@@ -56,4 +56,5 @@ Ths creates:
 * [R Packages](http://r-pkgs.had.co.nz)
 * [Testing](http://r-pkgs.had.co.nz/tests.html
 * [Documentation](http://r-pkgs.had.co.nz/man.html))
+* [R Package Primer](http://kbroman.org/pkg_primer/)
 * [Devtools Vignette](https://cran.r-project.org/web/packages/devtools/devtools.pdf)
