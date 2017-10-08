@@ -16,12 +16,11 @@ In general, the steps for creating well-formed R packages are:
 
 ### Install devtools and roxygen2
 
-`$ Rscript -e "install.packages('devtools', repo='http://cran.rstudio.com')"`
-`$ Rscript -e 'devtools::install_github("klutometis/roxygen")'`
+`$ Rscript -e "install.packages('devtools', repo='http://cran.rstudio.com'); devtools::install_github('klutometis/roxygen')"`
 
 See devtools.md in this directory for a devtools/roxygen guide.
 
-### Install Pakcrat
+### Install Packrat
 
 `$ Rscript -e "install.packages('packrat', repo='http://cran.rstudio.com')"`
 

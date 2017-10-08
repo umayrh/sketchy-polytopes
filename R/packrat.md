@@ -12,7 +12,7 @@ Here are some common Packrat workflows (run from within R inside the `rUtils` di
 
 Here's sample output:
 
-``
+```
 > packrat::init(".")
 Initializing packrat project in directory:
 - "~/sketchy-polytopes/R/rUtils"

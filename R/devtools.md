@@ -15,7 +15,8 @@ You should see the following files:
 
 ## Edit DESCRIPTION
 
-TODO: how does 
+See [The DESCRIPTION file](https://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file) for guidelines. Just
+remember not to give your package a name like `utils`, which would conflict with existing packages.
 
 ## Add R code
 
@@ -23,7 +24,7 @@ Remember all R code should go under R/ directory.
 
 ## Add and publish documentation
 
-After commenting your code to you heart's desire:
+After commenting code to your heart's desire:
 
 `devtools::document()`
 
