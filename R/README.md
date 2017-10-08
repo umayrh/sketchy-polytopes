@@ -36,7 +36,7 @@ See packrat.md in this directory for a Packrat guide.
 
 A brief description of projects:
 
-### `util`
+### `rUtil`
 
 Contains various utilities for programming in R such as:
 * object deletion
