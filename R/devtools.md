@@ -33,6 +33,6 @@ After commenting your code to you heart's desire:
 
 ## References
 
-[R Packages](http://r-pkgs.had.co.nz)
-[Vignette](https://cran.r-project.org/web/packages/devtools/devtools.pdf)
-[Hilary Parker](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/)
+* [R Packages](http://r-pkgs.had.co.nz)
+* [Vignette](https://cran.r-project.org/web/packages/devtools/devtools.pdf)
+* [Hilary Parker](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/)

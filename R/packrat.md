@@ -75,6 +75,6 @@ and `roxygen` (again!) to put them in Packrat's private library.
 
 ## References
 
-[Packrat Guide](https://rstudio.github.io/packrat/walkthrough.html)
-[Packrat Github](https://github.com/rstudio/packrat)
-[R-Bloggers](https://www.r-bloggers.com/creating-reproducible-software-environments-with-packrat/)
+* [Packrat Guide](https://rstudio.github.io/packrat/walkthrough.html)
+* [Packrat Github](https://github.com/rstudio/packrat)
+* [R-Bloggers](https://www.r-bloggers.com/creating-reproducible-software-environments-with-packrat/)

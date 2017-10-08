@@ -29,9 +29,9 @@ See packrat.md in this directory for a Packrat guide.
 
 ## References
 
-[Writing R Extensions](https://cran.r-project.org/doc/manuals/R-exts.html)
-[Hadley Wickham](http://hadley.nz)'s [Advanced R Programming](https://adv-r.hadley.nz)
-[R-Bloggers](https://www.r-bloggers.com)
+* [Writing R Extensions](https://cran.r-project.org/doc/manuals/R-exts.html)
+* [Hadley Wickham](http://hadley.nz)'s [Advanced R Programming](https://adv-r.hadley.nz)
+* [R-Bloggers](https://www.r-bloggers.com)
 
 ## Moreover, and finally
 
