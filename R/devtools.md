@@ -32,8 +32,28 @@ After commenting code to your heart's desire:
 
 `devtools::check()`
 
+## Set up unit-testing
+
+Install `testthat`:
+
+`install.packages(testthat)`
+
+Set up your package for unit testing:
+
+`devtools::use_testthat()`
+
+Ths creates:
+
+* `testthat` directory where all unit tests will reside
+* `testthat.R` a script that will run `R CMD check` to ensure package is well-formed
+
+## Git pre-commit hooks
+
+[TODO] for running unit test before commiting
+
 ## References
 
 * [R Packages](http://r-pkgs.had.co.nz)
-* [Vignette](https://cran.r-project.org/web/packages/devtools/devtools.pdf)
-* [Hilary Parker](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/)
+* [Testing](http://r-pkgs.had.co.nz/tests.html
+* [Documentation](http://r-pkgs.had.co.nz/man.html))
+* [Devtools Vignette](https://cran.r-project.org/web/packages/devtools/devtools.pdf)

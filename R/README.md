@@ -30,13 +30,15 @@ See packrat.md in this directory for a Packrat guide.
 
 * [Writing R Extensions](https://cran.r-project.org/doc/manuals/R-exts.html)
 * [Hadley Wickham](http://hadley.nz)'s [Advanced R Programming](https://adv-r.hadley.nz)
+* [The R Journal](https://journal.r-project.org)
+* [Journal of Statistical Software](https://www.jstatsoft.org/index)
 * [R-Bloggers](https://www.r-bloggers.com)
 
 ## Moreover, and finally
 
 A brief description of projects:
 
-### `rUtil`
+### `rUtils`
 
 Contains various utilities for programming in R such as:
 * object deletion
