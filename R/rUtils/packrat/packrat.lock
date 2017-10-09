@@ -58,6 +58,11 @@ Source: CRAN
 Version: 3.0
 Hash: fb0029f1c84bf9b510c4f55cda7103f1
 
+Package: data.table
+Source: CRAN
+Version: 1.10.4
+Hash: 2c7c47ccb40d01c7b214c8eff818108d
+
 Package: debugme
 Source: CRAN
 Version: 1.0.2
