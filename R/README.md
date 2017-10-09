@@ -34,6 +34,11 @@ See packrat.md in this directory for a Packrat guide.
 * [Journal of Statistical Software](https://www.jstatsoft.org/index)
 * [R-Bloggers](https://www.r-bloggers.com)
 
+## TODO
+
+* [Linting](https://github.com/jimhester/lintr)
+* [Test coverage](https://github.com/r-lib/covr)
+
 ## Moreover, and finally
 
 A brief description of projects:
@@ -41,4 +46,5 @@ A brief description of projects:
 ### `rUtils`
 
 Contains various utilities for programming in R such as:
-* object deletion
+* data.table deletion
+
