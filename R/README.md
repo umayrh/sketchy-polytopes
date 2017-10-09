@@ -1,7 +1,7 @@
 ## Perfunctory preamble
 
 This directory contains R code, that is structured using [devtools](https://github.com/hadley/devtools), documented using
-[roxygen2](https://github.com/klutometis/roxygen) with dependencies managed using [Packrat](https://rstudio.github.io/packrat/),
+[roxygen2](https://github.com/klutometis/roxygen), with dependencies managed using [Packrat](https://rstudio.github.io/packrat/),
 and unit-tested using [testthat](https://github.com/hadley/testthat). 
 
 ## Note on creating R packages
