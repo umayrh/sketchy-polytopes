@@ -34,6 +34,23 @@ See packrat.md in this directory for a Packrat guide.
 * [Journal of Statistical Software](https://www.jstatsoft.org/index)
 * [R-Bloggers](https://www.r-bloggers.com)
 
+## Installation notes
+
+Compiling R packages on Mac is a bit more [involved](https://github.com/Rdatatable/data.table/wiki/Installation). In short:
+
+* Get the latest XCode from AppStore
+* Install `clang`: `brew update && brew install llvm`
+* Update `~/R/.Makevars` to use `clang`:
+```
+CC=/usr/local/opt/llvm/bin/clang -fopenmp
+CXX=/usr/local/opt/llvm/bin/clang++
+# -O3 should be faster than -O2 (default) level optimisation ..
+CFLAGS=-g -O3 -Wall -pedantic -std=gnu99 -mtune=native -pipe
+CXXFLAGS=-g -O3 -Wall -pedantic -std=c++11 -mtune=native -pipe
+LDFLAGS=-L/usr/local/opt/gettext/lib -L/usr/local/opt/llvm/lib -Wl,-rpath,/usr/local/opt/llvm/lib
+CPPFLAGS=-I/usr/local/opt/gettext/include -I/usr/local/opt/llvm/include
+```
+
 ## TODO
 
 * [Linting](https://github.com/jimhester/lintr)

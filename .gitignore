@@ -1,4 +1,21 @@
+# Gradle
+
+.gradle
+./*/build
+
+# R
+
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
+
+./R/*/.Rproj.user
+./R/*/.Rhistory
+./R/*/.RData
+./R/*/.Ruserdata
+
+# OSX
+
+.DS_Store
+./*/.DS_Store
