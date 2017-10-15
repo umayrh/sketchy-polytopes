@@ -14,11 +14,16 @@ On a Mac, e.g., this might be "/Library/Frameworks/R.framework/Versions/3.4/Reso
 
 In general, the steps for creating well-formed R packages are:
 
-### Install devtools and roxygen2
+### Install devtools, usethis, testthat, and roxygen2
 
-`$ Rscript -e "install.packages('devtools', repo='http://cran.rstudio.com'); devtools::install_github('klutometis/roxygen')"`
+```
+$ Rscript -e "if (!require('devtools')) install.packages('devtools', repo='http://cran.rstudio.com')"
+$ Rscript -e "if (!require('usethis')) devtools::install_github('r-lib/usethis')"
+$ Rscript -e "if (!require('roxygen')) devtools::install_github('klutometis/roxygen')"
+$ Rscript -e "if (!require('packrat')) install.packages('packrat', repo='http://cran.rstudio.com')"
+```
 
-See [devtools.md](./devtools.md) for a devtools/roxygen guide.
+See [package.md](./package.md) for a package setup guide.
 
 ### Install Packrat
 
@@ -26,13 +31,16 @@ See [devtools.md](./devtools.md) for a devtools/roxygen guide.
 
 See [packrat.md](./packrat.md) for a Packrat guide.
 
-## References
+## Using Gradle
 
-* [Writing R Extensions](https://cran.r-project.org/doc/manuals/R-exts.html)
-* [Hadley Wickham](http://hadley.nz)'s [Advanced R Programming](https://adv-r.hadley.nz)
-* [The R Journal](https://journal.r-project.org)
-* [Journal of Statistical Software](https://www.jstatsoft.org/index)
-* [R-Bloggers](https://www.r-bloggers.com)
+If you use Gradle for build management, a (Gradle plugin for R)[TODO] automates many R packaging tasks. To use the plugin,
+
+* Create a directory with the name of your R package
+* Add a build.gradle file with the following contents
+
+```
+TODO
+```
 
 ## Installation notes
 
@@ -55,6 +63,14 @@ CPPFLAGS=-I/usr/local/opt/gettext/include -I/usr/local/opt/llvm/include
 
 * [Linting](https://github.com/jimhester/lintr)
 * [Test coverage](https://github.com/r-lib/covr)
+
+## References
+
+* [Writing R Extensions](https://cran.r-project.org/doc/manuals/R-exts.html)
+* [Hadley Wickham](http://hadley.nz)'s [Advanced R Programming](https://adv-r.hadley.nz)
+* [The R Journal](https://journal.r-project.org)
+* [Journal of Statistical Software](https://www.jstatsoft.org/index)
+* [R-Bloggers](https://www.r-bloggers.com)
 
 ## Moreover, and finally
 
