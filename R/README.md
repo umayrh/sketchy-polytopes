@@ -33,14 +33,8 @@ See [packrat.md](./packrat.md) for a Packrat guide.
 
 ## Using Gradle
 
-If you use Gradle for build management, a (Gradle plugin for R)[TODO] automates many R packaging tasks. To use the plugin,
-
-* Create a directory with the name of your R package
-* Add a build.gradle file with the following contents
-
-```
-TODO
-```
+If you use Gradle for build management, a (Gradle plugin for R)[https://github.com/umayrh/gradle-plugin-r] 
+automates many R packaging tasks.
 
 ## Installation notes
 
