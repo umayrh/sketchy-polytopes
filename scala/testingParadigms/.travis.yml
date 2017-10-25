@@ -1,0 +1,14 @@
+language: scala
+branches:
+  only:
+    - master
+notifications:
+  email:
+    - umayrh@gmail.com
+
+scala:
+  - 2.12.3
+dist: trusty
+jdk:
+  - openjdk8
+sudo: false
