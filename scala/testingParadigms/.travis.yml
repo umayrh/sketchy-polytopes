@@ -1,4 +1,13 @@
 language: scala
+sudo: false
+before_install: umask 0022
+
+scala:
+  - 2.12.3
+dist: trusty
+jdk:
+  - openjdk8
+
 branches:
   only:
     - master
@@ -6,9 +15,3 @@ notifications:
   email:
     - umayrh@gmail.com
 
-scala:
-  - 2.12.3
-dist: trusty
-jdk:
-  - openjdk8
-sudo: false
