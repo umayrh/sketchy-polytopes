@@ -1,0 +1,21 @@
+version = "0.1"
+description = "R Projects"
+
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.umayrh:gradle-plugin-r:0.2"
+  }
+}
+
+subprojects {
+  apply plugin: "com.umayrh.rplugin"
+
+  check {
+    dependsOn test
+  }
+}

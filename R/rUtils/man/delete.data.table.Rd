@@ -3,7 +3,8 @@
 \name{delete.data.table}
 \alias{delete.data.table}
 \title{This function allows deleting a data.table by removing all references to it in a given environment.
-In memory-strapped environments, we'd like to help the garbage collector reclaim memory that's not logically referenced anymore.
+In memory-strapped environments, we'd like to help the garbage collector reclaim memory that's not 
+logically referenced anymore.
 Note that any errors will be logged without a traceback for uninterrupted execution.
 TODO: Note that this function is NOT thread-safe.}
 \usage{
@@ -18,7 +19,8 @@ delete.data.table(target, environ_objs, environ = .GlobalEnv)
 }
 \description{
 This function allows deleting a data.table by removing all references to it in a given environment.
-In memory-strapped environments, we'd like to help the garbage collector reclaim memory that's not logically referenced anymore.
+In memory-strapped environments, we'd like to help the garbage collector reclaim memory that's not 
+logically referenced anymore.
 Note that any errors will be logged without a traceback for uninterrupted execution.
 TODO: Note that this function is NOT thread-safe.
 }

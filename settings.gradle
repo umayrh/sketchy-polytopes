@@ -1,0 +1,11 @@
+rootProject.name = 'sketchy-polytopes'
+
+/**
+  * Recursively add all Gradle subprojects excluding root
+  * https://stackoverflow.com/questions/15299004/is-it-possible-to-set-up-a-gradle-project-with-more-than-2-levels
+  */
+fileTree('.') {
+  include '**/build.gradle'
+  exclude 'build.gradle'
+}.collect { relativePath(it.parent).replace(File.separator, ':') }
+ .each { include(it) }
