@@ -1,0 +1,24 @@
+language: generic
+sudo: false
+dist: trusty
+
+scala:
+  - 2.12.3
+
+jdk:
+  - oraclejdk8
+  - openjdk8
+
+addons:
+  apt:
+    sources:
+    - r-packages-trusty
+    packages:
+    - r-base-dev
+
+branches:
+  only:
+    - master
+notifications:
+  email:
+    - umayrh@gmail.com
