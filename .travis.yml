@@ -2,6 +2,9 @@ language: generic
 sudo: false
 dist: trusty
 
+install:
+  - ./gradlew check
+
 scala:
   - 2.12.3
 
