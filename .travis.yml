@@ -2,6 +2,8 @@ language: generic
 sudo: false
 dist: trusty
 
+script: ./travis/travis-setup.sh
+
 install:
   - ./gradlew check
 
