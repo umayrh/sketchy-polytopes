@@ -5,6 +5,7 @@
 
 set -ex
 
+CRAN=${CRAN:-"http://cran.rstudio.com"}
 OS=$(uname -s)
 
 ## Check OS type
