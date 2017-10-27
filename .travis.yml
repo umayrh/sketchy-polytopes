@@ -19,6 +19,12 @@ addons:
     packages:
     - r-base-dev
 
+cache:
+  directories:
+    - /usr/local/lib/R/site-library
+    - /usr/lib/R/site-library
+    - /usr/lib/R/library
+
 branches:
   only:
     - master
