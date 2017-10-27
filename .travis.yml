@@ -1,5 +1,5 @@
 language: generic
-sudo: false
+sudo: required
 dist: trusty
 
 before_install: ./travis/travis-setup.sh
