@@ -14,13 +14,6 @@ jdk:
   - oraclejdk8
   - openjdk8
 
-addons:
-  apt:
-    sources:
-    - r-packages-trusty
-    packages:
-    - r-base-dev
-
 cache:
   directories:
     - /usr/local/lib/R/site-library
