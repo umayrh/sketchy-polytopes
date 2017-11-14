@@ -3,11 +3,12 @@ package com.umayrh.testing
 import java.lang.Math.addExact
 
 /**
-  * A class encapsulating
+  * A class that offers a simple implementation of a reducer
   */
-object Main {
+object Reducer {
     /**
       * Aggregates an input sequence of integers
+      * 
       */
     def reduceSeq(input: Seq[Int], binaryReducer: (Int, Int) => Int): Int = {
         if (input.length == 0) {

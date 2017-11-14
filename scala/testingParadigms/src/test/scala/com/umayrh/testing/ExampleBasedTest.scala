@@ -2,24 +2,25 @@ package com.umayrh.testing
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.junit.AssertionsForJUnit 
+import org.scalatest.junit.AssertionsForJUnit
 
 import org.scalatest._
 import org.scalatest.prop.TableDrivenPropertyChecks
 
 /**
  * Test class that combines behavior- and data-driven testing paradigms
+ *
+ * Annotate with @RunWith(classOf[JUnitRunner]) to run as JUnit test
  */
-@RunWith(classOf[JUnitRunner])
-class MainTest extends FeatureSpec with AssertionsForJUnit with GivenWhenThen with TableDrivenPropertyChecks {
+class ExampleBasedTest extends FeatureSpec with AssertionsForJUnit with GivenWhenThen with TableDrivenPropertyChecks {
 
-    feature("A summing function for sequences of integers") {
+    feature("A summing function for sequences of integers - tested using example data") {
         scenario("the function is invoked on an empty sequence") {
             Given("an empty sequence")
-           val emptySeq = Seq()
+            val emptySeq = Seq()
 
             When("reducer is invoked")
-            val result = Main.reduceSeq(emptySeq, Main.sumInts)
+            val result = Reducer.reduceSeq(emptySeq, Reducer.sumInts)
 
             Then("result is 0")
             assert(result == 0)
@@ -39,23 +40,23 @@ class MainTest extends FeatureSpec with AssertionsForJUnit with GivenWhenThen wi
 
             Then("result is an integer, which is the sum of input integers")
             forAll (testData) { (input: Seq[Int], output: Int) =>
-                assert(Main.reduceSeq(input, Main.sumInts) == output)
+                assert(Reducer.reduceSeq(input, Reducer.sumInts) == output)
             }
         }
 
         scenario("the function is invoked on a sequence causing underflow/overflow") {
-            Given("an empty sequence")
-            When("reducer is invoked")
+            Given("a sequence containing MIN_VAL or MAX_VAL")
             val testData = Table(
                 ("input"),
                 (Seq(Int.MaxValue, 1)),
                 (Seq(Int.MinValue, -1))
             )
 
+            When("reducer is invoked")
             Then("result is an ArithmeticException")
             forAll (testData) { (input: Seq[Int]) =>
                 intercept[ArithmeticException] {
-                    Main.reduceSeq(input, Main.sumInts)
+                    Reducer.reduceSeq(input, Reducer.sumInts)
                 }
             }
         }

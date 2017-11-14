@@ -14,6 +14,7 @@ subprojects {
     compile 'org.scala-lang:scala-library:2.12.3'
   
     testCompile 'org.scalatest:scalatest_2.12:3.0.4'
+    testCompile 'org.scalacheck:scalacheck_2.12:1.13.4'
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
   }
