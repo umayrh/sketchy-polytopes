@@ -120,8 +120,16 @@ This allows random test data generation and, possibly, more rigorous testing (wh
 that of testing a function that adds two integers. Instead of specifying test data, we would generate random integers and test for properties of
 addition: identity, commutativity, associativity, and distributivity.
 
-## 
+[ScalaCheck](http://www.scalacheck.org) is a Scala library for property-based testing, which is also supported by 
+[ScalaTest](http://www.scalatest.org/user_guide/generator_driven_property_checks). Generally, these tests would:
 
-### Matchers
+* extend the `GeneratorDrivenPropertyChecks` trait,
+* create randomly generated test cases using `org.scalacheck.Arbitrary` or `org.scalacheck.Gen` generators,
+* use the `forAll` method for iterating for randomly generated test cases (this method comes from the `GeneratorDrivenPropertyChecks` trait),
+* use [matchers](http://www.scalatest.org/user_guide/using_matchers) for specifying assertions,
+* use `whenever` method to selectively test for conditions (beware that test-case may fail if `whenever` ends up being too exclusive), and
 
-### Test-case rules
+See also:
+* [ScalaCheck Github](https://github.com/rickynils/scalacheck)
+* [ScalaCheck User Guide](https://github.com/rickynils/scalacheck/blob/master/doc/UserGuide.md)
+* [ScalaCheck: The Definitive Guide - Coding Examples](https://booksites.artima.com/scalacheck/examples/index.html)
