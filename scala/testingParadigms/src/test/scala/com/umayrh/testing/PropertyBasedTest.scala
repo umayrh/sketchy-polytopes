@@ -51,7 +51,7 @@ class PropertyBasedTest extends FeatureSpec with AssertionsForJUnit with GivenWh
 
                     resultThrew should be (resultShuffledThrew)
 
-                    whenever(!resultThrew) {
+                    if (!resultThrew) {
                         result should be (resultShuffled)
                     }
             }
@@ -88,7 +88,7 @@ class PropertyBasedTest extends FeatureSpec with AssertionsForJUnit with GivenWh
                     }
                     resultThrew should be (resultSplitThrew)
 
-                    whenever(!resultThrew) {
+                    if (!resultThrew) {
                         result should be (resultSplit)
                     }
             }
