@@ -126,8 +126,8 @@ addition: identity, commutativity, associativity, and distributivity.
 * extend the `GeneratorDrivenPropertyChecks` trait,
 * create randomly generated test cases using `org.scalacheck.Arbitrary` or `org.scalacheck.Gen` generators,
 * use the `forAll` method for iterating for randomly generated test cases (this method comes from the `GeneratorDrivenPropertyChecks` trait),
-* use [matchers](http://www.scalatest.org/user_guide/using_matchers) for specifying assertions,
-* use `whenever` method to selectively test for conditions (beware that test-case may fail if `whenever` ends up being too exclusive), and
+* use [matchers](http://www.scalatest.org/user_guide/using_matchers) for specifying assertions, and
+* use `whenever` method to selectively test for conditions (beware that test-case may fail if `whenever` ends up being too exclusive)
 
 See also:
 * [ScalaCheck Github](https://github.com/rickynils/scalacheck)
