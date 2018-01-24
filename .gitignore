@@ -1,7 +1,10 @@
 # Gradle
 
 .gradle
-./*/build
+**/build
+**/.project
+**/.settings
+**/derby.log
 
 # R
 

@@ -1,0 +1,6 @@
+version = "0.1"
+description = "Interval Graph"
+
+dependencies {
+    compile group: 'org.roaringbitmap', name: 'RoaringBitmap', version: "0.6.+"
+}
