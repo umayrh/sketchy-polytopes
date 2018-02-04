@@ -42,10 +42,17 @@ This is because, for interval graphs, (1) the chromatic number equals the maximu
 An algorithm that can find all maximal cliques in an interval graph also trivially solves the three problem mentioned before. Here's an O(n)-time for it:
 
 Given: 
-* a table of observations, each with some interval within [0, 1]
+* a table of observations, `n` in size, each with some interval within [0, 1]
 * a definition of overlap between any two given intervals
+* an encoding of each interval with a binary word of fixed length, `W`
+
 
 ```
+* In one pass, transform each interval into an (possibly, encoded) bitset
+* In one pass, take a union across all bitsets to create a distinct union-ed bitset
+* 
+* In one pass, for each bitset:
+** 
 
 ```
 
