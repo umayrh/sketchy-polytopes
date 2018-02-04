@@ -3,6 +3,16 @@
 
 #include "glpk.h"
 
-#define STRING "Hello, World"
+/* vertex data block */
+typedef struct
+{
+    double rhs;
+} v_data;
+
+/* arc data block */
+typedef struct
+{
+    double low, cap, cost;
+} a_data;
 
 #endif
