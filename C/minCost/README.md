@@ -26,3 +26,4 @@
 ```
 * Create unit test
 * Hook up project with Travis
+* Rename binary, create library, update gradle.build

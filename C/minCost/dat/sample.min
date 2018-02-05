@@ -2,6 +2,24 @@ c sample.min
 c
 c This is an example of the minimum cost flow problem data c in DIMACS format.
 c
+c Here's the solution:
+c   sol =   213
+c   arc 1->4: x =    13; rc =     0
+c   arc 1->2: x =     7; rc =     0
+c   arc 2->4: x =     0; rc =     3
+c   arc 2->3: x =     7; rc =     0
+c   arc 3->8: x =     5; rc =     0
+c   arc 3->5: x =     2; rc =     3
+c   arc 4->5: x =    13; rc =     0
+c   arc 5->7: x =     4; rc =    -1
+c   arc 5->6: x =    11; rc =     0
+c   arc 5->2: x =     0; rc =     1
+c   arc 6->8: x =     4; rc =     3
+c   arc 6->7: x =     7; rc =    -3
+c   arc 7->9: x =    11; rc =     0
+c   arc 8->9: x =     9; rc =     0
+c
+c
 p min 9 14
 c
 n 1 20
