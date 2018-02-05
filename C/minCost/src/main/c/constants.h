@@ -27,6 +27,6 @@ typedef struct
 
 int read_mincost(glp_graph *G, const char *filename);
 void print_mincost_sol(glp_graph *G, double sol);
-int make_mincost_net(glp_graph *G);
+int make_mincost_net(glp_graph *G, int nodes, int arcs, int supply);
 
 #endif

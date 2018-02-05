@@ -1,5 +1,36 @@
 # Minimum-cost optimization using GLPK
 
+## Build and run
+
+To build, run `./gradlew clean mainExecutable`. 
+
+To execute, run `./build/exe/main/main`.
+
+## Performance
+
+System specs:
+
+```
+      Processor Name: Intel Core i7
+      Processor Speed: 1.7 GHz
+      Number of Processors: 1
+      Total Number of Cores: 2
+      L2 Cache (per Core): 256 KB
+      L3 Cache: 4 MB
+      Memory: 8 GB
+```
+
+|           Task        |   (50K, 90K, 25K)  |  (50K, 90K, 250K)  | (100K, 100K, 100K) |
+| ----------------------|:------------------:|:------------------:|:------------------:|
+| glp_netgen            |       3.5s         |        3.2s        |     10.6s          |
+| glp_mincost_relax4    |       24.9s        |      1261.6s       |     659.4s         |
+
+The tuple (N, A, S) represents a problem instance, where:
+
+N = number of nodes
+A = number of arcs
+S = total supply
+
 ## References
 
 * [GLPK](https://www.gnu.org/software/glpk/)
@@ -13,6 +44,7 @@
 ## TODO
 
 * Use glp_netgen to test performance to large graphs
+* Update the dimacs_to_dot.py script
 * Better variable names
 * Function for extracting the solution
 * Function for converting a custom input in to DIMACS. Format:
@@ -27,3 +59,4 @@
 * Create unit test
 * Hook up project with Travis
 * Rename binary, create library, update gradle.build
+* Ribify GLPK?
