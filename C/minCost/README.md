@@ -55,8 +55,6 @@ The tuple (N, A, S) represents a problem instance, where:
 
 ## TODO
 
-* Use glp_netgen to test performance to large graphs
-* Update the dimacs_to_dot.py script
 * Better variable names
 * Function for extracting the solution
 * Function for converting a custom input in to DIMACS. Format:
