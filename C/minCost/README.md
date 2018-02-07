@@ -1,5 +1,9 @@
 # Minimum-cost optimization using GLPK
 
+## Minimum cost network flow
+
+![alt text](./etc/sample.png)
+
 ## Build and run
 
 To build, run `./gradlew clean mainExecutable`. 
@@ -34,9 +38,9 @@ Maximum resident set size reported using `/usr/bin/time -l`.
 
 The tuple (N, A, S) represents a problem instance, where:
 
-N = number of nodes
-A = number of arcs
-S = total supply
+* N = number of nodes
+* A = number of arcs
+* S = total supply
 
 ## References
 
@@ -47,6 +51,7 @@ S = total supply
 * [DIMACS-Graphviz](https://gist.github.com/maelvalais/755c16db4681e3a671c1)
 * [MIT 15-082j](https://ocw.mit.edu/courses/sloan-school-of-management/15-082j-network-optimization-fall-2010/)
 * [Network Programming, Katta Murty](http://www-personal.umich.edu/~murty/books/network_programming/)
+* [Network Optimization: Continuous and Discrete Models, Dmitri Bertsekas](http://web.mit.edu/dimitrib/www/netbook_Full_Book.pdf)
 
 ## TODO
 
