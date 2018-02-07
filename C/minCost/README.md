@@ -2,7 +2,7 @@
 
 ## Minimum cost network flow
 
-![alt text](./etc/sample.png)
+![](./dat/sample.png)
 
 ## Build and run
 
