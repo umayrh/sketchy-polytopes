@@ -9,7 +9,6 @@ To execute, run `./build/exe/main/main`.
 ## Performance
 
 System specs:
-
 ```
       Processor Name: Intel Core i7
       Processor Speed: 1.7 GHz
@@ -20,10 +19,18 @@ System specs:
       Memory: 8 GB
 ```
 
+Maximum resident set size reported using `/usr/bin/time -l`.
+
 |           Task        |   (50K, 90K, 25K)  |  (50K, 90K, 250K)  | (100K, 100K, 100K) |
 | ----------------------|:------------------:|:------------------:|:------------------:|
 | glp_netgen            |       3.5s         |        3.2s        |     10.6s          |
 | glp_mincost_relax4    |       24.9s        |      1261.6s       |     659.4s         |
+
+|           Task        |   (15K, 5M, 25K)   |   (15K, 1M, 25K)   |  (15K, 100K, 25K)  |
+| ----------------------|:------------------:|:------------------:|:------------------:|
+| glp_netgen            |       36.7s        |        6.45        |        1.31s       |
+| glp_mincost_relax4    |       8.73s        |        3.05s       |        1.80s       |
+| Max RSS               |       696MB        |        142MB       |        31MB        |
 
 The tuple (N, A, S) represents a problem instance, where:
 

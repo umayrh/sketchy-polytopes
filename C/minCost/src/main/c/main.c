@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     // initialize the graph using a network generator
     printf("make_mincost_net\n");
     timer(start);
-    ret = make_mincost_net(G, 50000, 90000, 25000);
+    ret = make_mincost_net(G, 15000, 200000, 25000);
     timer(end);
     print_time;
 
