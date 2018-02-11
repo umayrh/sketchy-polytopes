@@ -45,7 +45,7 @@ installLemon() {
     cd lemon-1.3.1 && mkdir build && cd build
     cmake ..
     make
-    make install
+    sudo make install
 }
 
 # Retry a given command
