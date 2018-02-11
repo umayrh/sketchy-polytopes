@@ -1,0 +1,27 @@
+// TODO(UH): maybe move dependencies to lib and include dirs in this project
+
+    apply plugin: 'c'
+
+    model {
+        repositories {
+            lib(PrebuiltLibraries) {
+                glpk {
+                    headers.srcDir "/usr/local/include"
+                   binaries.withType(StaticLibraryBinary) {
+                        staticLibraryFile = file("/usr/local/lib/libglpk.a")
+                    }
+                   binaries.withType(SharedLibraryBinary) {
+                        sharedLibraryFile = file("/usr/local/lib/libglpk.dylib")
+                   }
+                }
+            }
+        }
+
+        components {
+            main(NativeExecutableSpec) {
+                sources {
+                    c.lib library: 'glpk', linkage: 'static'
+                }
+            }
+        }
+    }

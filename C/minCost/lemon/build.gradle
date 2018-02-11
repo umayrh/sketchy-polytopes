@@ -1,0 +1,24 @@
+// TODO(UH): maybe move dependencies to lib and include dirs in this project
+
+    apply plugin: 'cpp' 
+
+    model {
+        repositories {
+            lib(PrebuiltLibraries) {
+                lemon {
+                    headers.srcDir "/usr/local/include/lemon"
+                    binaries.withType(StaticLibraryBinary) {
+                        staticLibraryFile = file("/usr/local/lib/libemon.a")
+                    }
+                }
+            }
+        }
+
+        components {
+            main(NativeExecutableSpec) {
+                sources {
+                    cpp.lib library: 'lemon', linkage: 'static'
+                }
+            }
+        }
+    }
