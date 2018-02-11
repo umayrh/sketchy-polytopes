@@ -1,5 +1,14 @@
 # Installation Notes
 
+To install [LEMON](http://lemon.cs.elte.hu/trac/lemon):
+* `wget http://lemon.cs.elte.hu/pub/sources/lemon-1.3.1.tar.gz`
+* `tar xzvf lemon-1.3.1.tar.gz`
+* `mkdir build && cd build`
+* `cmake ..`
+* `make`
+* `make check`
+* `make install`
+
 ## Mac
 
 Assuming `brew` is installed:

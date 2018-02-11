@@ -13,7 +13,9 @@ int main(int argc, char** argv) {
     // initialize the graph using a network generator
     printf("make_mincost_net\n");
     timer(start);
-    ret = make_mincost_net(G, 15000, 200000, 25000);
+    // ret = make_mincost_net(G, 15000, 200000, 25000);
+    char *file_name = "dat/small.min";
+    read_mincost(G, file_name);
     timer(end);
     print_time;
 

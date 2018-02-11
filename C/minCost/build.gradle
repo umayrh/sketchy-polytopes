@@ -1,27 +1,53 @@
-apply plugin : 'c'
-
 // TODO(UH): maybe move dependencies to lib and include dirs in this project
-model {
-    repositories {
-        lib(PrebuiltLibraries) {
-            glpk {
-                headers.srcDir "/usr/local/include"
-                binaries.withType(StaticLibraryBinary) {
-                    staticLibraryFile = file("/usr/local/lib/libglpk.a")
+
+project(":glpk") {
+    apply plugin: 'c'
+
+    model {
+        repositories {
+            lib(PrebuiltLibraries) {
+                glpk {
+                    headers.srcDir "/usr/local/include"
+                   binaries.withType(StaticLibraryBinary) {
+                        staticLibraryFile = file("/usr/local/lib/libglpk.a")
+                    }
+                   binaries.withType(SharedLibraryBinary) {
+                        sharedLibraryFile = file("/usr/local/lib/libglpk.dylib")
+                   }
                 }
-               binaries.withType(SharedLibraryBinary) {
-                    sharedLibraryFile = file("/usr/local/lib/libglpk.dylib")
+            }
+        }
+
+        components {
+            main(NativeExecutableSpec) {
+                sources {
+                    c.lib library: 'glpk', linkage: 'static'
                 }
             }
         }
     }
 }
 
-model {
-    components {
-        main(NativeExecutableSpec) {
-            sources {
-                c.lib library: 'glpk', linkage: 'static'
+project(":lemon") {
+    apply plugin: 'cpp' 
+
+    model {
+        repositories {
+            lib(PrebuiltLibraries) {
+                lemon {
+                    headers.srcDir "/usr/local/include/lemon"
+                    binaries.withType(StaticLibraryBinary) {
+                        staticLibraryFile = file("/usr/local/lib/libemon.a")
+                    }
+                }
+            }
+        }
+
+        components {
+            main(NativeExecutableSpec) {
+                sources {
+                    cpp.lib library: 'lemon', linkage: 'static'
+                }
             }
         }
     }
