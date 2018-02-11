@@ -8,7 +8,9 @@
 
 To build, run `./gradlew clean mainExecutable`. 
 
-To execute, run `./build/exe/main/main`.
+To execute the GLPK-based solver, run `.glpk/build/exe/main/main`.
+
+To execute the LEMON-based solver, run `.lemon/build/exe/main/main`.
 
 ## Performance
 

@@ -18,8 +18,13 @@ bootstrap() {
     fi
 }
 
-## Installs r-base and make R libs writable
 bootstrapLinux() {
+    setupR
+    installLemon
+}
+
+## Installs r-base and make R libs writable
+setupR() {
     sudo add-apt-repository "deb ${CRAN}/bin/linux/ubuntu $(lsb_release -cs)/"
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
 
@@ -31,6 +36,16 @@ bootstrapLinux() {
     retry sudo apt-get install -y --no-install-recommends r-base-dev r-recommended qpdf
 
     sudo chmod 2777 /usr/local/lib/R /usr/local/lib/R/site-library
+}
+
+# Build and installs LEMON from source
+installLemon() {
+    wget http://lemon.cs.elte.hu/pub/sources/lemon-1.3.1.tar.gz
+    tar xzvf lemon-1.3.1.tar.gz
+    cd lemon-1.3.1 && mkdir build && cd build
+    cmake ..
+    make
+    make install
 }
 
 # Retry a given command
