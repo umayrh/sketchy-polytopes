@@ -3,6 +3,20 @@
     apply plugin: 'cpp' 
 
     model {
+        toolChains {
+            gcc(Gcc) {
+                eachPlatform {
+                    tools -> tools.cppCompiler.executable = "g++"
+                }
+            }
+
+            clang(Clang) {
+                eachPlatform {
+                    tools -> tools.cppCompiler.executable = "clang++"
+                }
+            }
+        }
+
         repositories {
             lib(PrebuiltLibraries) {
                 lemon {
