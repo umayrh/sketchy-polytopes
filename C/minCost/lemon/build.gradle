@@ -20,7 +20,8 @@
         repositories {
             lib(PrebuiltLibraries) {
                 lemon {
-                    headers.srcDir "/usr/local/include/lemon"
+                    // Explicitly including headers causes compilation errors
+                    // headers.srcDir "/usr/local/include/lemon"
                     binaries.withType(StaticLibraryBinary) {
                         staticLibraryFile = file("/usr/local/lib/libemon.a")
                     }
