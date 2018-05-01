@@ -1,6 +1,7 @@
 package com.umayrh.intervalGraph
 
 import java.sql.Date
+import java.util
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
@@ -9,6 +10,7 @@ import org.scalatest._
 import org.scalatest.prop.TableDrivenPropertyChecks
 import com.holdenkarau.spark.testing._
 import org.apache.spark.sql.types.DataTypes
+import org.roaringbitmap.RoaringBitmap
 
 /**
   * Tests [[DateOverlap]]
@@ -37,7 +39,7 @@ class DateOverlapTest
       Then("result is 0")
     }
 
-    Scenario("mapIntRangeToBitSet create a column containing bitmap") {
+    Scenario("mapIntRangeToBitSet creates a column containing bitmap") {
 
       Given("A data frame with overlapping dates")
       val inputDf = sc
@@ -54,6 +56,19 @@ class DateOverlapTest
       outputDf.schema.fields
         .filter(f => f.name.equals("bitmap"))(0)
         .dataType equals (DataTypes.BinaryType)
+
+      val bitmaps: Array[RoaringBitmap] = outputDf
+        .select("bitmap")
+        .collect()
+        .map(row => {
+          RoaringBitmapUtils.deserialize(row.get(0).asInstanceOf[Array[Byte]])
+        })
+
+      val result = new RoaringBitmap()
+      bitmaps.foreach(b => result.or(b))
+      result.getCardinality equals (5)
+      RoaringBitmap.flip(result, 1L, 5L).getCardinality equals (0)
+
     }
   }
 
