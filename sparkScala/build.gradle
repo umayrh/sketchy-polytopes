@@ -1,6 +1,18 @@
 version = "0.1"
 description = "Apache Spark-Scala Projects"
 
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+
+  dependencies {
+    classpath 'cz.alenkacz:gradle-scalafmt:1.6.0'
+  }
+}
+
 subprojects {
   repositories {
     mavenCentral()
@@ -9,6 +21,7 @@ subprojects {
   }
 
   apply plugin: 'scala'
+  apply plugin: 'scalafmt'
 
   dependencies {
     compile group: 'org.scala-lang', name: 'scala-library', version: scalaVersion + ".+"
@@ -34,6 +47,7 @@ subprojects {
     classpath = sourceSets.test.runtimeClasspath
   }
 
+  compileScala.dependsOn checkScalafmtAll
   test.dependsOn scalaTest
 }
 
