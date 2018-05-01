@@ -6,6 +6,10 @@
 **/.settings
 **/derby.log
 
+# IntelliJ
+.idea/*
+sketchy-polytopes.iml
+
 # R
 
 .Rproj.user
