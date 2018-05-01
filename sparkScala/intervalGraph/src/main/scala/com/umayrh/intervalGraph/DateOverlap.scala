@@ -1,15 +1,19 @@
 package com.umayrh.intervalGraph
 
+import java.io.{DataOutputStream, OutputStream}
+import java.nio.ByteBuffer
+
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
-
 import org.roaringbitmap.RoaringBitmap
 
 /**
   * Utilities for grouping observations that overlap in time
   */
 object DateOverlap {
+  implicit val ENCODER = org.apache.spark.sql.Encoders.kryo[RoaringBitmap]
+
   private val SECONDS_IN_A_DAY: Long = 86400
 
   /**
@@ -27,9 +31,9 @@ object DateOverlap {
     * @param outputCol - name of column appended to the data frame
     * @return the input data frame with a new column containing unix timestamp (in days)
     */
-  private def mapDateToInt(df: DataFrame,
-                           inputCol: String,
-                           outputCol: String): DataFrame = {
+  def mapDateToInt(df: DataFrame,
+                   inputCol: String,
+                   outputCol: String): DataFrame = {
     df.withColumn(
       outputCol,
       (unix_timestamp(df(inputCol)) / SECONDS_IN_A_DAY).cast(LongType))
@@ -40,14 +44,14 @@ object DateOverlap {
   /**
     *
     */
-  private def mapIntRangeToBitSet(df: DataFrame,
-                                  inputStart: String,
-                                  inputEnd: String,
-                                  outputCol: String): DataFrame = {
+  def mapIntRangeToBitSet(df: DataFrame,
+                          inputStart: String,
+                          inputEnd: String,
+                          outputCol: String): DataFrame = {
     val bitmap = (start: Long, end: Long) => {
       val map = new RoaringBitmap()
       map.add(start, end)
-      map
+      RoaringBitmapUtils.serialize(map)
     }
     val bitmapUdf = udf(bitmap)
     df.withColumn(outputCol, bitmapUdf(df(inputStart), df(inputEnd)))

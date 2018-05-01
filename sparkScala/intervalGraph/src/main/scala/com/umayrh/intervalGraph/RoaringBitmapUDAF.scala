@@ -6,16 +6,22 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.roaringbitmap.RoaringBitmap
 
-class RoaringBitmapAggregationFunction(inputCol: String, outputCol: String)
+/**
+  * [[UserDefinedAggregateFunction]] for [[org.apache.spark.sql.Dataset]] columns
+  * containing [[RoaringBitmap]] objects
+  */
+class RoaringBitmapUDAF(inputCol: String, outputCol: String)
     extends UserDefinedAggregateFunction {
-  // Define the UDAF input and result schema's
+
   def inputSchema: StructType =
     new StructType().add(inputCol, DoubleType)
+
   def bufferSchema: StructType =
     new StructType().add(outputCol, DoubleType)
+
   def dataType: DataType = DoubleType
-  def deterministic: Boolean =
-    true // true: our UDAF's output given an input is deterministic
+
+  def deterministic: Boolean = true
 
   def initialize(buffer: MutableAggregationBuffer): Unit = {
     buffer.update(0, 0.0) // Initialize the result to 0.0

@@ -5,14 +5,13 @@ import java.sql.Date
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.junit.AssertionsForJUnit
-
 import org.scalatest._
 import org.scalatest.prop.TableDrivenPropertyChecks
-
 import com.holdenkarau.spark.testing._
+import org.apache.spark.sql.types.DataTypes
 
 /**
-  * Test class for DateOverlap
+  * Tests [[DateOverlap]]
   */
 class DateOverlapTest
     extends FeatureSpec
@@ -22,8 +21,8 @@ class DateOverlapTest
     with DataFrameSuiteBase {
   Feature(
     "A function for grouping overlapping dates - tested using example data") {
-    Scenario("the function is invoked on an empty sequence") {
-      import sqlContext.implicits._
+    import sqlContext.implicits._
+    Scenario("groupByOverlap is invoked on an empty sequence") {
 
       Given("A data frame with overlapping dates")
       val inputDf = sc
@@ -36,6 +35,25 @@ class DateOverlapTest
       When("reducer is invoked")
 
       Then("result is 0")
+    }
+
+    Scenario("mapIntRangeToBitSet create a column containing bitmap") {
+
+      Given("A data frame with overlapping dates")
+      val inputDf = sc
+        .parallelize(List[(Long, Long)]((1, 3), (1, 4), (4, 5)))
+        .toDF("start", "end")
+
+      When("mapIntRangeToBitSet is invoked on given integer ranges")
+      val outputDf =
+        DateOverlap.mapIntRangeToBitSet(inputDf, "start", "end", "bitmap")
+
+      Then("the table's schema contains a new column of type BinaryType")
+      outputDf.schema.fields.size equals 3
+      outputDf.schema.fields.map(f => f.name) contains ("bitmap")
+      outputDf.schema.fields
+        .filter(f => f.name.equals("bitmap"))(0)
+        .dataType equals (DataTypes.BinaryType)
     }
   }
 
