@@ -7,38 +7,49 @@ import org.apache.spark.sql.types._
 import org.roaringbitmap.RoaringBitmap
 
 /**
-  * [[UserDefinedAggregateFunction]] for [[org.apache.spark.sql.Dataset]] columns
-  * containing [[RoaringBitmap]] objects
+  * [[UserDefinedAggregateFunction]] for [[org.apache.spark.sql.Dataset]] doing an
+  * OR operation across all [[RoaringBitmap]] objects in a given column.
+  *
+  * TODO: figure out how to avoid incessant serde
   */
 class RoaringBitmapUDAF(inputCol: String, outputCol: String)
     extends UserDefinedAggregateFunction {
+  private val BASE_MAP = RoaringBitmapSerde.serialize(new RoaringBitmap())
 
   def inputSchema: StructType =
-    new StructType().add(inputCol, DoubleType)
+    new StructType()
+      .add(inputCol, BinaryType)
+      .add(outputCol, BinaryType)
 
-  def bufferSchema: StructType =
-    new StructType().add(outputCol, DoubleType)
+  def bufferSchema: StructType = new StructType().add(outputCol, BinaryType)
 
-  def dataType: DataType = DoubleType
+  def dataType: DataType = BinaryType
 
   def deterministic: Boolean = true
 
   def initialize(buffer: MutableAggregationBuffer): Unit = {
-    buffer.update(0, 0.0) // Initialize the result to 0.0
+    buffer.update(0, BASE_MAP.clone())
   }
 
   def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
-    val sum = buffer.getDouble(0) // Intermediate result to be updated
-    val price = input.getDouble(0) // First input parameter
-    val qty = input.getLong(1) // Second input parameter
-    buffer.update(0, sum + (price * qty)) // Update the intermediate result
+    buffer.update(0, or(buffer.get(0), input.get(0)))
   }
+
   // Merge intermediate result sums by adding them
   def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {
-    buffer1.update(0, buffer1.getDouble(0) + buffer2.getDouble(0))
+    buffer1.update(0, or(buffer1.get(0), buffer2.get(0)))
   }
-  // THe final result will be contained in 'buffer'
+
+  private def or(buffer: Any, input: Any): Array[Byte] = {
+    val inputBitmap =
+      RoaringBitmapSerde.deserialize(input.asInstanceOf[Array[Byte]])
+    val bufferBitmap =
+      RoaringBitmapSerde.deserialize(buffer.asInstanceOf[Array[Byte]])
+    bufferBitmap.or(inputBitmap)
+    RoaringBitmapSerde.serialize(bufferBitmap);
+  }
+
   def evaluate(buffer: Row): Any = {
-    buffer.getDouble(0)
+    buffer.get(0)
   }
 }

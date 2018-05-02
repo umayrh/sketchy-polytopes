@@ -1,18 +1,10 @@
 package com.umayrh.testing
 
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.junit.AssertionsForJUnit
-
-import org.scalatest._
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
-
+import org.scalacheck.Gen._
 import org.scalacheck._
-import Arbitrary.arbitrary
-import Gen._
-import Matchers._
-
-import java.lang.ArithmeticException
+import org.scalatest._
+import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 /**
   * Test class that combines behavior- and property-driven testing paradigms

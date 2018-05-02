@@ -1,8 +1,6 @@
 package com.umayrh.intervalGraph
 
-import java.io.{DataOutputStream, OutputStream}
-import java.nio.ByteBuffer
-
+import com.google.common.base.Preconditions
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
@@ -27,22 +25,36 @@ object DateOverlap {
 
   /**
     * @param df - a data frame containing a date column
-    * @param inputCol - name of date column
-    * @param outputCol - name of column appended to the data frame
-    * @return the input data frame with a new column containing unix timestamp (in days)
+    * @param inputCols - names of date columns
+    * @param outputCols - names of output columns appended to the data frame
+    * @return the input data frame with new columns containing unix timestamp (in days)
     */
   def mapDateToInt(df: DataFrame,
-                   inputCol: String,
-                   outputCol: String): DataFrame = {
-    df.withColumn(
-      outputCol,
-      (unix_timestamp(df(inputCol)) / SECONDS_IN_A_DAY).cast(LongType))
+                   inputCols: Seq[String],
+                   outputCols: Seq[String]): DataFrame = {
+    Preconditions.checkArgument(inputCols.size == outputCols.size)
+    var outDf: DataFrame = df;
     // TODO: normalize the input's range e.g. subtract the min value from all
     // this requires an aggregation and a broadcast-join
+
+    (0 to inputCols.size).foreach({ idx =>
+      outDf = outDf.withColumn(
+        outputCols(idx),
+        (unix_timestamp(outDf(inputCols(idx))) / SECONDS_IN_A_DAY)
+          .cast(LongType))
+    // TODO: each date must be mapped to two bit positions
+    })
+    outDf
   }
 
   /**
-    *
+    * Add a new column to given dataframe. Each row corresponds to a bitmap
+    * that has the bits indexed by the given range set.
+    * @param df table
+    * @param inputStart input range start column name
+    * @param inputEnd input range end column name
+    * @param outputCol output column name
+    * @return a [[DataFrame]] with a new column with given name
     */
   def mapIntRangeToBitSet(df: DataFrame,
                           inputStart: String,
@@ -51,7 +63,7 @@ object DateOverlap {
     val bitmap = (start: Long, end: Long) => {
       val map = new RoaringBitmap()
       map.add(start, end)
-      RoaringBitmapUtils.serialize(map)
+      RoaringBitmapSerde.serialize(map)
     }
     val bitmapUdf = udf(bitmap)
     df.withColumn(outputCol, bitmapUdf(df(inputStart), df(inputEnd)))

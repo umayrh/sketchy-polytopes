@@ -39,6 +39,6 @@ subprojects {
     classpath = sourceSets.test.runtimeClasspath
   }
   
-  compileScala.dependsOn checkScalafmtAll
+  compileScala.dependsOn scalafmtAll
   test.dependsOn scalaTest
 }
