@@ -1,5 +1,8 @@
 package com.umayrh.intervalGraph
 
+import java.io.{DataInputStream, DataOutputStream}
+import java.nio.ByteBuffer
+
 import com.umayrh.intervalGraph.RoaringBitmapSerde._
 import org.roaringbitmap.RoaringBitmap
 import org.scalacheck.Gen
@@ -9,7 +12,7 @@ import org.scalatest.{FeatureSpec, GivenWhenThen}
 /**
   * Tests [[RoaringBitmapSerde]]
   */
-object RoaringBitmapSerdeTest
+class RoaringBitmapSerdeTest
     extends FeatureSpec
     with GivenWhenThen
     with GeneratorDrivenPropertyChecks {
@@ -25,16 +28,34 @@ object RoaringBitmapSerdeTest
       When("a given bitmap is serialized and then deserialized")
       Then("the cardinality of the bitmap does not change")
 
-      // TODO: figure our why forAll cannot be resolved
-      //     forAll(pairGen) { (start: Long, end: Long) =>
-      //       val bitmap = new RoaringBitmap()
-      //       bitmap.add(start, end)
+      // TODO: figure our why compiler cannot resolve forAll
+      pairGen.map({
+        case (start: Long, end: Long) =>
+          val bitmap = makeBitmap(start, end)
 
-      //       val serializedMap = serialize(bitmap, makeOutputStream)
-      //       val deserializedMap = deserialize(serializedMap, makeInputStream)
+          val streams: Seq[((ByteBuffer) => DataOutputStream,
+                            (ByteBuffer) => DataInputStream)] =
+            Seq((makeOutputStream, makeInputStream),
+                (makeUnsafeOutputStream, makeUnsafeInputStream))
 
-      //       bitmap.getCardinality equals (deserializedMap.getCardinality)
-      //     }
+          for ((outputStream, inputStream) <- streams) {
+            val serializedMap = serialize(bitmap, outputStream)
+            val deserializedMap = deserialize(serializedMap, inputStream)
+
+            RoaringBitmap
+              .flip(deserializedMap, start, end)
+              .getCardinality equals (bitmap.getCardinality)
+          }
+      })
     }
+  }
+
+  /*
+   * @return a [[RoaringBitmap]] with bits in the inclusive range (start, end) set to 1
+   */
+  private def makeBitmap(start: Long, end: Long): RoaringBitmap = {
+    val bitmap = new RoaringBitmap()
+    bitmap.add(start, end)
+    bitmap
   }
 }

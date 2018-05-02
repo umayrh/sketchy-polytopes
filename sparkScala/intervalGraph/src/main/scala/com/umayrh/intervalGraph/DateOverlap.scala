@@ -60,12 +60,12 @@ object DateOverlap {
                           inputStart: String,
                           inputEnd: String,
                           outputCol: String): DataFrame = {
-    val bitmap = (start: Long, end: Long) => {
+    val serializeBitmap = (start: Long, end: Long) => {
       val map = new RoaringBitmap()
       map.add(start, end)
       RoaringBitmapSerde.serialize(map)
     }
-    val bitmapUdf = udf(bitmap)
-    df.withColumn(outputCol, bitmapUdf(df(inputStart), df(inputEnd)))
+    val serializeBitmapUdf = udf(serializeBitmap)
+    df.withColumn(outputCol, serializeBitmapUdf(df(inputStart), df(inputEnd)))
   }
 }

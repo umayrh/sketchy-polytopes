@@ -3,6 +3,6 @@ package com.umayrh.intervalGraph
 /**
   * Tests [[RoaringBitmapUDAF]]
   */
-object RoaringBitmapUDAFTest {
+class RoaringBitmapUDAFTest {
   // TODO
 }
