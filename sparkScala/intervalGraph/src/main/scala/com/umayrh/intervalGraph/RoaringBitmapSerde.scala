@@ -25,7 +25,7 @@ object RoaringBitmapSerde {
     * @return serialized byte array
     */
   def serialize(bitmap: RoaringBitmap): Array[Byte] = {
-    serialize(bitmap, makeUnsafeOutputStream)
+    serialize(bitmap, true, makeUnsafeOutputStream)
   }
 
   /**
@@ -34,8 +34,10 @@ object RoaringBitmapSerde {
     * @return serialized byte array
     */
   def serialize(bitmap: RoaringBitmap,
+                useDirectBuffer: Boolean,
                 outputGen: (ByteBuffer) => DataOutputStream): Array[Byte] = {
-    val outputBuffer = ByteBuffer.allocateDirect(bitmap.serializedSizeInBytes())
+    val outputBuffer =
+      getBuffer(useDirectBuffer, bitmap.serializedSizeInBytes())
     bitmap.serialize(outputGen.apply(outputBuffer))
     byteBufferToArray(outputBuffer)
   }
@@ -62,7 +64,7 @@ object RoaringBitmapSerde {
     * @return deserialized [[RoaringBitmap]]
     */
   def deserialize(buffer: Array[Byte]): RoaringBitmap = {
-    deserialize(buffer, makeUnsafeInputStream)
+    deserialize(buffer, true, makeUnsafeInputStream)
   }
 
   /**
@@ -71,12 +73,12 @@ object RoaringBitmapSerde {
     * @return byte array deserialized to a [[RoaringBitmap]]
     */
   def deserialize(buffer: Array[Byte],
+                  useDirectBuffer: Boolean,
                   inputGen: (ByteBuffer) => DataInputStream): RoaringBitmap = {
     val bitmap = new RoaringBitmap()
-    var outputBuffer = ByteBuffer.allocateDirect(buffer.length)
-    outputBuffer = outputBuffer.put(buffer)
-    // reset position to allow reading the buffer just written to
-    outputBuffer.rewind()
+    val outputBuffer = getBuffer(useDirectBuffer, buffer.length)
+    outputBuffer.put(buffer)
+    outputBuffer.rewind() // reset position to read the buffer just written to
     bitmap.deserialize(inputGen.apply(outputBuffer))
     bitmap
   }
@@ -145,5 +147,13 @@ object RoaringBitmapSerde {
         len
       }
     })
+  }
+
+  /**
+    * Returns either a direct or an array-backed [[ByteBuffer]] of given capacity
+    */
+  private def getBuffer(isDirectBuffer: Boolean, capacity: Int): ByteBuffer = {
+    if (isDirectBuffer) ByteBuffer.allocateDirect(capacity)
+    else ByteBuffer.allocate(capacity)
   }
 }

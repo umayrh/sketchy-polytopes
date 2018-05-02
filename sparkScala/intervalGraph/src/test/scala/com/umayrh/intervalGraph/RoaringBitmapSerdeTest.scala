@@ -20,31 +20,34 @@ class RoaringBitmapSerdeTest
     Scenario(
       "RoaringBitmaps before serialization and after deserialization are equal") {
       Given("a sequence of integer pairs between 0 and Int.Max")
-      val pairGen = for {
-        n <- Gen.choose(0L, Int.MaxValue.longValue())
-        m <- Gen.choose(n, Int.MaxValue.longValue())
-      } yield (n, m)
+      val pairGen = List
+        .fill(1000)(Int.MaxValue)
+        .map(k =>
+          (scala.util.Random.nextInt(k), scala.util.Random.nextInt(1000)))
+        .map(k => (Int.int2long(k._1), Int.int2long(k._2)))
 
       When("a given bitmap is serialized and then deserialized")
       Then("the cardinality of the bitmap does not change")
 
-      // TODO: figure our why compiler cannot resolve forAll
       pairGen.map({
-        case (start: Long, end: Long) =>
+        case (start: Long, len: Long) =>
+          val end = start + len - 1
           val bitmap = makeBitmap(start, end)
 
-          val streams: Seq[((ByteBuffer) => DataOutputStream,
+          val streams: Seq[(Boolean,
+                            (ByteBuffer) => DataOutputStream,
                             (ByteBuffer) => DataInputStream)] =
-            Seq((makeOutputStream, makeInputStream),
-                (makeUnsafeOutputStream, makeUnsafeInputStream))
+            Seq((false, makeOutputStream, makeInputStream),
+                (true, makeUnsafeOutputStream, makeUnsafeInputStream))
 
-          for ((outputStream, inputStream) <- streams) {
-            val serializedMap = serialize(bitmap, outputStream)
-            val deserializedMap = deserialize(serializedMap, inputStream)
+          for ((useDirectBuffer, outputStream, inputStream) <- streams) {
+            val serializedMap = serialize(bitmap, useDirectBuffer, outputStream)
+            val deserializedMap =
+              deserialize(serializedMap, useDirectBuffer, inputStream)
 
             RoaringBitmap
               .flip(deserializedMap, start, end)
-              .getCardinality equals (bitmap.getCardinality)
+              .getCardinality equals (0)
           }
       })
     }
