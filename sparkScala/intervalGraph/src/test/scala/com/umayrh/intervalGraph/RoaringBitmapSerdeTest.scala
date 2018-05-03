@@ -15,7 +15,7 @@ class RoaringBitmapSerdeTest
     extends FeatureSpec
     with GivenWhenThen
     with GeneratorDrivenPropertyChecks
-      with Matchers{
+    with Matchers {
   Feature("Functions for serializing and deserializing RoaringBitmap objects") {
     Scenario(
       "RoaringBitmaps before serialization and after deserialization are equal") {
@@ -47,7 +47,7 @@ class RoaringBitmapSerdeTest
 
             RoaringBitmap
               .flip(deserializedMap, start, end)
-              .getCardinality should be (0)
+              .getCardinality should be(0)
           }
       })
     }
