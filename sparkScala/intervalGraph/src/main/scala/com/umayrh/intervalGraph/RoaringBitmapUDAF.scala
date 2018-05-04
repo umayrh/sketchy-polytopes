@@ -1,8 +1,10 @@
 package com.umayrh.intervalGraph
 
-import org.apache.spark.sql.expressions.MutableAggregationBuffer
-import org.apache.spark.sql.expressions.UserDefinedAggregateFunction
 import org.apache.spark.sql.Row
+import org.apache.spark.sql.expressions.{
+  MutableAggregationBuffer,
+  UserDefinedAggregateFunction
+}
 import org.apache.spark.sql.types._
 import org.roaringbitmap.RoaringBitmap
 
@@ -12,9 +14,14 @@ import org.roaringbitmap.RoaringBitmap
   *
   * TODO: figure out how to avoid incessant serde
   */
+object RoaringBitmapUDAF {
+  // use to create a new
+  private val BASE_MAP = RoaringBitmapSerde.serialize(new RoaringBitmap())
+}
+
 class RoaringBitmapUDAF(inputCol: String, outputCol: String)
     extends UserDefinedAggregateFunction {
-  private val BASE_MAP = RoaringBitmapSerde.serialize(new RoaringBitmap())
+  import RoaringBitmapUDAF.BASE_MAP
 
   def inputSchema: StructType =
     new StructType()

@@ -27,7 +27,8 @@ class RoaringBitmapSerdeTest
         .map(k => (Int.int2long(k._1), Int.int2long(k._2)))
 
       When("a given bitmap is serialized and then deserialized")
-      Then("the cardinality of the bitmap does not change")
+      Then(
+        "the cardinality of the bitmap is 0 after flipping bits in the given range")
 
       pairGen.map({
         case (start: Long, len: Long) =>

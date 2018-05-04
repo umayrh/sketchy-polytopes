@@ -13,10 +13,13 @@ import sun.nio.ch.DirectBuffer
   *
   * @see [[https://github.com/RoaringBitmap/RoaringBitmap/blob/master/examples/SerializeToByteArrayExample.java]]
   *
-  * TODO: reduce memory copies, and maybe use Kryo directly
-  * TODO: figure out if/when to deallocate
-  * TODO: the unsafe serde needs more thought - we'd want Spark to effectively
-  * manipulate ByteBuffers directly
+  * TODO: Reduce memory copies.
+  * TODO: Maybe use Kryo directly (KryoOutput/KryoOutputDataOutputBridge, KryoInput/KryoOutputDataInputBridge).
+  * TODO: Figure out if/when to deallocate.
+  * TODO: The unsafe serde functions need more thought - we'd want Spark to effectively
+  *       manipulate ByteBuffers directly.
+  * TODO: Better to use pairs of stream to clarify which input and output streams
+  *       work together.
   */
 object RoaringBitmapSerde {
 
@@ -25,7 +28,7 @@ object RoaringBitmapSerde {
     * @return serialized byte array
     */
   def serialize(bitmap: RoaringBitmap): Array[Byte] = {
-    serialize(bitmap, true, makeUnsafeOutputStream)
+    serialize(bitmap, false, makeOutputStream)
   }
 
   /**
@@ -64,7 +67,7 @@ object RoaringBitmapSerde {
     * @return deserialized [[RoaringBitmap]]
     */
   def deserialize(buffer: Array[Byte]): RoaringBitmap = {
-    deserialize(buffer, true, makeUnsafeInputStream)
+    deserialize(buffer, false, makeInputStream)
   }
 
   /**
