@@ -9,6 +9,8 @@
 # IntelliJ
 .idea/*
 sketchy-polytopes.iml
+*/*/out/production/*
+*/*/out/test/*
 
 # R
 
@@ -26,3 +28,7 @@ sketchy-polytopes.iml
 
 .DS_Store
 ./*/.DS_Store
+
+# other
+
+*/*/metastore_db/*

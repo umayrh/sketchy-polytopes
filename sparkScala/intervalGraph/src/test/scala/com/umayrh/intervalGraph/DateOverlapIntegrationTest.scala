@@ -7,7 +7,7 @@ import org.scalatest.junit.AssertionsForJUnit
 /**
   * Tests [[DateOverlap]]
   */
-class DateOverlapTest
+class DateOverlapIntegrationTest
     extends FeatureSpec
     with AssertionsForJUnit
     with GivenWhenThen

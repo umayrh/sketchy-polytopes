@@ -54,8 +54,8 @@ object RoaringBitmapSerde {
       buffer.array()
     } else {
       val output = new Array[Byte](buffer.capacity())
-      // reset position to allow reading the buffer just written to
-      buffer.rewind()
+      buffer
+        .flip() // reset position to allow reading the buffer just written to
       // performance gain down the drain
       buffer.get(output, 0, output.length)
       output
@@ -81,7 +81,7 @@ object RoaringBitmapSerde {
     val bitmap = new RoaringBitmap()
     val outputBuffer = getBuffer(useDirectBuffer, buffer.length)
     outputBuffer.put(buffer)
-    outputBuffer.rewind() // reset position to read the buffer just written to
+    outputBuffer.flip() // reset position to read the buffer just written to
     bitmap.deserialize(inputGen.apply(outputBuffer))
     bitmap
   }
