@@ -12,6 +12,7 @@ import org.roaringbitmap.RoaringBitmap
   * [[UserDefinedAggregateFunction]] for [[org.apache.spark.sql.Dataset]] doing an
   * OR operation across all [[RoaringBitmap]] objects in a given column.
   *
+  * To use in Spark SQL: sqlContext.udf.register("rb", new RoaringBitmapUDAF)
   * TODO: figure out how to avoid incessant serde
   */
 object RoaringBitmapUDAF {
@@ -19,16 +20,12 @@ object RoaringBitmapUDAF {
   private val BASE_MAP = RoaringBitmapSerde.serialize(new RoaringBitmap())
 }
 
-class RoaringBitmapUDAF(inputCol: String, outputCol: String)
-    extends UserDefinedAggregateFunction {
+class RoaringBitmapUDAF(inputCol: String) extends UserDefinedAggregateFunction {
   import RoaringBitmapUDAF.BASE_MAP
 
-  def inputSchema: StructType =
-    new StructType()
-      .add(inputCol, BinaryType)
-      .add(outputCol, BinaryType)
+  def inputSchema: StructType = new StructType().add(inputCol, BinaryType)
 
-  def bufferSchema: StructType = new StructType().add(outputCol, BinaryType)
+  def bufferSchema: StructType = new StructType().add("udaf_buffer", BinaryType)
 
   def dataType: DataType = BinaryType
 

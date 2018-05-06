@@ -20,11 +20,7 @@ class RoaringBitmapSerdeTest
     Scenario(
       "RoaringBitmaps before serialization and after deserialization are equal") {
       Given("a sequence of integer pairs between 0 and Int.Max")
-      val pairGen = List
-        .fill(1000)(Int.MaxValue)
-        .map(k =>
-          (scala.util.Random.nextInt(k), scala.util.Random.nextInt(1000)))
-        .map(k => (Int.int2long(k._1), Int.int2long(k._2)))
+      val pairGen = TestUtils.getRandRanges()
 
       When("a given bitmap is serialized and then deserialized")
       Then(
@@ -33,7 +29,7 @@ class RoaringBitmapSerdeTest
       pairGen.map({
         case (start: Long, len: Long) =>
           val end = start + len - 1
-          val bitmap = makeBitmap(start, end)
+          val bitmap = TestUtils.makeBitmap(start, end)
 
           val streams: Seq[(Boolean,
                             (ByteBuffer) => DataOutputStream,
@@ -52,14 +48,5 @@ class RoaringBitmapSerdeTest
           }
       })
     }
-  }
-
-  /*
-   * @return a [[RoaringBitmap]] with bits in the inclusive range (start, end) set to 1
-   */
-  private def makeBitmap(start: Long, end: Long): RoaringBitmap = {
-    val bitmap = new RoaringBitmap()
-    bitmap.add(start, end)
-    bitmap
   }
 }
