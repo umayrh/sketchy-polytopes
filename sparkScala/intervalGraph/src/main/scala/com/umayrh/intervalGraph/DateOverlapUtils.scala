@@ -5,11 +5,11 @@ import java.nio.ByteBuffer
 import com.google.common.base.Preconditions
 import org.apache.commons.lang.StringUtils
 import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.functions.{broadcast, lit, sum, udf, unix_timestamp}
+import org.apache.spark.sql.expressions.UserDefinedFunction
+import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.LongType
 import org.joda.time.DateTimeConstants
-import org.roaringbitmap.RoaringBitmap
-import org.roaringbitmap.IntConsumer
+import org.roaringbitmap.{IntConsumer, RoaringBitmap}
 
 /**
   * Utilities for [[DateOverlap]]
@@ -17,23 +17,29 @@ import org.roaringbitmap.IntConsumer
 object DateOverlapUtils {
 
   /**
-    * @param df - a data frame containing a date column
-    * @param inputCols - names of date columns
-    * @param outputCols - names of output columns appended to the data frame
+    * @param df - a data frame containing a date columns
+    * @param inputCols - a pair of date columns, representing the start and end dates
+    *                  (inclusive) of a range
+    * @param outputCols - names of output columns appended to the data frame. Each output
+    *                   column represents the normalized epoch time of the corresponding
+    *                   input column. Normalization is done by offseting to the minimum
+    *                   date across input columns.
     * @return the input data frame with new columns containing unix timestamp (in days)
     */
   def mapDateToInt(df: DataFrame,
-                   inputCols: Seq[String],
-                   outputCols: Seq[String]): DataFrame = {
-    Preconditions.checkArgument(inputCols.size == outputCols.size)
+                   inputCols: (String, String),
+                   outputCols: (String, String)): DataFrame = {
     var outDf: DataFrame = df;
     // TODO: normalize the input's range e.g. subtract the min value from all
     // this requires an aggregation and a broadcast-join
 
-    (0 to inputCols.size).foreach({ idx =>
+    val input = Seq(inputCols._1, inputCols._2)
+    val output = Seq(outputCols._1, outputCols._2)
+
+    (0 to input.size).foreach({ idx =>
       outDf = outDf.withColumn(
-        outputCols(idx),
-        (unix_timestamp(outDf(inputCols(idx))) / DateTimeConstants.SECONDS_PER_DAY)
+        output(idx),
+        (unix_timestamp(outDf(input(idx))) / DateTimeConstants.SECONDS_PER_DAY)
           .cast(LongType))
     // TODO: each date must be mapped to two bit positions
     })
@@ -46,10 +52,10 @@ object DateOverlapUtils {
     * @param df table
     * @param inputStart input range start column name
     * @param inputEnd input range end column name
-    * @param outputCol output column name
+    * @param outputCol name of the column containing bitmap for given range
     * @return a [[DataFrame]] with a new column with given name
     */
-  def mapIntRangeToBitSet(df: DataFrame,
+  def mapIntRangeToBitmap(df: DataFrame,
                           inputStart: String,
                           inputEnd: String,
                           outputCol: String): DataFrame = {
@@ -80,15 +86,30 @@ object DateOverlapUtils {
                        outputCol: String): DataFrame = {
     Preconditions.checkArgument(StringUtils.isNotBlank(dfCol))
     Preconditions.checkArgument(StringUtils.isNotBlank(aggCol))
-    Preconditions.checkArgument(dfCol.equals(aggCol))
+    Preconditions.checkArgument(!dfCol.equals(aggCol))
 
     // map aggDf to a bitmap of indices.
     val indexCol = "TMP_index"
     val indexDf = makeIndexDf(aggDf, aggCol, df, indexCol)
-
     val joinedDf = df.crossJoin(broadcast(indexDf))
+    val intersectUdf = getInterectUdf()
 
-    val intersect =
+    joinedDf
+      .withColumn(
+        outputCol,
+        intersectUdf(joinedDf(dfCol), joinedDf(aggCol), joinedDf(indexCol)))
+      .drop(aggCol)
+      .drop(indexCol)
+  }
+
+  /**
+    * @return a [[UserDefinedFunction]] that takes two serialized [[RoaringBitmap]]s
+    *         and a serialized int array as input. if the two bitmaps have a non-
+    *         empty intersection, then it return the index of the first bit in the
+    *         intersection. Otherwise, returns 0.
+    */
+  private def getInterectUdf(): UserDefinedFunction = {
+    val intersectFn =
       (range: Array[Byte], or: Array[Byte], index: Array[Byte]) => {
         val bitmap = RoaringBitmapSerde.deserialize(range)
         val orBitmap = RoaringBitmapSerde.deserialize(or)
@@ -100,16 +121,13 @@ object DateOverlapUtils {
           0
         }
       }
-
-    val intersectUdf = udf(intersect)
-
-    joinedDf
-      .withColumn(
-        outputCol,
-        intersectUdf(joinedDf(dfCol), joinedDf(aggCol), joinedDf(indexCol)))
-      .drop(indexCol)
+    udf(intersectFn)
   }
 
+  /**
+    * @param arr a byte array
+    * @return the byte array as an int array
+    */
   private def toIntArray(arr: Array[Byte]): Array[Int] = {
     val buf = ByteBuffer.allocate(arr.length)
     buf.put(arr)
@@ -135,10 +153,24 @@ object DateOverlapUtils {
       broadcast(
         df.withColumn(sizeCol, lit(1))
           .agg(sum(sizeCol).as(sizeCol))))
+    val indexUdf = getIndexUdf()
 
-    // TODO: optimize the size of the index array by mapping log_2(data size)
-    // to an appropriate integral type. Is it strange that
-    val dfToIndex = (bits: Array[Byte], size: Int) => {
+    joinedDf
+      .withColumn(indexCol, indexUdf(joinedDf(col), joinedDf(sizeCol)))
+      .drop(sizeCol)
+  }
+
+  /**
+    * @return a [[UserDefinedFunction]] that takes a serialized [[RoaringBitmap]]
+    *         and an int as inputs. It assigns a unique id to subsequences of
+    *         consecutive 1's, and stores that id in a new array at the same
+    *         position as a set bit in the bitmap. This array is the output of
+    *         the function.
+    * TODO: optimize the size of the index array by mapping log_2(data size)
+    * to an appropriate integral type. Is it strange that
+    */
+  private def getIndexUdf(): UserDefinedFunction = {
+    val indexFn = (bits: Array[Byte], size: Int) => {
       val indexMap = new Array[Int](size)
       val bitmap = RoaringBitmapSerde.deserialize(bits)
       var groupCnt = 1
@@ -159,10 +191,6 @@ object DateOverlapUtils {
       indexMap
     }
 
-    val dfToIndexUdf = udf(dfToIndex)
-
-    joinedDf
-      .withColumn(indexCol, dfToIndexUdf(joinedDf(col), joinedDf(sizeCol)))
-      .drop(sizeCol)
+    udf(indexFn)
   }
 }

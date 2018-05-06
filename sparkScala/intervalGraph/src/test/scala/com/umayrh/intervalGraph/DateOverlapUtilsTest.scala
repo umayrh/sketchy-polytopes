@@ -29,7 +29,7 @@ class DateOverlapUtilsTest
 
       When("mapIntRangeToBitSet is invoked on given integer ranges")
       val outputDf =
-        DateOverlapUtils.mapIntRangeToBitSet(inputDf, "start", "end", "bitmap")
+        DateOverlapUtils.mapIntRangeToBitmap(inputDf, "start", "end", "bitmap")
 
       Then(
         "the table's schema contains a new column of serialized RoaringBitmap")
