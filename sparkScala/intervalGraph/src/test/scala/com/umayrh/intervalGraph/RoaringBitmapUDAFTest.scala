@@ -21,7 +21,7 @@ object RoaringBitmapUDAFTest {
 }
 
 class RoaringBitmapUDAFTest
-  extends FeatureSpec
+    extends FeatureSpec
     with GivenWhenThen
     with GeneratorDrivenPropertyChecks
     with Matchers
@@ -40,14 +40,14 @@ class RoaringBitmapUDAFTest
 
       When("bitmaps rows in a dataframe are shuffled")
       val shuffledDf = df.orderBy(rand())
-      val actualDf = shuffledDf.agg(orFn(
-        shuffledDf(START_COL), shuffledDf(END_COL)))
+      val actualDf =
+        shuffledDf.agg(orFn(shuffledDf(START_COL), shuffledDf(END_COL)))
 
       Then("the result of UDAF doesn't change")
       TestUtils.assertDataFrameEquals(expectedDf, actualDf)
     }
 
-    Scenario("The UDAF implies associative") {
+    Scenario("The UDAF is partially associative") {
       Given("bitmaps containing possibly overlapping ranges of bits set")
       val data = inputData()
       val df = toDf(data)
@@ -59,7 +59,8 @@ class RoaringBitmapUDAFTest
       val splitData = data.grouped(splitSize)
       val splitDf = splitData.map(toDf)
       val bitmapsDf =
-        splitDf.map(df => df.agg(orFn(df(START_COL), df(END_COL)).as(OUTPUT_COL)))
+        splitDf.map(df =>
+          df.agg(orFn(df(START_COL), df(END_COL)).as(OUTPUT_COL)))
       val unionedDf = Random.shuffle(bitmapsDf).reduce(_.union(_))
       val actual = unionedDf
         .collect()

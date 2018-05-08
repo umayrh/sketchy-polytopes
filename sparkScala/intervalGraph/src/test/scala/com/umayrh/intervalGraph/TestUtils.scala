@@ -38,7 +38,9 @@ object TestUtils extends Matchers {
     * @param colName name of column containing bitmaps
     * @return a dataframe of serialized [[RoaringBitmap]]s out of the given list
     */
-  def toDf(sc: SparkContext, sqlContext: SQLContext)(bitmaps: List[RoaringBitmap], colName: String): DataFrame = {
+  def toDf(sc: SparkContext, sqlContext: SQLContext)(
+      bitmaps: List[RoaringBitmap],
+      colName: String): DataFrame = {
     val serializedBitmaps = bitmaps.map(RoaringBitmapSerde.serialize)
     // implicits, yuck...
     import sqlContext.implicits._

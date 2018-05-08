@@ -1,7 +1,10 @@
 package com.umayrh.intervalGraph
 
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
+import org.apache.spark.sql.expressions.{
+  MutableAggregationBuffer,
+  UserDefinedAggregateFunction
+}
 import org.apache.spark.sql.types._
 import org.roaringbitmap.RoaringBitmap
 
@@ -13,10 +16,12 @@ import org.roaringbitmap.RoaringBitmap
   *
   * To use in Spark SQL: sqlContext.udf.register("rb", new RoaringBitmapUDAF)
   */
-class RoaringBitmapUDAF(startCol: String, endCol: String) extends UserDefinedAggregateFunction {
-  def inputSchema: StructType = new StructType()
-    .add(startCol, LongType)
-    .add(endCol, LongType)
+class RoaringBitmapUDAF(startCol: String, endCol: String)
+    extends UserDefinedAggregateFunction {
+  def inputSchema: StructType =
+    new StructType()
+      .add(startCol, LongType)
+      .add(endCol, LongType)
 
   def bufferSchema: StructType = new StructType().add("udaf_buffer", BinaryType)
 

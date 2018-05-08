@@ -20,7 +20,8 @@ object RoaringBitmapOrUDAF {
   private val BASE_MAP = RoaringBitmapSerde.serialize(new RoaringBitmap())
 }
 
-class RoaringBitmapOrUDAF(inputCol: String) extends UserDefinedAggregateFunction {
+class RoaringBitmapOrUDAF(inputCol: String)
+    extends UserDefinedAggregateFunction {
   import RoaringBitmapOrUDAF.BASE_MAP
 
   def inputSchema: StructType = new StructType().add(inputCol, BinaryType)
