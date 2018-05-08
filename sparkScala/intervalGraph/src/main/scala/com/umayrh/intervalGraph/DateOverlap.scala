@@ -31,10 +31,10 @@ object DateOverlap {
 
     val bitmapCol = "TMP_bitmap"
     val bitmapDf =
-      mapIntRangeToBitmap(intDf, epochEndCol, epochEndCol, bitmapCol)
+      mapIntRangeToBitmap(intDf, epochStartCol, epochEndCol, bitmapCol)
 
     val aggCol = "TMP_agg_bitmap"
-    val bitmapUdaf = new RoaringBitmapUDAF(aggCol)
+    val bitmapUdaf = new RoaringBitmapOrUDAF(aggCol)
     val aggDf = bitmapDf.agg(bitmapUdaf(bitmapDf(bitmapCol)))
 
     val result = intersectBitmaps(df, bitmapCol, aggDf, aggCol, outputCol)

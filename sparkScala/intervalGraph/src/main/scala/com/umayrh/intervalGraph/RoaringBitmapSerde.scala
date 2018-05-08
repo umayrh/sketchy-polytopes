@@ -20,6 +20,9 @@ import sun.nio.ch.DirectBuffer
   *       manipulate ByteBuffers directly.
   * TODO: Better to use pairs of stream to clarify which input and output streams
   *       work together.
+  * See also: https://github.com/twitter/chill (consider using KryoPool)
+  * Spark itself uses Kryo for serializing RoaringBitmap:
+  * [[https://github.com/apache/spark/blob/master/core/src/main/scala/org/apache/spark/serializer/KryoSerializer.scala]]
   */
 object RoaringBitmapSerde {
 

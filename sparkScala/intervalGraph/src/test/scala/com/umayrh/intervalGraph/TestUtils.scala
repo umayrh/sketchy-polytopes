@@ -1,6 +1,7 @@
 package com.umayrh.intervalGraph
 
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.roaringbitmap.RoaringBitmap
 import org.scalatest.Matchers
 
@@ -14,10 +15,11 @@ object TestUtils extends Matchers {
     *         a randomly generated (0-Int.Max) range start index, and the second
     *         implying a sequence length capped maxLen (default: 1000)
     */
-  def getRandRanges(maxLen: Long = 1000): List[(Long, Long)] = {
+  def getRandRanges(maxLen: Int = 1000): List[(Long, Long)] = {
     List
-      .fill(1000)(Int.MaxValue)
-      .map(k => (scala.util.Random.nextInt(k), scala.util.Random.nextInt(1000)))
+      .fill(maxLen)(Int.MaxValue)
+      .map(k =>
+        (scala.util.Random.nextInt(k), scala.util.Random.nextInt(maxLen)))
       .map(k => (Int.int2long(k._1), Int.int2long(k._2)))
   }
 
@@ -28,6 +30,19 @@ object TestUtils extends Matchers {
     val bitmap = new RoaringBitmap()
     bitmap.add(start, end)
     bitmap
+  }
+
+  /**
+    * @param sqlContext [[SQLContext]], for importing implicits
+    * @param bitmaps list of bitmaps to be dataframe-d
+    * @param colName name of column containing bitmaps
+    * @return a dataframe of serialized [[RoaringBitmap]]s out of the given list
+    */
+  def toDf(sc: SparkContext, sqlContext: SQLContext)(bitmaps: List[RoaringBitmap], colName: String): DataFrame = {
+    val serializedBitmaps = bitmaps.map(RoaringBitmapSerde.serialize)
+    // implicits, yuck...
+    import sqlContext.implicits._
+    sc.parallelize(serializedBitmaps).toDF(colName)
   }
 
   /**

@@ -36,12 +36,14 @@ object DateOverlapUtils {
     val input = Seq(inputCols._1, inputCols._2)
     val output = Seq(outputCols._1, outputCols._2)
 
+    //var minDf = df
+    //val minDates = input.map(inCol => )
+
     (0 to input.size).foreach({ idx =>
       outDf = outDf.withColumn(
         output(idx),
         (unix_timestamp(outDf(input(idx))) / DateTimeConstants.SECONDS_PER_DAY)
           .cast(LongType))
-    // TODO: each date must be mapped to two bit positions
     })
     outDf
   }
@@ -61,6 +63,7 @@ object DateOverlapUtils {
                           outputCol: String): DataFrame = {
     val serializeBitmap = (start: Long, end: Long) => {
       val map = new RoaringBitmap()
+      // TODO: each date must be mapped to two bit positions
       map.add(start, end)
       // possibly use org.apache.spark.sql.Encoders.kryo[RoaringBitmap]
       RoaringBitmapSerde.serialize(map)
@@ -143,10 +146,10 @@ object DateOverlapUtils {
     * @return 'aggDf' with a new column named 'indexCol' appended to it. The new column
     *         contains an Array[Int] of the same size as the number of rows in 'df'.
     */
-  private def makeIndexDf(aggDf: DataFrame,
-                          col: String,
-                          df: DataFrame,
-                          indexCol: String): DataFrame = {
+  def makeIndexDf(aggDf: DataFrame,
+                  col: String,
+                  df: DataFrame,
+                  indexCol: String): DataFrame = {
     // taking pain to avoid Dataframe.count()
     val sizeCol = "TMP_size"
     val joinedDf = aggDf.crossJoin(

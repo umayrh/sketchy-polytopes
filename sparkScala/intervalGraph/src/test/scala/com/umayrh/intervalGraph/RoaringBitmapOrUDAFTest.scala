@@ -12,81 +12,83 @@ import scala.util.Random
 /**
   * Tests [[RoaringBitmapOrUDAF]]
   */
-object RoaringBitmapUDAFTest {
+object RoaringBitmapOrUDAFTest {
   val MAX_ITER = 50
-  val BITMAP_COL = "bitmaps"
-  val START_COL = "range_start"
-  val END_COL = "range_end"
+  val INPUT_COL = "bitmap"
   val OUTPUT_COL = "agg_bitmap"
 }
 
-class RoaringBitmapUDAFTest
-  extends FeatureSpec
+class RoaringBitmapOrUDAFTest
+    extends FeatureSpec
     with GivenWhenThen
     with GeneratorDrivenPropertyChecks
     with Matchers
     with SharedSparkContext
     with DataFrameSuiteBase {
-  import RoaringBitmapUDAFTest._
+  import RoaringBitmapOrUDAFTest._
 
   Feature(
-    "Spark User-defined Aggregation Function for performing an OR op on columns describing a range") {
-    val orFn = new RoaringBitmapUDAF(START_COL, END_COL)
+    "Spark User-defined Aggregation Function for performing an OR op on a RoaringBitmap column") {
+    val orFn = new RoaringBitmapOrUDAF(INPUT_COL)
 
     Scenario("The UDAF is commutative ") {
       Given("bitmaps containing possibly overlapping ranges of bits set")
       val df = toDf(inputData())
-      val expectedDf = df.agg(orFn(df(START_COL), df(END_COL)))
+      val expectedDf = df.agg(orFn(df(INPUT_COL)))
 
       When("bitmaps rows in a dataframe are shuffled")
       val shuffledDf = df.orderBy(rand())
-      val actualDf = shuffledDf.agg(orFn(
-        shuffledDf(START_COL), shuffledDf(END_COL)))
+      val actualDf = shuffledDf.agg(orFn(shuffledDf(INPUT_COL)))
 
       Then("the result of UDAF doesn't change")
       TestUtils.assertDataFrameEquals(expectedDf, actualDf)
     }
 
-    Scenario("The UDAF implies associative") {
+    Scenario("The UDAF is associative ") {
       Given("bitmaps containing possibly overlapping ranges of bits set")
       val data = inputData()
       val df = toDf(data)
-      val expectedDf = df.agg(orFn(df(START_COL), df(END_COL)).as(OUTPUT_COL))
+      val expectedDf = df.agg(orFn(df(INPUT_COL)).as(OUTPUT_COL))
 
       When(
-        "The results of randomly ordered UDAF invocations are aggregated using OR")
+        "UDAF is invoked on the results of randomly ordered UDAF invocations")
       val splitSize = Random.nextInt(data.size)
       val splitData = data.grouped(splitSize)
       val splitDf = splitData.map(toDf)
       val bitmapsDf =
-        splitDf.map(df => df.agg(orFn(df(START_COL), df(END_COL)).as(OUTPUT_COL)))
+        splitDf.map(df => df.agg(orFn(df(INPUT_COL)).as(OUTPUT_COL)))
       val unionedDf = Random.shuffle(bitmapsDf).reduce(_.union(_))
-      val actual = unionedDf
-        .collect()
-        .map(r => RoaringBitmapSerde.deserialize(r.getAs(0)))
-        .reduce(RoaringBitmap.or)
+      val actualDf = unionedDf.agg(orFn(unionedDf(OUTPUT_COL)))
 
       Then("the result of UDAF doesn't change")
-      TestUtils.assertDataFrameEquals(expectedDf, toBitmapDf(List(actual)))
+      TestUtils.assertDataFrameEquals(expectedDf, actualDf)
     }
 
-    Scenario("TODO: The UDAF is idempotent") {
+    Scenario("The UDAF is idempotent") {
       Given("bitmaps containing possibly overlapping ranges of bits set")
+      val df = toDf(inputData())
+      val expectedDf = df.agg(orFn(df(INPUT_COL)).as(OUTPUT_COL))
+
       When("invoking the UDAF N times (N >= 1) on the same bitmap")
+      var actualDf = df.withColumnRenamed(INPUT_COL, OUTPUT_COL)
+      val numIter = Random.nextInt(MAX_ITER) + 1
+      Range(0, numIter).foreach(k =>
+        actualDf = actualDf.agg(orFn(actualDf(OUTPUT_COL)).as(OUTPUT_COL)))
+
       Then("doesn't change the bitmap")
+      TestUtils.assertDataFrameEquals(expectedDf, actualDf)
     }
 
     Scenario("The UDAF obeys De Morgan's law: A OR B = ~A AND ~B ") {
       Given("bitmaps containing possibly overlapping ranges of bits set")
       val data = inputData()
-      val bitmaps = data.map(range => TestUtils.makeBitmap(range._1, range._2))
-      val flipped = bitmaps.map(b => RoaringBitmap.andNot(b, b))
+      val flipped = data.map(b => RoaringBitmap.andNot(b, b))
       val conjugated = flipped.reduce(RoaringBitmap.and)
-      val expectedDf = toBitmapDf(List(conjugated))
+      val expectedDf = toDf(List(conjugated))
 
       When("UDAF is invoked on a set of bitmaps")
       val df = toDf(data)
-      val actualDf = df.agg(orFn(df(START_COL), df(END_COL)).as(BITMAP_COL))
+      val actualDf = df.agg(orFn(df(INPUT_COL)).as(INPUT_COL))
 
       Then(
         "the result is the same as that of bitmaps conjugated after being flipped")
@@ -95,26 +97,19 @@ class RoaringBitmapUDAFTest
   }
 
   /**
-    * @return list of with a randomly generated ranges
+    * @return list of [[RoaringBitmap]]s with a randomly generated range of bits set
     */
-  private def inputData(): List[(Long, Long)] = {
-    TestUtils.getRandRanges()
-  }
-
-  /**
-    * @param ranges list of ranges
-    * @return a dataframe out of the given list
-    */
-  private def toDf(ranges: List[(Long, Long)]): DataFrame = {
-    import sqlContext.implicits._
-    sc.parallelize(ranges).toDF(START_COL, END_COL)
+  private def inputData(): List[RoaringBitmap] = {
+    TestUtils
+      .getRandRanges()
+      .map(range => TestUtils.makeBitmap(range._1, range._2))
   }
 
   /**
     * @param bitmaps list of [[RoaringBitmap]]s
     * @return a dataframe out of the given list
     */
-  private def toBitmapDf(bitmaps: List[RoaringBitmap]): DataFrame = {
-    TestUtils.toDf(sc, sqlContext)(bitmaps, BITMAP_COL)
+  private def toDf(bitmaps: List[RoaringBitmap]): DataFrame = {
+    TestUtils.toDf(sc, sqlContext)(bitmaps, INPUT_COL)
   }
 }
