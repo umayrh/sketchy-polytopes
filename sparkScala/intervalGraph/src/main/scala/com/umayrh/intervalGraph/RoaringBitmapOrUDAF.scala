@@ -12,7 +12,7 @@ import org.roaringbitmap.RoaringBitmap
   * [[UserDefinedAggregateFunction]] for [[org.apache.spark.sql.Dataset]] doing an
   * OR operation across all [[RoaringBitmap]] objects in a given column.
   *
-  * To use in Spark SQL: sqlContext.udf.register("rb", new RoaringBitmapUDAF)
+  * To use in Spark SQL: sqlContext.udf.register("rb", new RoaringBitmapOrUDAF)
   * TODO: figure out how to avoid incessant serde
   */
 object RoaringBitmapOrUDAF {

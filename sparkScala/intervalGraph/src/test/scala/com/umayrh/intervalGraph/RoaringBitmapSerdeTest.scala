@@ -43,7 +43,7 @@ class RoaringBitmapSerdeTest
               deserialize(serializedMap, useDirectBuffer, inputStream)
 
             RoaringBitmap
-              .flip(deserializedMap, start, end)
+              .flip(deserializedMap, start, end + 1)
               .getCardinality should be(0)
           }
       })

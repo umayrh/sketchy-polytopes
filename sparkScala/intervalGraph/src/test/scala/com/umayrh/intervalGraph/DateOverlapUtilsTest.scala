@@ -3,8 +3,6 @@ package com.umayrh.intervalGraph
 import java.sql.Date
 
 import com.holdenkarau.spark.testing.{DataFrameSuiteBase, SharedSparkContext}
-import org.apache.spark.sql.types.DataTypes
-import org.roaringbitmap.RoaringBitmap
 import org.scalatest.junit.AssertionsForJUnit
 import org.scalatest.{FeatureSpec, GivenWhenThen}
 
@@ -18,40 +16,33 @@ class DateOverlapUtilsTest
     with SharedSparkContext
     with DataFrameSuiteBase {
   Feature("Functions for creating bitmaps from a table containing dates") {
-    import sqlContext.implicits._
 
-    Scenario("mapIntRangeToBitSet() creates a column containing bitmap") {
-
-      Given("A data frame with overlapping dates")
-      val inputDf = sc
-        .parallelize(List[(Long, Long)]((1, 3), (1, 4), (4, 5)))
-        .toDF("start", "end")
-
-      When("mapIntRangeToBitSet is invoked on given integer ranges")
-      val outputDf =
-        DateOverlapUtils.mapIntRangeToBitmap(inputDf, "start", "end", "bitmap")
-
+    Scenario("mapDateToInt() maps a date range to an int range") {
+      Given("A data frame with date columns")
+      When("mapDateToInt() is invoked")
       Then(
-        "the table's schema contains a new column of serialized RoaringBitmap")
-      outputDf.schema.fields.size equals 3
-      outputDf.schema.fields.map(f => f.name) contains ("bitmap")
-      outputDf.schema.fields
-        .filter(f => f.name.equals("bitmap"))(0)
-        .dataType equals (DataTypes.BinaryType)
+        "the table has two new columns representing the normalized epoch start and end")
+      pending
+    }
 
-      val bitmaps: Array[RoaringBitmap] = outputDf
-        .select("bitmap")
-        .collect()
-        .map(row => {
-          RoaringBitmapSerde.deserialize(row.get(0).asInstanceOf[Array[Byte]])
-        })
+    Scenario(
+      "makeIndexDf() maps an aggregated bitmap to an array of monotonically increasing ids") {
+      Given(
+        "A data frame with int range, it's aggregated bitmap, and an index column name")
+      When("mapDateToInt() is invoked")
+      Then(
+        "the table has a column with expected name, the same number of rows as the aggregated bitmap, and correct indices")
+      pending
+    }
 
-      val result = new RoaringBitmap()
-      bitmaps.foreach(b => result.or(b))
-      And("the serialized RoaringBitmap can be correctly deserialized")
-      result.getCardinality equals (5)
-      RoaringBitmap.flip(result, 1L, 5L).getCardinality equals (0)
-
+    Scenario(
+      "intersectBitmaps() maps an dateframe with ranges to an integer such that overlapping ranges have the same value") {
+      Given(
+        "A data frame with int range, it's aggregated bitmap, and an output column name")
+      When("mapDateToInt() is invoked")
+      Then(
+        "the table has a column with expected name, the same number of rows as the input bitmap, and correct ids")
+      pending
     }
   }
 

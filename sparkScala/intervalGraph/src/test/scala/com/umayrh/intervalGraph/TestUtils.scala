@@ -1,9 +1,12 @@
 package com.umayrh.intervalGraph
 
+import com.google.common.base.Preconditions
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.roaringbitmap.RoaringBitmap
 import org.scalatest.Matchers
+
+import scala.util.Random
 
 /**
   * Common test utilities
@@ -11,24 +14,29 @@ import org.scalatest.Matchers
 object TestUtils extends Matchers {
 
   /**
-    * @return a sequence of tuples with the first element implying
-    *         a randomly generated (0-Int.Max) range start index, and the second
-    *         implying a sequence length capped maxLen (default: 1000)
+    * @param maxLen maximum length across generated ranges. Must be positive.
+    * @return a sequence of tuples with the randomly generated range start
+    *         and range end pair. The range is guaranteed to be non-empty,
+    *         and bounded, and should be treated as inclusive.
     */
-  def getRandRanges(maxLen: Int = 1000): List[(Long, Long)] = {
+  def getRandRanges(maxLen: Int = 100): List[(Long, Long)] = {
+    Preconditions.checkArgument(maxLen > 0)
     List
-      .fill(maxLen)(Int.MaxValue)
-      .map(k =>
-        (scala.util.Random.nextInt(k), scala.util.Random.nextInt(maxLen)))
-      .map(k => (Int.int2long(k._1), Int.int2long(k._2)))
+      .fill(maxLen)(10 * maxLen)
+      .map(k => (Random.nextInt(k), Random.nextInt(maxLen) + 1))
+      .map(k => (Int.int2long(k._1), Int.int2long(k._1 + k._2 - 1)))
   }
 
   /**
+    * @param start start of range (must be >= 0)
+    * @param end end of range (must be >= start, and < Long.MaxValue)
     * @return a [[RoaringBitmap]] with bits in the inclusive range (start, end) set to 1
     */
   def makeBitmap(start: Long, end: Long): RoaringBitmap = {
+    Preconditions.checkArgument(
+      start >= 0 && start <= end && end < Long.MaxValue)
     val bitmap = new RoaringBitmap()
-    bitmap.add(start, end)
+    bitmap.add(start, end + 1)
     bitmap
   }
 
@@ -79,7 +87,16 @@ object TestUtils extends Matchers {
     if (map1.equals(map2)) {
       (true, "")
     } else {
-      (false, s"($map1.first(), $map1.last()) != ($map2.first(), $map2.last())")
+      (false, bitmapToString(map1) + " != " + bitmapToString(map2))
+    }
+  }
+
+  def bitmapToString(map: RoaringBitmap): String = {
+    val card = map.getCardinality
+    if (card == 0) {
+      "EMPTY"
+    } else {
+      (map.first(), map.last()) + ": " + card
     }
   }
 }

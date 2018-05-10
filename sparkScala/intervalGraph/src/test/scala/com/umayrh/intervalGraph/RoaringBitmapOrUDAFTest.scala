@@ -52,7 +52,7 @@ class RoaringBitmapOrUDAFTest
 
       When(
         "UDAF is invoked on the results of randomly ordered UDAF invocations")
-      val splitSize = Random.nextInt(data.size)
+      val splitSize = Random.nextInt(data.size) + 1 // must be positive
       val splitData = data.grouped(splitSize)
       val splitDf = splitData.map(toDf)
       val bitmapsDf =
@@ -79,19 +79,22 @@ class RoaringBitmapOrUDAFTest
       TestUtils.assertDataFrameEquals(expectedDf, actualDf)
     }
 
-    Scenario("The UDAF obeys De Morgan's law: A OR B = ~A AND ~B ") {
+    Scenario("The UDAF obeys De Morgan's law: A OR B) = ~(~A AND ~B) ") {
       Given("bitmaps containing possibly overlapping ranges of bits set")
       val data = inputData()
-      val flipped = data.map(b => RoaringBitmap.andNot(b, b))
+      val maxCardinality = data.map(b => b.last()).reduce(Math.max)
+      val flipped = data.map(b => RoaringBitmap.flip(b, 0L, maxCardinality + 1))
       val conjugated = flipped.reduce(RoaringBitmap.and)
-      val expectedDf = toDf(List(conjugated))
+      val negated = RoaringBitmap.flip(conjugated, 0L, maxCardinality + 1)
+
+      val expectedDf = toDf(List(negated))
 
       When("UDAF is invoked on a set of bitmaps")
       val df = toDf(data)
       val actualDf = df.agg(orFn(df(INPUT_COL)).as(INPUT_COL))
 
       Then(
-        "the result is the same as that of bitmaps conjugated after being flipped")
+        "the result is the same as that of bitmaps flipped, conjugated, and flipped again")
       TestUtils.assertDataFrameEquals(expectedDf, actualDf)
     }
   }
@@ -102,7 +105,7 @@ class RoaringBitmapOrUDAFTest
   private def inputData(): List[RoaringBitmap] = {
     TestUtils
       .getRandRanges()
-      .map(range => TestUtils.makeBitmap(range._1, range._2))
+      .map(range => { TestUtils.makeBitmap(range._1, range._2) })
   }
 
   /**

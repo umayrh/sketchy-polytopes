@@ -1,6 +1,7 @@
 package com.umayrh.intervalGraph
 
 import com.holdenkarau.spark.testing.{DataFrameSuiteBase, SharedSparkContext}
+import com.umayrh.intervalGraph.RoaringBitmapUDAF.{toEndIndex, toStartIndex}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.rand
 import org.roaringbitmap.RoaringBitmap
@@ -10,7 +11,7 @@ import org.scalatest.{FeatureSpec, GivenWhenThen, Matchers}
 import scala.util.Random
 
 /**
-  * Tests [[RoaringBitmapOrUDAF]]
+  * Tests [[RoaringBitmapUDAF]]
   */
 object RoaringBitmapUDAFTest {
   val MAX_ITER = 50
@@ -61,7 +62,7 @@ class RoaringBitmapUDAFTest
       val bitmapsDf =
         splitDf.map(df =>
           df.agg(orFn(df(START_COL), df(END_COL)).as(OUTPUT_COL)))
-      val unionedDf = Random.shuffle(bitmapsDf).reduce(_.union(_))
+      val unionedDf = Random.shuffle(bitmapsDf).reduce(_ union _)
       val actual = unionedDf
         .collect()
         .map(r => RoaringBitmapSerde.deserialize(r.getAs(0)))
@@ -71,26 +72,27 @@ class RoaringBitmapUDAFTest
       TestUtils.assertDataFrameEquals(expectedDf, toBitmapDf(List(actual)))
     }
 
-    Scenario("TODO: The UDAF is idempotent") {
-      Given("bitmaps containing possibly overlapping ranges of bits set")
-      When("invoking the UDAF N times (N >= 1) on the same bitmap")
-      Then("doesn't change the bitmap")
-    }
-
-    Scenario("The UDAF obeys De Morgan's law: A OR B = ~A AND ~B ") {
+    Scenario("The UDAF obeys De Morgan's law: A OR B = ~(~A AND ~B) ") {
       Given("bitmaps containing possibly overlapping ranges of bits set")
       val data = inputData()
-      val bitmaps = data.map(range => TestUtils.makeBitmap(range._1, range._2))
-      val flipped = bitmaps.map(b => RoaringBitmap.andNot(b, b))
+
+      // since the UDAF does this scaling implicitly, test data needs explicit scaling
+      val scaled = data.map(k => (toStartIndex(k._1), toEndIndex(k._1, k._2)))
+      val bitmaps =
+        scaled.map(range => TestUtils.makeBitmap(range._1, range._2))
+      val maxCardinality = bitmaps.map(b => b.last()).reduce(Math.max)
+      val flipped =
+        bitmaps.map(b => RoaringBitmap.flip(b, 0L, maxCardinality + 1))
       val conjugated = flipped.reduce(RoaringBitmap.and)
-      val expectedDf = toBitmapDf(List(conjugated))
+      val negated = RoaringBitmap.flip(conjugated, 0L, maxCardinality + 1)
+      val expectedDf = toBitmapDf(List(negated))
 
       When("UDAF is invoked on a set of bitmaps")
       val df = toDf(data)
       val actualDf = df.agg(orFn(df(START_COL), df(END_COL)).as(BITMAP_COL))
 
       Then(
-        "the result is the same as that of bitmaps conjugated after being flipped")
+        "the result is the same as that of bitmaps flipped, conjugated, and flipped again")
       TestUtils.assertDataFrameEquals(expectedDf, actualDf)
     }
   }

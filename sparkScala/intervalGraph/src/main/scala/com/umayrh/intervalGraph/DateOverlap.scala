@@ -1,10 +1,14 @@
 package com.umayrh.intervalGraph
 
+import com.umayrh.intervalGraph.DateOverlapUtils._
 import org.apache.spark.sql.DataFrame
-import DateOverlapUtils._
 
 /**
   * Utilities for grouping observations that overlap in time
+  *
+  * See also:
+  * - Bitmaps vs sorted lists
+  * [[https://lemire.me/blog/2012/10/23/when-is-a-bitmap-faster-than-an-integer-list/]]
   */
 object DateOverlap {
 
@@ -29,19 +33,17 @@ object DateOverlap {
     val epochEndCol = "TMP_end"
     val intDf = mapDateToInt(df, inputCols, (epochStartCol, epochEndCol))
 
-    val bitmapCol = "TMP_bitmap"
-    val bitmapDf =
-      mapIntRangeToBitmap(intDf, epochStartCol, epochEndCol, bitmapCol)
-
     val aggCol = "TMP_agg_bitmap"
-    val bitmapUdaf = new RoaringBitmapOrUDAF(aggCol)
-    val aggDf = bitmapDf.agg(bitmapUdaf(bitmapDf(bitmapCol)))
+    val bitmapUdaf = new RoaringBitmapUDAF(epochStartCol, epochEndCol)
+    val aggDf =
+      intDf.agg(bitmapUdaf(intDf(epochStartCol), intDf(epochEndCol)).as(aggCol))
 
-    val result = intersectBitmaps(df, bitmapCol, aggDf, aggCol, outputCol)
+    val result =
+      intersectBitmaps(intDf, epochStartCol, aggDf, aggCol, outputCol)
 
     result
       .drop(epochStartCol)
       .drop(epochEndCol)
-      .drop(bitmapCol)
+      .drop(aggCol)
   }
 }

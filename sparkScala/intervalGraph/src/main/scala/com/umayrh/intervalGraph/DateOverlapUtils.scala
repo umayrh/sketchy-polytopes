@@ -13,6 +13,8 @@ import org.roaringbitmap.{IntConsumer, RoaringBitmap}
 
 /**
   * Utilities for [[DateOverlap]]
+  *
+  * TODO: should crossJoin be replaced with broadcast variable?
   */
 object DateOverlapUtils {
 
@@ -49,32 +51,8 @@ object DateOverlapUtils {
   }
 
   /**
-    * Add a new column to given dataframe. Each row corresponds to a bitmap
-    * that has the bits indexed by the given range set.
-    * @param df table
-    * @param inputStart input range start column name
-    * @param inputEnd input range end column name
-    * @param outputCol name of the column containing bitmap for given range
-    * @return a [[DataFrame]] with a new column with given name
-    */
-  def mapIntRangeToBitmap(df: DataFrame,
-                          inputStart: String,
-                          inputEnd: String,
-                          outputCol: String): DataFrame = {
-    val serializeBitmap = (start: Long, end: Long) => {
-      val map = new RoaringBitmap()
-      // TODO: each date must be mapped to two bit positions
-      map.add(start, end)
-      // possibly use org.apache.spark.sql.Encoders.kryo[RoaringBitmap]
-      RoaringBitmapSerde.serialize(map)
-    }
-    val serializeBitmapUdf = udf(serializeBitmap)
-    df.withColumn(outputCol, serializeBitmapUdf(df(inputStart), df(inputEnd)))
-  }
-
-  /**
     * @param df a dataframe containing bitmaps
-    * @param dfCol name of the 'df' column containing bitmaps
+    * @param dfCol name of the 'df' column representing the start of an range
     * @param aggDf an aggregated dataframe that represents bitwise-OR across df(dfCol) bitmaps
     * @param aggCol name of the 'aggDf' column containing a single bitmap. This must be different
     *               from dfCol
@@ -95,47 +73,29 @@ object DateOverlapUtils {
     val indexCol = "TMP_index"
     val indexDf = makeIndexDf(aggDf, aggCol, df, indexCol)
     val joinedDf = df.crossJoin(broadcast(indexDf))
-    val intersectUdf = getInterectUdf()
+    val intersectUdf = getIntersectUdf()
 
     joinedDf
-      .withColumn(
-        outputCol,
-        intersectUdf(joinedDf(dfCol), joinedDf(aggCol), joinedDf(indexCol)))
+      .withColumn(outputCol, intersectUdf(joinedDf(dfCol), joinedDf(indexCol)))
       .drop(aggCol)
       .drop(indexCol)
   }
 
   /**
     * @return a [[UserDefinedFunction]] that takes two serialized [[RoaringBitmap]]s
-    *         and a serialized int array as input. if the two bitmaps have a non-
-    *         empty intersection, then it return the index of the first bit in the
-    *         intersection. Otherwise, returns 0.
+    *         and a serialized int array as input. The first bitmap has a single
+    *         range of bits sets while the second represents the union of all such
+    *         bitmaps. Thus, the intersection is always non-empty, and we can use
+    *         the index of the first set bit to find the range map's group id.
     */
-  private def getInterectUdf(): UserDefinedFunction = {
+  private def getIntersectUdf(): UserDefinedFunction = {
     val intersectFn =
-      (range: Array[Byte], or: Array[Byte], index: Array[Byte]) => {
-        val bitmap = RoaringBitmapSerde.deserialize(range)
-        val orBitmap = RoaringBitmapSerde.deserialize(or)
+      (rangeStart: Long, index: Array[Byte]) => {
         val indexMap = toIntArray(index)
-        val andMap = RoaringBitmap.and(bitmap, orBitmap)
-        if (andMap.getCardinality() > 0) {
-          indexMap(andMap.first())
-        } else {
-          0
-        }
+        // TODO: sure you want to cast long as int?
+        indexMap(RoaringBitmapUDAF.toStartIndex(rangeStart).intValue())
       }
     udf(intersectFn)
-  }
-
-  /**
-    * @param arr a byte array
-    * @return the byte array as an int array
-    */
-  private def toIntArray(arr: Array[Byte]): Array[Int] = {
-    val buf = ByteBuffer.allocate(arr.length)
-    buf.put(arr)
-    buf.flip()
-    buf.asIntBuffer().array()
   }
 
   /**
@@ -143,8 +103,11 @@ object DateOverlapUtils {
     * @param col name of bitmap col in 'aggDf'
     * @param df a dataframe containing bitmaps
     * @param indexCol name of the output column
-    * @return 'aggDf' with a new column named 'indexCol' appended to it. The new column
+    * @return a dataframe with a column named 'indexCol' appended to it. The new column
     *         contains an Array[Int] of the same size as the number of rows in 'df'.
+    * TODO: maybe compress this array using e.g. https://github.com/lemire/JavaFastPFOR
+    * While the compression ratio may be high since the index array has incrementing
+    * integers, decompression may be slow. Maybe delta encoding?
     */
   def makeIndexDf(aggDf: DataFrame,
                   col: String,
@@ -161,6 +124,7 @@ object DateOverlapUtils {
     joinedDf
       .withColumn(indexCol, indexUdf(joinedDf(col), joinedDf(sizeCol)))
       .drop(sizeCol)
+      .drop(col)
   }
 
   /**
@@ -170,7 +134,7 @@ object DateOverlapUtils {
     *         position as a set bit in the bitmap. This array is the output of
     *         the function.
     * TODO: optimize the size of the index array by mapping log_2(data size)
-    * to an appropriate integral type. Is it strange that
+    * to an appropriate integral type.
     */
   private def getIndexUdf(): UserDefinedFunction = {
     val indexFn = (bits: Array[Byte], size: Int) => {
@@ -178,6 +142,7 @@ object DateOverlapUtils {
       val bitmap = RoaringBitmapSerde.deserialize(bits)
       var groupCnt = 1
       var prevIdx = -1
+      // TODO: convert to single abstract method
       val consumerFn: IntConsumer = new IntConsumer() {
         override def accept(idx: Int): Unit = {
           // increment group id iff there're unset bits between
@@ -191,9 +156,27 @@ object DateOverlapUtils {
         }
       }
       bitmap.forEach(consumerFn)
-      indexMap
+      toByteArray(indexMap)
     }
 
     udf(indexFn)
+  }
+
+  /**
+    * @param arr a byte array
+    * @return a view of the byte array as an int array
+    */
+  private def toIntArray(arr: Array[Byte]): Array[Int] = {
+    ByteBuffer.wrap(arr).asIntBuffer().array()
+  }
+
+  /**
+    * @param arr an int array
+    * @return a view of the int array as a byte array
+    */
+  private def toByteArray(arr: Array[Int]): Array[Byte] = {
+    val buf = ByteBuffer.allocate(arr.length * 4)
+    buf.asIntBuffer().put(arr)
+    buf.array()
   }
 }
