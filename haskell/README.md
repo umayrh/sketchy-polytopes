@@ -27,6 +27,9 @@ GHCi, version 8.2.2: http://www.haskell.org/ghc/  :? for help
 Prelude> f a b = a ++ ", " ++ b
 Prelude> f "OK" "Computer"
 "OK, Computer"
+Prelude> f a b = a + b 
+Prelude> :t f
+f :: Num a => a -> a -> a
 ``` 
 
 * Quit using `:q`
@@ -46,7 +49,7 @@ Prelude> f "OK" "Computer"
 * P. Fraenkl. Parallelize all the things -- Deconstructing Haxl, with Clojure macros, topological sorting and Quasar fibers. [link](http://blog.podsnap.com/qaxl.html)
 * T. van Laarhoven. Dependently typed DAGs [link](https://www.twanvl.nl/blog/haskell/dependently-typed-dags)
 
-#### Funtional programming
+#### Functional programming
 
 * M. P. Jones, L. Duponcheel. Composing Monads [link](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.42.2605)
 * Functional Programming with Structured Graphs ([slides](http://www.cs.nott.ac.uk/~psxbv/Away_Day/fplad12-talk_henrik.pdf), 
