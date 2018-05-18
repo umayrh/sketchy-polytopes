@@ -31,14 +31,38 @@ perceptions nouvelles. (G. W. Leibniz)
     * Left identity: `id . f = f`  
     * Right identity: `f . id = f`  
     * Associativity: (f . g) . h = f . (g . h)  
+* Simple commuting diagrams
+    * Commuting triangles (association) and commuting loops (identity).
+
+* Categories
+    * "Much of the power of category theory rests in the fact that it reflects on itself."
+    * A triune theory:
+        * Category: a collection of objects and a collection of morphisms. The domains and combinations of morphisms obey compositional laws.
+        * Functor: maps each object and each morphism in a category to another category such that the mapping obeys compositional laws.
+        * Natural transformation: maps each functor and each morphism on functors such that the mapping obeys compositional laws (the commuting square).
+            * Vertical composition: association across functors
+            * Horizontal composition: identification across categories
+    * Category theory vs. set theory: 
+ 
+        | Set theory | Category theory |  
+        |------------|-----------------|  
+        | membership | -               |  
+        | sets       | categories      |  
+        | elements   | objects         |  
+        | -          | morphisms/arrows |  
+        | functions  | functors        |  
+        | equations between elements | isomorphisms between objects |  
+        | equations between sets | equivalences between categories |  
+        | equations between functions | natural transformations between functors |  
 
 * Functions: `:i (->)`  
     * Definitions:  
         * `id :: (a -> a)`  
         * `(.) :: (b -> c) -> (a -> b) -> (a -> c)`  
-    * Currying and Partial application  
-    * Function "$": application  
-    * Function ".": composition  
+    * Curio:
+        * Currying and Partial application  
+        * Application: `:i $`
+        * Composition: `:i .`
 
 * Functors: `:i Functor`  
     * Definitions:  
@@ -77,3 +101,7 @@ perceptions nouvelles. (G. W. Leibniz)
 * Ring  
 
 * Field  
+
+## References
+
+* [The nLab](https://ncatlab.org/nlab/show/HomePage)
