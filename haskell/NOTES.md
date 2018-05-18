@@ -46,6 +46,8 @@ perceptions nouvelles. (G. W. Leibniz)
     * Laws:  
         * Identity: `fmap id = id`  
         * Composition: `fmap (f . g) = fmap f . fmap g`  
+    * Curio:
+        * List is functor but not Set since Set is only defined over equatable types, and hence restricts functions defined on it
 
 * Applicative functor: `:i Applicative`  
     * Definitions:  
@@ -56,6 +58,8 @@ perceptions nouvelles. (G. W. Leibniz)
         * Homomorphism: `pure f <*> pure x = pure (f x)`  
         * Interchange: `f <*> pure x = pure ($ x) <*> f`  
         * Composition: `pure (.) <*> f <*> g <*> x = f <*> (g <*> x)`  
+    * Curio:
+        * `(*2) . (*5) . [1, 2, 3]` vs `pure((*2) . (*5)) <*> [1, 2, 3]` vs `fmap ((*2) . (*5)) [1, 2, 3]`
 
 * Semigroup: `:i Semigroup`  
 
