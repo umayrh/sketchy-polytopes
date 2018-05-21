@@ -27,12 +27,14 @@ perceptions nouvelles. (G. W. Leibniz)
 
 ## Sketch
 
+![Haskell Typeclass Hierarchy](etc/typeclassopedia-diagram.png "Haskell typeclass hierarchy [5]")
+
 * Compositional laws  
     * Left identity: `id . f = f`  
     * Right identity: `f . id = f`  
-    * Associativity: (f . g) . h = f . (g . h)  
-* Simple commuting diagrams
-    * Commuting triangles (association) and commuting loops (identity).
+    * Associativity: `(f . g) . h = f . (g . h)`  
+    * Commuting diagrams
+        * Commuting triangles (association) and commuting loops (identity).
 
 * Categories
     * "Much of the power of category theory rests in the fact that it reflects on itself."
@@ -55,14 +57,19 @@ perceptions nouvelles. (G. W. Leibniz)
         | equations between sets | equivalences between categories |  
         | equations between functions | natural transformations between functors |  
 
-* Functions: `:i (->)`  
+* Morphism: `:i (->)`  
     * Definitions:  
         * `id :: (a -> a)`  
         * `(.) :: (b -> c) -> (a -> b) -> (a -> c)`  
     * Curio:
         * Currying and Partial application  
+            * Functions with multiple arguments are _curried_ i.e. transformed into functions with one or none argument: `(+) :: a -> a -> a`
+            * This allows _partial application_ i.e. extracting functions of fewer arguments: `inc = (+1)`
         * Application: `:i $`
         * Composition: `:i .`
+
+<p align="center"> <img src="etc/morphism-composition.png" alt="Morphism composition [3]"/></p>
+
 
 * Functors: `:i Functor`  
     * Definitions:  
@@ -71,7 +78,11 @@ perceptions nouvelles. (G. W. Leibniz)
         * Identity: `fmap id = id`  
         * Composition: `fmap (f . g) = fmap f . fmap g`  
     * Curio:
-        * List is functor but not Set since Set is only defined over equatable types, and hence restricts functions defined on it
+        * Collections
+            * Lists, sets and powersets are all examples of the  mathematical functor. Set is not a functor in Haskell because it requires objects to comparable to each other while `fmap` must be applicable to any type. Classes that constrain input types can extend e.g. `Foldable`
+            * Functors also represent infinite collections or computations (e.g. the recursion `ones = 1 : ones`
+        * Not-a-Functor
+            * 
 
 * Applicative functor: `:i Applicative`  
     * Definitions:  
@@ -83,6 +94,7 @@ perceptions nouvelles. (G. W. Leibniz)
         * Interchange: `f <*> pure x = pure ($ x) <*> f`  
         * Composition: `pure (.) <*> f <*> g <*> x = f <*> (g <*> x)`  
     * Curio:
+        * "`Functor` allows us to lift a “normal” function to a function on computational contexts. But `fmap` doesn’t allow us to apply a function which is itself in a context to a value in a context"
         * `(*2) . (*5) . [1, 2, 3]` vs `pure((*2) . (*5)) <*> [1, 2, 3]` vs `fmap ((*2) . (*5)) [1, 2, 3]`
 
 * Semigroup: `:i Semigroup`  
@@ -93,6 +105,7 @@ perceptions nouvelles. (G. W. Leibniz)
     * Definitions:  
     * Laws:  
     * Types:
+        * Powerset, List 
         * IO Monad  
         * Free Monad  
 
@@ -104,4 +117,8 @@ perceptions nouvelles. (G. W. Leibniz)
 
 ## References
 
-* [The nLab](https://ncatlab.org/nlab/show/HomePage)
+1. [The nLab](https://ncatlab.org/nlab/show/HomePage)
+2. https://wiki.haskell.org/Category_theory
+3. https://en.wikibooks.org/wiki/Haskell/Category_theory
+4. https://www.haskell.org/tutorial/index.html
+5. https://wiki.haskell.org/Typeclassopedia
