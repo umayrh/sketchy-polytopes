@@ -104,10 +104,25 @@ perceptions nouvelles. (G. W. Leibniz)
 * Monad  
     * Definitions:  
     * Laws:  
-    * Types:
-        * Powerset, List 
-        * IO Monad  
-        * Free Monad  
+    * Curio:
+        * What problem do Monads solve?
+            * E. Moggi, _Notions of Computations and Monads_:
+                *  _Categorical semantics of computation_: In the general theory of functions (category theory), a programming language is in a category that can be used to reason about programs (esp. proving equivalence).
+                * _Notion of computation_: "[W]e distinguish the object A of values (of type A) from the object TA of computations (of type A), and take as denotations of programs (of type A) the elements of TA. In particular, we identify the type A with the object of values (of type A) and obtain the object of computations (of type A) by applying an unary type-constructor T to A. We call T a notion of computation, since it abstracts away from the type of values computations may produce. There are many choices for T A corresponding to different notions of computations."
+                * _Metalanguage_: "Rather than focusing on a specific T, we want to find the general properties common to all notions of computation, therefore we impose as only requirement that programs should form a category."
+            * P. Wadler, _Comprehending Monads_:
+                * _Comprehensions_: Translate "Moggi'􏰄s technique of structuring denotational speci􏰘cations into a technique for structuring functional programs."
+                * "A key feature of the monad approach is the use of types to indicate what parts of a program may have what sorts of e􏰚ects.􏰅"
+                * 
+            * Two aspects:
+                * Separate description and implementation: components of a monad don't take part in its action
+                * Structure computation: a chain in the dependency graph
+            * List comprehension is a kind of monad comprehension: a monad is an interface between Iterable and List: a sequence with implicit indexing, implying local computation
+        * Catalog
+            * IO Monad
+            * Parallel Monad
+            * Free Monad
+            * Monad transformers [6]
 
 * Group  
 
@@ -122,3 +137,4 @@ perceptions nouvelles. (G. W. Leibniz)
 3. https://en.wikibooks.org/wiki/Haskell/Category_theory
 4. https://www.haskell.org/tutorial/index.html
 5. https://wiki.haskell.org/Typeclassopedia
+6. https://wiki.haskell.org/Monad_Transformers_Explained

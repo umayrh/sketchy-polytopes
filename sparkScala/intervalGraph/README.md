@@ -24,7 +24,7 @@ must be connected since intersections of subintervals of the real line, under se
 
 Precisely because interval graphs have _cliques_, there exists a scheme for removing all the vertices of the graph by removing one simplicial
 vertex, i.e. a vertex in a clique, at a time. Thus, removing a _simplicial vertex_ (i.e. a vertex in a clique) in an interval graph results in another interval graph. Hence,
-there exists an ordering, or a scheme, or simplicial vertex for an interval graph such that removing vertices in that ordering results in
+there exists an ordering, or a scheme, of simplicial vertices for an interval graph such that removing vertices in that ordering results in
 the extinction of the graph. This property makes interval graphs a subclass of [perfect graphs](https://en.wikipedia.org/wiki/Perfect_graph).
 
 ## Three problems
@@ -39,27 +39,29 @@ This is because, for interval graphs, (1) the chromatic number equals the maximu
 
 ## An O(n)-time algorithm
 
-An algorithm that can find all maximal cliques in an interval graph also trivially solves the three problem mentioned before. Here's an O(n)-time for it:
+An algorithm that can find all maximal cliques in an interval graph also trivially solves the three problem mentioned before. Here's an O(n)-time for algorithm it:
 
-Given: 
-* a table of observations, `n` in size, each with some interval within [0, 1]
-* a definition of overlap between any two given intervals
-* an encoding of each interval with a binary word of fixed length, `W`
+Given:  
+* a table of observations, `n` in size, each with some interval within [0, 1]  
+* a definition of overlap between any two given intervals  
+* an encoding of each interval to a binary word. The size, `W`, of the union of all intervals is such that `W << n` 
 
 
 ```
-* In one pass, transform each interval into an (possibly, encoded) bitset
-* In one pass, take a union across all bitsets to create a distinct union-ed bitset
-* 
-* In one pass, for each bitset:
-** 
+* In one pass, transform each interval into a (possibly, encoded) bitset  
+* In one pass, take a union across all bitsets to create a single union-ed bitset. 
+    * Since each input bitset is a range, this is equivalent to setting all bits of the output in the given range. 
+* In one pass over all bits in the union-ed bitset to a (possibly, delta-encoded) integral array such that each longest substring of 1's in the bitset maps to a string of integers. 
+    * The integers only have the same values within a string. 
+    * If the integers strings are incremental, the array can be delta-encoded.
+* In one pass over input bitset, use the start of range in each bitset to index the integer array. The value at that index is the clique id of the bitset.
 
 ```
 
 ## References
 
-(1) T. Kashiwabara. "Algorithms for Some Intersection Graphs" [link](https://pdfs.semanticscholar.org/cd29/05237ab92257718f798c15626a917855ee14.pdf)
-(2) J. E. Cohen, J. Komlos, and T. Mueller. "The Probability of an Interval Graph, and Why It Matters" 
+1. T. Kashiwabara. "Algorithms for Some Intersection Graphs" [link](https://pdfs.semanticscholar.org/cd29/05237ab92257718f798c15626a917855ee14.pdf)
+2. J. E. Cohen, J. Komlos, and T. Mueller. "The Probability of an Interval Graph, and Why It Matters" 
 [link](http://lab.rockefeller.edu/cohenje/PDFs/066CohenKomlosMuellerProcSymposPureMath1979.pdf)
-(3) A. Hertz, "Quick on the Draw" [link](http://www.polymtl.ca/pub/sites/lagrapheur/en/index.php)
-(4) F. S. Roberts. "Graph Theory and Its Applications to Problems of Society"
+3. A. Hertz, "Quick on the Draw" [link](http://www.polymtl.ca/pub/sites/lagrapheur/en/index.php)
+4. F. S. Roberts. "Graph Theory and Its Applications to Problems of Society"

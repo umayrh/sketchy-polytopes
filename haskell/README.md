@@ -34,22 +34,26 @@ f :: Num a => a -> a -> a
 
 * Quit using `:q`
 
-### Docs
+## Notes
+
+Some [notes](NOTES.md) on Haskell, category theory, and function programming.
+
+## Docs
 
 * [Main](https://www.haskell.org/documentation)
 * Haskell [Wikibook](https://en.wikibooks.org/wiki/Haskell)
 * Haxl [README](http://hackage.haskell.org/package/haxl-0.5.1.0#readme)
 
-### Reading
+## Reading
 
-#### Haskell
+### Haskell
 
 * B. O'Sullivan, D. Stewart, J. Goerzen. Real World Haskell. [link](http://book.realworldhaskell.org/read/)
 * S. Marlow. Fun With Haxl. [link](https://simonmar.github.io/posts/2015-10-20-Fun-With-Haxl-1.html)
 * P. Fraenkl. Parallelize all the things -- Deconstructing Haxl, with Clojure macros, topological sorting and Quasar fibers. [link](http://blog.podsnap.com/qaxl.html)
 * T. van Laarhoven. Dependently typed DAGs [link](https://www.twanvl.nl/blog/haskell/dependently-typed-dags)
 
-#### Functional programming
+### Functional programming
 
 * M. P. Jones, L. Duponcheel. Composing Monads [link](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.42.2605)
 * Functional Programming with Structured Graphs ([slides](http://www.cs.nott.ac.uk/~psxbv/Away_Day/fplad12-talk_henrik.pdf), 
@@ -60,7 +64,7 @@ f :: Num a => a -> a -> a
 * D. Ancona, E. Moggi. Program Generation and Components. [link](https://www.disi.unige.it/person/MoggiE/ftp/fmco04.pdf)
 * nLab. Monads (in Computer Science). [link](https://ncatlab.org/nlab/show/monad+%28in+computer+science%29)
 
-##### Incremental programming
+### Incremental programming
 
 * U. A. Acar, G. E. Blelloch, R. Harper. Adaptive Functional Programming. [link](https://www.cs.cmu.edu/~guyb/papers/popl02.pdf)
 * D. Firsov, W. Jeltsch. Purely Functional Incremental Programming. [link](http://firsov.ee/incremental/incremental.pdf)
