@@ -36,7 +36,7 @@ f :: Num a => a -> a -> a
 
 ## Notes
 
-Some [notes](NOTES.md) on Haskell, category theory, and function programming.
+Some [notes](NOTES.md) on Haskell, category theory, and functional programming.
 
 ## Docs
 
