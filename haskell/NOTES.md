@@ -5,8 +5,8 @@ perceptions nouvelles. (G. W. Leibniz)
 
 ## History
 
-* J. Backus. Can Programming Be Liberated from the von Neumann Style? A Functional Style and Its Algebra of Programs. 
-[link](https://www.thocp.net/biographies/papers/backus_turingaward_lecture.pdf)  
+#### J. Backus. Can Programming Be Liberated from the von Neumann Style? A Functional Style and Its Algebra of Programs. [link](https://www.thocp.net/biographies/papers/backus_turingaward_lecture.pdf)
+
 * Programming models  
    * Foundations: tersness, completeness  
    * History sensitivity: states are not programs  
@@ -20,7 +20,7 @@ perceptions nouvelles. (G. W. Leibniz)
     * "Let us distinguish two parts of a programming language. First, its _framework_ gives the overall rules of the system, and second, its changeable parts, whose existence is anticipated by the framework but whose particular behavior is not specified by it."
     * "Perhaps the most important element in providing powerful changeable parts in a language is the availability of combining forms that can be generally used to build new procedures from old ones."
 
-* P. Hudak, J. Hughes, S. P. Jones, P. Wadler. A History of Haskell: Being Lazy with Class. [link](http://haskell.cs.yale.edu/wp-content/uploads/2011/02/history.pdf)  
+#### P. Hudak, J. Hughes, S. P. Jones, P. Wadler. A History of Haskell: Being Lazy with Class. [link](http://haskell.cs.yale.edu/wp-content/uploads/2011/02/history.pdf)  
 * Haskell is lazy  
 * Haskell is pure  
 * Haskell is statically typed  
@@ -98,6 +98,9 @@ perceptions nouvelles. (G. W. Leibniz)
     * "`Functor` allows us to lift a “normal” function to a function on computational contexts. But `fmap` doesn’t allow us to apply a function which is itself in a context to a value in a context"
     * `(*2) . (*5) . [1, 2, 3]` vs `pure((*2) . (*5)) <*> [1, 2, 3]` vs `fmap ((*2) . (*5)) [1, 2, 3]`
 
+
+![Alegbraic structures](etc/algebraic-struct.png "Alegbraic structures [7]")
+
 ### Semigroup: `:i Semigroup`  
 
 ### Monoid  
@@ -127,6 +130,8 @@ perceptions nouvelles. (G. W. Leibniz)
 
 ### Group  
 
+### Semiring
+
 ### Ring  
 
 ### Field  
@@ -139,3 +144,4 @@ perceptions nouvelles. (G. W. Leibniz)
 4. https://www.haskell.org/tutorial/index.html
 5. https://wiki.haskell.org/Typeclassopedia
 6. https://wiki.haskell.org/Monad_Transformers_Explained
+7. https://github.com/tysonzero/algebraic-structures
