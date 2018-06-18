@@ -86,10 +86,15 @@ class RoaringBitmapUDAF(startCol: String, endCol: String)
   }
 }
 
+/**
+  * Map an inclusive-inclusive range (closed subset)
+  * to an exclusive-exclusive range (open subset)
+  * TODO: find a mapping more efficient than affine map
+  */
 object RoaringBitmapUDAF {
   // start of a range, inclusive
   def toStartIndex(start: Long) = 2 * start
   // end of a range, inclusive
   def toEndIndex(start: Long, end: Long) =
-    if (start < end) 2 * end - 1 else 2 * end
+    if (start < end) 2 * end + 1 else 2 * end
 }

@@ -31,7 +31,7 @@ class RoaringBitmapOrUDAFTest
     "Spark User-defined Aggregation Function for performing an OR op on a RoaringBitmap column") {
     val orFn = new RoaringBitmapOrUDAF(INPUT_COL)
 
-    Scenario("The UDAF is commutative ") {
+    Scenario("The UDAF is commutative") {
       Given("bitmaps containing possibly overlapping ranges of bits set")
       val df = toDf(inputData())
       val expectedDf = df.agg(orFn(df(INPUT_COL)))
@@ -113,6 +113,6 @@ class RoaringBitmapOrUDAFTest
     * @return a dataframe out of the given list
     */
   private def toDf(bitmaps: List[RoaringBitmap]): DataFrame = {
-    TestUtils.toDf(sc, sqlContext)(bitmaps, INPUT_COL)
+    TestUtils.bitmapsToDf(sc, sqlContext)(bitmaps, INPUT_COL)
   }
 }

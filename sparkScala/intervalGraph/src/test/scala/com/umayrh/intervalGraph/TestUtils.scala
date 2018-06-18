@@ -1,5 +1,7 @@
 package com.umayrh.intervalGraph
 
+import java.sql.Date
+
 import com.google.common.base.Preconditions
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{DataFrame, SQLContext}
@@ -19,7 +21,7 @@ object TestUtils extends Matchers {
     *         and range end pair. The range is guaranteed to be non-empty,
     *         and bounded, and should be treated as inclusive.
     */
-  def getRandRanges(maxLen: Int = 100): List[(Long, Long)] = {
+  def getRandRanges(maxLen: Int = 1000): List[(Long, Long)] = {
     Preconditions.checkArgument(maxLen > 0)
     List
       .fill(maxLen)(10 * maxLen)
@@ -46,13 +48,29 @@ object TestUtils extends Matchers {
     * @param colName name of column containing bitmaps
     * @return a dataframe of serialized [[RoaringBitmap]]s out of the given list
     */
-  def toDf(sc: SparkContext, sqlContext: SQLContext)(
+  def bitmapsToDf(sc: SparkContext, sqlContext: SQLContext)(
       bitmaps: List[RoaringBitmap],
       colName: String): DataFrame = {
     val serializedBitmaps = bitmaps.map(RoaringBitmapSerde.serialize)
     // implicits, yuck...
     import sqlContext.implicits._
     sc.parallelize(serializedBitmaps).toDF(colName)
+  }
+
+  /**
+    * Convert a list of date ranges to a dataframe
+    * @param dates list of date ranges
+    * @param startCol name of start date column (default: "s")
+    * @param endCol name of end date column (default: "t")
+    * @return a dataframe with two date columns
+    */
+  def datesToDf(sc: SparkContext, sqlContext: SQLContext)(
+      dates: List[(Date, Date)],
+      startCol: String = "s",
+      endCol: String = "t"): DataFrame = {
+    // implicits, yuck...
+    import sqlContext.implicits._
+    sc.parallelize(dates).toDF(startCol, endCol)
   }
 
   /**

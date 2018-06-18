@@ -118,6 +118,6 @@ class RoaringBitmapUDAFTest
     * @return a dataframe out of the given list
     */
   private def toBitmapDf(bitmaps: List[RoaringBitmap]): DataFrame = {
-    TestUtils.toDf(sc, sqlContext)(bitmaps, BITMAP_COL)
+    TestUtils.bitmapsToDf(sc, sqlContext)(bitmaps, BITMAP_COL)
   }
 }

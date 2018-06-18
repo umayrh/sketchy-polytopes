@@ -1,5 +1,6 @@
 package com.umayrh.intervalGraph
 
+import com.google.common.base.Preconditions
 import com.umayrh.intervalGraph.DateOverlapUtils._
 import org.apache.spark.sql.DataFrame
 
@@ -29,6 +30,9 @@ object DateOverlap {
   def groupByOverlap(df: DataFrame,
                      inputCols: (String, String),
                      outputCol: String): DataFrame = {
+    Preconditions.checkArgument(df.columns.contains(inputCols._1))
+    Preconditions.checkArgument(df.columns.contains(inputCols._2))
+
     val epochStartCol = "TMP_start"
     val epochEndCol = "TMP_end"
     val intDf = mapDateToInt(df, inputCols, (epochStartCol, epochEndCol))
