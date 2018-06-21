@@ -166,7 +166,7 @@ object DateOverlapUtils {
           if (prevIdx >= 0 && idx > prevIdx + 1) {
             groupCnt += 1
           }
-          indexMap(idx) = groupCnt // TODO: fix bug
+          indexMap(idx) = groupCnt
           prevIdx = idx
         }
       }
