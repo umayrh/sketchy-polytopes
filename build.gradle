@@ -1,2 +1,19 @@
 version = "0.1"
 description = "Projects"
+
+apply plugin: 'project-report'
+
+subprojects {
+    apply plugin: 'project-report'
+
+    task listAllDependencies(type: DependencyReportTask) {}
+    configurations {
+        compileProject.extendsFrom compile, archives
+        runtimeProject.extendsFrom runtime, archives
+    }
+}
+
+htmlDependencyReport {
+    projects = project.allprojects
+    reports.html.destination = file("build/reports/project/dependencies")
+}
