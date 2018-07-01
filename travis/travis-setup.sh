@@ -24,6 +24,7 @@ bootstrapLinux() {
 }
 
 ## Installs r-base and make R libs writable
+## TODO: move to https://docs.travis-ci.com/user/languages/r/
 setupR() {
     sudo add-apt-repository "deb ${CRAN}/bin/linux/ubuntu $(lsb_release -cs)/"
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9

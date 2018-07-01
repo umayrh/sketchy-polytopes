@@ -2,42 +2,42 @@ version = "0.1"
 description = "Scala Projects"
 
 buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
-  }
 
-  dependencies {
-    classpath 'cz.alenkacz:gradle-scalafmt:1.6.0'
-  }
+    dependencies {
+        classpath 'cz.alenkacz:gradle-scalafmt:1.6.0'
+    }
 }
 
 subprojects {
-  repositories {
-    mavenCentral()
-    jcenter()
-    maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
-  }
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
+    }
 
-  apply plugin: 'scala'
-  apply plugin: 'scalafmt'
+    apply plugin: 'scala'
+    apply plugin: 'scalafmt'
 
-  dependencies {
-    compile 'org.scala-lang:scala-library:2.12.3'
+    dependencies {
+        compile 'org.scala-lang:scala-library:2.12.3'
   
-    testCompile 'org.scalatest:scalatest_2.12:3.0.4'
-    testCompile 'org.scalacheck:scalacheck_2.12:1.13.4'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
-  }
+        testCompile 'org.scalatest:scalatest_2.12:3.0.4'
+        testCompile 'org.scalacheck:scalacheck_2.12:1.13.4'
+        testCompile 'junit:junit:4.12'
+        testCompile 'org.hamcrest:hamcrest-all:1.3'
+    }
 
-  task scalaTest(dependsOn: ['testClasses'], type: JavaExec) {
+    task scalaTest(dependsOn: ['testClasses'], type: JavaExec) {
     main = 'org.scalatest.tools.Runner'
     args = ['-R', 'build/classes/scala/test', '-o']
     classpath = sourceSets.test.runtimeClasspath
-  }
-  
-  compileScala.dependsOn scalafmtAll
-  test.dependsOn scalaTest
+    }
+
+    compileScala.dependsOn scalafmtAll
+    test.dependsOn scalaTest
 }
