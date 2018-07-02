@@ -9,6 +9,7 @@
 */.idea/
 */.tox*
 */.venv*
+*.venv
 *pinned.txt
 /*/MANIFEST
 /*/activate
@@ -23,3 +24,5 @@
 */ligradle/
 */TEST-*.xml
 */pinned.txt
+*/test/__init__.pyc
+*/test/__pycache__/
