@@ -24,12 +24,6 @@ subprojects {
         }
     }
 
-    python {
-        details {
-            pythonVersion = '3.6'
-        }
-    }
-
     repositories {
         pyGradlePyPi()
 
