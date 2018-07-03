@@ -1,11 +1,18 @@
-from distutils.core import setup
+from glob import glob
+from os.path import basename
+from os.path import splitext
+
+from setuptools import find_packages
+from setuptools import setup
 
 setup(
     name='evolvingdag',
     version='0.1.0',
     author='Umayr Hassan',
     author_email='umayrh@gmail.com',
-    packages=['src', 'test'],
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
     scripts=['bin/data_pipeline.py'],
     url='https://github.com/umayrh/sketchy-polytopes/tree/master/python/evolvingdag',
     license='GPL-3.0',

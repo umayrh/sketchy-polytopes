@@ -29,3 +29,4 @@ See also Travis [integration](https://docs.travis-ci.com/user/database-setup/#Ne
 * [Longitudinal Methods of Network Analysis](https://www.stats.ox.ac.uk/~snijders/siena/Longi_Net.pdf)
 * [Social Network Image Animator](https://web.stanford.edu/group/sonia/index.html)
 * [DAG Generator](http://daggenerator.com/#)
+* [Probabilistic Programming](http://www.probabilistic-programming.org/wiki/Home)

@@ -1,5 +1,7 @@
+*/.cache
 */*.egg
-*/*.egg-info/
+*/*.egg-info
+*/*/*.egg-info/
 */*.pyc
 */*.pyo
 */*.sublime-*
@@ -26,3 +28,4 @@
 */pinned.txt
 */test/__init__.pyc
 */test/__pycache__/
+*/src/*.pyc
