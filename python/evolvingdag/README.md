@@ -30,3 +30,4 @@ See also Travis [integration](https://docs.travis-ci.com/user/database-setup/#Ne
 * [Social Network Image Animator](https://web.stanford.edu/group/sonia/index.html)
 * [DAG Generator](http://daggenerator.com/#)
 * [Probabilistic Programming](http://www.probabilistic-programming.org/wiki/Home)
+* [Visualization](http://www.forensicswiki.org/wiki/Tools:Visualization)

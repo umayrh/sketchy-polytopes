@@ -10,14 +10,10 @@ class RandomDag:
     def __init__(self, dag_model):
         self.dag_model = dag_model
 
-    def make(self):
+    def sample(self):
         """ Instantiates a DAG model.
         """
-        print("unimplemented")
-
-    def __str__(self):
-        """String representation of this object"""
-        return "dag_model" + str(self.dag_model)
+        print("not implemented")
 
 
 class RandomDagModel:
