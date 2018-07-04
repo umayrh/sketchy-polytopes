@@ -1,4 +1,5 @@
-import networkx as nx
+from networkx import DiGraph
+from networkx.algorithms.dag import descendants
 
 
 class RandomDag:
@@ -25,17 +26,23 @@ class RandomDagModel:
     This class represents a simple DAG with properties
     that might be random models e.g. a 'runtime' property for each node
     with value from the uniform distribution, U(30, 50).
+
+    TODO: support layers, and random edges between layers
     """
     def __init__(self):
-        # TODO: support layers, and random edges between layers
-        self.base_dag = nx.DiGraph()
+        self.base_dag = DiGraph()
 
     def add_node(self, node):
+        """Adds a node to this DAG
+
+        Args:
+            node (Node): a node to add to this DAG
+        """
         self.base_dag.add_node(node.name, **node.properties)
 
     def add_edge(self, from_node,
                  to_node,
-                 properties=None,
+                 properties={},
                  check_acyclicity=True):
         """Adds a directed edge to this DAG
 
@@ -47,16 +54,13 @@ class RandomDagModel:
                cycle to the DAG (default: True)
         """
         if check_acyclicity and \
-                from_node.name in nx.descendents(self.base_dag, to_node.name):
+                from_node.name in descendants(self.base_dag, to_node.name):
             raise Exception("This edge adds a cycle to the graph")
-        if properties is None:
-            self.base_dag.add_edge(from_node, to_node)
-        else:
-            self.base_dag.add_edge(from_node, to_node, **properties)
 
-    def __str__(self):
-        """String representation of this model as a map of adjacency lists"""
-        str(nx.to_dict_of_lists(self.base_dag))
+        if properties is None or properties is {}:
+            self.base_dag.add_edge(from_node.name, to_node.name)
+        else:
+            self.base_dag.add_edge(from_node.name, to_node.name, **properties)
 
 
 class Node:
@@ -67,7 +71,7 @@ class Node:
 
     NODE_LABEL_KEY = "__node_labels"
 
-    def __init__(self, name, properties, labels=None):
+    def __init__(self, name, properties={}, labels=None):
         """
         Creates a node object.
 
@@ -79,7 +83,8 @@ class Node:
         """
         self.name = name
         self.properties = properties
-        self.properties[self.__class__.NODE_LABEL_KEY] = labels
+        if labels is not None:
+            self.properties[self.__class__.NODE_LABEL_KEY] = labels
 
     def __str__(self):
         ' '.join("name", self.name, "properties", str(self.properties))

@@ -12,7 +12,7 @@ a requirements.txt that can be used with `pip`.
 * [Python Packaging](http://python-packaging.readthedocs.io/en/latest/index.html)
 * [Guide to Packaging](http://the-hitchhikers-guide-to-packaging.readthedocs.io/en/latest/index.html)
 * [YAPF](https://github.com/google/yapf)
-* [Spinx-Napolean](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/index.html)
+* [Sphinx-Napolean](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/index.html)
 
 ## Python and Gradle
 
