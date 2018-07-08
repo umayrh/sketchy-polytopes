@@ -13,7 +13,7 @@ class RandomDag:
 
     @staticmethod
     def _update_property(data, property_name, default_weight):
-        """ Instantiates a DAG model.
+        """ Update a node or edge property with given name.
 
         Args:
             data (dict): map of node/edge properties
@@ -27,11 +27,14 @@ class RandomDag:
                 return property_val[0](*func_args)
         return default_weight
 
-    def sample_nodes(self, node_property, weight_key='w', default_weight=0):
-        """ Instantiates a DAG model.
+    def sample_node_property(self, node_property,
+                             weight_key='w',
+                             default_weight=0):
+        """ Samples nodes with given property, and sets weight_key with the
+        sampled, or default, value.
 
         Args:
-            node_property (str): name of property to sample
+            node_property (str): name of node property to sample
             weight_key (str): name of property that holds sampled value
             default_weight (float): default value of the weight_key property
         """
@@ -41,13 +44,16 @@ class RandomDag:
         for (node, data) in list(self.model.dag.nodes(data=True)):
             property_weight = RandomDag._update_property(
                 data, node_property, default_weight)
-            self.model.dag[node][weight_key] = property_weight
+            self.model.dag.nodes[node][weight_key] = property_weight
 
-    def sample_edges(self, edge_property, weight_key='w', default_weight=0):
-        """ Instantiates a DAG model.
+    def sample_edge_property(self, edge_property,
+                             weight_key='w',
+                             default_weight=0):
+        """ Samples edges with given property, and sets weight_key with the
+        sampled, or default, value.
 
         Args:
-            edge_property (str): name of property to sample
+            edge_property (str): name of edge property to sample
             weight_key (str): name of property that holds sampled value
             default_weight (float): default value of the weight_key property
         """
