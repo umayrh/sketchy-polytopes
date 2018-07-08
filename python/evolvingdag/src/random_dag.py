@@ -1,5 +1,6 @@
 from networkx import DiGraph
 from networkx.algorithms.dag import descendants
+import numpy.random  # NOQA
 
 
 class RandomDag:
@@ -8,12 +9,67 @@ class RandomDag:
     The model uses a random sample from each property with a random model.
     """
     def __init__(self, dag_model):
-        self.dag_model = dag_model
+        self.model = dag_model
 
-    def sample(self):
+    @staticmethod
+    def _update_property(data, property_name, default_weight):
         """ Instantiates a DAG model.
+
+        Args:
+            data (dict): map of node/edge properties
+            property_name: name of a property (i.e. a key for 'data')
+            default_weight (float): default value of the property
         """
-        print("not implemented")
+        if property_name in data:
+            property_val = data[property_name]
+            if property_val is not None and len(property_val) > 1:
+                func_args = property_val[1:]
+                return property_val[0](*func_args)
+        return default_weight
+
+    def sample_nodes(self, node_property, weight_key='w', default_weight=0):
+        """ Instantiates a DAG model.
+
+        Args:
+            node_property (str): name of property to sample
+            weight_key (str): name of property that holds sampled value
+            default_weight (float): default value of the weight_key property
+        """
+        if node_property is None or node_property is "":
+            raise Exception("Invalid property")
+
+        for (node, data) in list(self.model.dag.nodes(data=True)):
+            property_weight = RandomDag._update_property(
+                data, node_property, default_weight)
+            self.model.dag[node][weight_key] = property_weight
+
+    def sample_edges(self, edge_property, weight_key='w', default_weight=0):
+        """ Instantiates a DAG model.
+
+        Args:
+            edge_property (str): name of property to sample
+            weight_key (str): name of property that holds sampled value
+            default_weight (float): default value of the weight_key property
+        """
+        if edge_property is None or edge_property is "":
+            raise Exception("Invalid property")
+
+        for (s, t, data) in list(self.model.dag.edges(data=True, default={})):
+            property_weight = RandomDag._update_property(
+                data, edge_property, default_weight)
+            self.model.dag[s][t][weight_key] = property_weight
+
+    def node_property_to_edge(self):
+        # TODO
+        print("no implemented")
+
+    def longest_path(self):
+        # TODO
+        print("no implemented")
+
+    def second_longest_path(self):
+        # TODO
+        print("no implemented")
 
 
 class RandomDagModel:
@@ -23,10 +79,16 @@ class RandomDagModel:
     that might be random models e.g. a 'runtime' property for each node
     with value from the uniform distribution, U(30, 50).
 
+    Each node may be associated with key-value pairs of properties. The key
+    specifies the name of the property whereas the value is a list. The first
+    element in the list is the name of a SciPy random distribution function
+    (https://docs.scipy.org/doc/numpy-1.14.0/reference/routines.random.html),
+    and the rest are the arguments to that function.
+
     TODO: support layers, and random edges between layers
     """
     def __init__(self):
-        self.base_dag = DiGraph()
+        self.dag = DiGraph()
 
     def add_node(self, node):
         """Adds a node to this DAG
@@ -34,7 +96,7 @@ class RandomDagModel:
         Args:
             node (Node): a node to add to this DAG
         """
-        self.base_dag.add_node(node.name, **node.properties)
+        self.dag.add_node(node.name, **node.properties)
 
     def add_edge(self, from_node,
                  to_node,
@@ -50,13 +112,13 @@ class RandomDagModel:
                cycle to the DAG (default: True)
         """
         if check_acyclicity and \
-                from_node.name in descendants(self.base_dag, to_node.name):
+                from_node.name in descendants(self.dag, to_node.name):
             raise Exception("This edge adds a cycle to the graph")
 
         if properties is None or properties is {}:
-            self.base_dag.add_edge(from_node.name, to_node.name)
+            self.dag.add_edge(from_node.name, to_node.name)
         else:
-            self.base_dag.add_edge(from_node.name, to_node.name, **properties)
+            self.dag.add_edge(from_node.name, to_node.name, **properties)
 
 
 class Node:

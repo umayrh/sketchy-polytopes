@@ -13,8 +13,9 @@ languages](https://stackoverflow.com/questions/27644586/how-to-set-up-travis-ci-
     * Can [bookdown](https://bookdown.org/yihui/bookdown/) help connect documents across projects? At least,
     Markdown docs.
 * Algorithms:
-    * Min-cost network flow implemented with data structures using space-filling curve
-    * Series-parallel graph converter
+    * Min-cost network flow
+    * Space-filling curves
+    * Series-parallel graph
 * Programming:
     * Haskell
     * Scalaz
