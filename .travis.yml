@@ -14,6 +14,9 @@ jdk:
   - oraclejdk8
   - openjdk8
 
+services:
+  - neo4j
+
 python:
   - "2.7"
   - "3.6.4"

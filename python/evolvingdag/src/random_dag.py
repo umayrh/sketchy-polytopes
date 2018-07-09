@@ -2,6 +2,60 @@ from networkx import DiGraph
 from networkx.algorithms.dag import descendants
 
 
+class LongitudinalRandomDag:
+    """This class represents a hierarchical time series of RandomDag objects.
+
+    Each node in the hierarchy represent a time rollup. The top level is
+    'year', the second-lowest level 'hour', and each event is a leaf node
+    connected to an hour node. An event may trigger an time rollup rollover:
+    events in a new day or month create a new node.
+    """
+    DAG_LABEL_KEY = "__dag"
+
+    def __init__(self):
+        self.root = "root"
+        self.time_series = DiGraph()
+        self.time_series.add_node(self.root)
+
+    @staticmethod
+    def __node_id(prefix, suffix):
+        return "".join(prefix, suffix)
+
+    def add_event(self, event, timestamp):
+        """
+        Adds a RandomDag as an event. Each event is assumed to have a
+        unique timestamp.
+
+        Args:
+            event (RandomDag): a RandomDag instance
+            timestamp (datetime.datetime): a timestamo for this event
+        TODO: for timestamps, handle microseconds and UTC offset
+        TODO: should time rollups be connected in a linked list?
+        TODO: is setting RandomDag as a node property ideal? It space-
+               efficient but are queries harmed in the process?
+        """
+        if len(event.dag.nodes) == 0:
+            return
+
+        node_id = LongitudinalRandomDag.__node_id
+        event_id = timestamp.isoformat()
+        rollups = {"year": node_id('y', timestamp.year),
+                   "month": node_id('m', timestamp.month),
+                   "day": node_id('d', timestamp.day),
+                   "hour": node_id('h', timestamp.hour),
+                   "event": event_id}
+
+        prev_time = self.root
+        for (label, time) in rollups:
+            if time not in self.time_series.nodes:
+                self.time_series.add_node(time, {Node.NODE_LABEL_KEY: label})
+            self.time_series.add_edge(prev_time, time)
+            prev_time = time
+
+        property_label = LongitudinalRandomDag.DAG_LABEL_KEY
+        self.time_series.nodes[event_id][property_label] = event
+
+
 class RandomDag:
     """This class represents a simple DAG with properties
     that might be random variable e.g. a 'runtime' property for each node
@@ -67,7 +121,7 @@ class RandomDag:
     def sample_node_property(self, node_property,
                              weight_key='w',
                              default_weight=0):
-        """ Samples nodes with given property, and sets weight_key with the
+        """Samples nodes with given property, and sets weight_key with the
         sampled, or default, value.
 
         Args:
@@ -86,7 +140,7 @@ class RandomDag:
     def sample_edge_property(self, edge_property,
                              weight_key='w',
                              default_weight=0):
-        """ Samples edges with given property, and sets weight_key with the
+        """Samples edges with given property, and sets weight_key with the
         sampled, or default, value.
 
         Args:
@@ -105,7 +159,7 @@ class RandomDag:
     def node_property_to_edge(self, start_node_name="start",
                               node_property='w',
                               edge_property='w'):
-        """ Translates a node property to an edge property by modifying the
+        """Translates a node property to an edge property by modifying the
         underlying DAG to (1) add a "start" node, and to (2) add an
         edge weight, which is the weight of its successor node.
 
@@ -126,7 +180,7 @@ class RandomDag:
             self.dag[s][t][edge_property] = self.dag.nodes[t][node_property]
 
     def second_longest_path(self, weight='w', default_weight=0):
-        """
+        """Find the second-longest path in the underlying graph
 
         Args:
             weight (str): edge data key to use for weight
@@ -145,7 +199,7 @@ class Node:
 
     NODE_LABEL_KEY = "__node_labels"
 
-    def __init__(self, name, properties={}, labels=None):
+    def __init__(self, name, properties={}, label=None):
         """
         Creates a node object.
 
@@ -153,12 +207,12 @@ class Node:
             name (str): an identifier for this node, assumed to be
                unique across all nodes in the graph that this node belongs to
             properties (dict): a map of string keys to any values
-            labels (set): a set of string labels
+            label (str): a set of string labels
         """
         self.name = name
         self.properties = properties
-        if labels is not None:
-            self.properties[self.__class__.NODE_LABEL_KEY] = labels
+        if label is not None and label is not "":
+            self.properties[self.__class__.NODE_LABEL_KEY] = label
 
     def __str__(self):
         ' '.join("name", self.name, "properties", str(self.properties))

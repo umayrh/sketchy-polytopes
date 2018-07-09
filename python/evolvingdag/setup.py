@@ -13,7 +13,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
-    scripts=['bin/data_pipeline.py'],
     url='https://github.com/umayrh/sketchy-polytopes/tree/master/python/evolvingdag',
     license='GPL-3.0',
     description='Create and analyze random, longitudinal directed acyclic graphs',
@@ -22,5 +21,5 @@ setup(
         "networkx>=2.1",
         "numpy>=1.14.5",
         "neo4j-driver>=1.6.0"
-    ],
+    ]
 )
