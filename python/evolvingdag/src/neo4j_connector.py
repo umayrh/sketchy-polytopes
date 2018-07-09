@@ -6,19 +6,20 @@ class Neo4jConnector:
         self.driver = GraphDatabase.driver(url, auth=auth)
 
     @staticmethod
-    def add_node(tx, label="Node", data={}):
-        """
+    def add_node(tx, labels=set("Node"), data={}):
+        """Adds a node to the database.
+        https://neo4j.com/docs/developer-manual/current/cypher/clauses/merge/
 
         Args:
             tx (transaction): a transaction object
-            label: node label
-            name: node name
-            data: node properties (must have string keys)
+            labels (set): node label
+            name (str): node name
+            data (dict): node properties (must have string keys)
         """
-        if label is None or data is None:
+        if labels is None or len(labels) is 0 or data is None:
             raise Exception("Arguments must be non-null")
 
-        create_query = "MERGE (a:{})".format(label)
+        create_query = "MERGE (a:{})".format(":".join(labels))
         subqueries = [create_query]
         for k in data.iterkeys():
             subqueries.append("SET a.{} = ${}".format(k, k))

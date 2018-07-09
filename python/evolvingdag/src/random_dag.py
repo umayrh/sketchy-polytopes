@@ -199,7 +199,7 @@ class Node:
 
     NODE_LABEL_KEY = "__node_labels"
 
-    def __init__(self, name, properties={}, label=None):
+    def __init__(self, name, properties={}, labels=None):
         """
         Creates a node object.
 
@@ -207,12 +207,12 @@ class Node:
             name (str): an identifier for this node, assumed to be
                unique across all nodes in the graph that this node belongs to
             properties (dict): a map of string keys to any values
-            label (str): a set of string labels
+            labels (set): a set of string labels
         """
         self.name = name
         self.properties = properties
-        if label is not None and label is not "":
-            self.properties[self.__class__.NODE_LABEL_KEY] = label
+        if labels is not None and len(labels) is not 0:
+            self.properties[self.__class__.NODE_LABEL_KEY] = labels
 
     def __str__(self):
         ' '.join("name", self.name, "properties", str(self.properties))
