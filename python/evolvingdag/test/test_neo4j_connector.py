@@ -27,8 +27,7 @@ class Test(unittest.TestCase):
             tx = session.begin_transaction()
             Neo4jConnector.add_node(tx, set("Node"), properties)
             tx.commit()
-            tx = session.begin_transaction()
-            result = tx.run("MATCH (a:Node) WHERE a.time = $val "
-                            "RETURN a.name",
-                            val=properties["time"]).single().value()
+            result = session.run("MATCH (a:Node) WHERE a.time = $val "
+                                 "RETURN a.name",
+                                 val=properties["time"]).single().value()
             self.assertEqual(properties["name"], result)
