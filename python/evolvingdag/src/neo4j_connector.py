@@ -3,7 +3,7 @@ from neo4j.v1 import GraphDatabase
 
 class Neo4jConnector:
     def __init__(self, url, auth):
-        self.driver = GraphDatabase.driver(url, auth=auth)
+        self._driver = GraphDatabase.driver(url, auth=auth)
 
     @staticmethod
     def add_node(tx, labels=set("Node"), data={}):
@@ -13,11 +13,10 @@ class Neo4jConnector:
         Args:
             tx (transaction): a transaction object
             labels (set): node label
-            name (str): node name
             data (dict): node properties (must have string keys)
         """
         if labels is None or len(labels) is 0 or data is None:
-            raise Exception("Arguments must be non-null")
+            raise Exception("Arguments must be non-null; labels, non-empty")
 
         create_query = "MERGE (a:{})".format(":".join(labels))
         subqueries = [create_query]
@@ -25,3 +24,6 @@ class Neo4jConnector:
             subqueries.append("SET a.{} = ${}".format(k, k))
         query = " ".join(subqueries)
         tx.run(query, **data)
+
+    def close(self):
+        self._driver.close()
