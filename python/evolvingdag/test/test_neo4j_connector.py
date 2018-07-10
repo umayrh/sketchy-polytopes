@@ -30,5 +30,6 @@ class Test(unittest.TestCase):
         with Test.conn._driver.session() as session:
             result = session.run("MATCH (a:Node) WHERE a.time = $val "
                                  "RETURN a.name",
-                                 val=properties["time"]).single().value()
-            self.assertEqual(properties["name"], result)
+                                 val=properties["time"])
+            record = next(iter(result))
+            self.assertEqual(properties["name"], record[0])
