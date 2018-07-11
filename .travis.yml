@@ -12,11 +12,9 @@ scala:
 
 jdk:
   - oraclejdk8
-  - openjdk8
 
 python:
   - "2.7.10"
-  - "3.6.4"
 
 cache:
   apt: true
@@ -24,9 +22,16 @@ cache:
     - $HOME/.m2
     - $HOME/.cache
     - $HOME/.cache/pip
-    - $HOME/R/Library
+    - /usr/lib/R/library
+    - /usr/lib/R/site-library
+    - /usr/local/lib/R/site-library
     - $TRAVIS_BUILD_DIR/umayrh/sketchy-polytopes/R/*/packrat/lib
     - $TRAVIS_BUILD_DIR/umayrh/sketchy-polytopes/python/*/build/venv/lib
+
+before_cache:
+    - mkdir -p /usr/lib/R/library && chmod 2777 /usr/lib/R/library
+    - mkdir -p /usr/lib/R/site-library && chmod 2777 /usr/lib/R/site-library
+    - mkdir -p /usr/local/lib/R/site-library && chmod 2777 /usr/local/lib/R/site-library
 
 branches:
   only:
