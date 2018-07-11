@@ -7,7 +7,7 @@ set -ex
 
 CRAN=${CRAN:-"http://cran.rstudio.com"}
 OS=$(uname -s)
-NEO4J_VERSION={NEO4J_VERSION:-"3.4.1"}
+NEO4J_VERSION=${NEO4J_VERSION:-"3.4.1"}
 
 ## Check OS type
 bootstrap() {
