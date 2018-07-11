@@ -7,6 +7,7 @@ set -ex
 
 CRAN=${CRAN:-"http://cran.rstudio.com"}
 OS=$(uname -s)
+NEO4J_VERSION={NEO4J_VERSION:-"3.4.1"}
 
 ## Check OS type
 bootstrap() {
@@ -19,8 +20,22 @@ bootstrap() {
 }
 
 bootstrapLinux() {
+    setupNeo4j
     setupR
     installLemon
+}
+
+## Installs a specific version of Neo4j
+## see https://github.com/travis-ci/travis-ci/issues/3243
+setupNeo4j() {
+    if [ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]; then
+        wget -P $HOME/.cache dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
+        cd $HOME/.cache && tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
+        neo4j-community-${NEO4J_VERSION}/bin/neo4j start
+        sleep 10  # give Neo4J some time to start
+        curl -v POST http://neo4j:neo4j@localhost:7474/user/neo4j/password -d"password=neo4j2"
+        curl -v POST http://neo4j:neo4j2@localhost:7474/user/neo4j/password -d"password=neo4j"
+    fi
 }
 
 ## Installs r-base and make R libs writable
@@ -41,12 +56,14 @@ setupR() {
 
 # Build and installs LEMON from source
 installLemon() {
-    wget http://lemon.cs.elte.hu/pub/sources/lemon-1.3.1.tar.gz
-    tar xzvf lemon-1.3.1.tar.gz
-    cd lemon-1.3.1 && mkdir build && cd build
-    cmake ..
-    make
-    sudo make install
+    if [ ! -d "$HOME/.cache/lemon-1.3.1" ]; then
+        wget -P $HOME/.cache http://lemon.cs.elte.hu/pub/sources/lemon-1.3.1.tar.gz
+        cd $HOME/.cache && tar xzvf lemon-1.3.1.tar.gz
+        cd lemon-1.3.1 && mkdir build && cd build
+        cmake ..
+        make
+        sudo make install
+    fi
 }
 
 # Retry a given command

@@ -14,18 +14,22 @@ jdk:
   - oraclejdk8
   - openjdk8
 
-services:
-  - neo4j
-
 python:
   - "2.7"
   - "3.6.4"
 
 cache:
+  apt: true
   directories:
     - /usr/local/lib/R/site-library
     - /usr/lib/R/site-library
     - /usr/lib/R/library
+    - $HOME/R/Library
+    - $HOME/.cache/pip
+    - $HOME/.m2
+    - $HOME/.cache
+    - $HOME/build/umayrh/sketchy-polytopes/R/*/packrat/lib
+    - $HOME/build/umayrh/sketchy-polytopes/python/*/build/venv/lib
 
 branches:
   only:
