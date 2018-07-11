@@ -15,19 +15,16 @@ jdk:
   - openjdk8
 
 python:
-  - "2.7"
+  - "2.7.10"
   - "3.6.4"
 
 cache:
   apt: true
   directories:
-    - /usr/local/lib/R/site-library
-    - /usr/lib/R/site-library
-    - /usr/lib/R/library
-    - $HOME/R/Library
-    - $HOME/.cache/pip
     - $HOME/.m2
     - $HOME/.cache
+    - $HOME/.cache/pip
+    - $HOME/R/Library
     - $TRAVIS_BUILD_DIR/umayrh/sketchy-polytopes/R/*/packrat/lib
     - $TRAVIS_BUILD_DIR/umayrh/sketchy-polytopes/python/*/build/venv/lib
 
