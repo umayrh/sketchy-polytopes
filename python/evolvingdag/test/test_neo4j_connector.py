@@ -25,7 +25,7 @@ class Test(unittest.TestCase):
         properties = {"name": "a", "time": 4}
         with Test.conn._driver.session() as session:
             tx = session.begin_transaction()
-            Neo4jConnector.add_node(tx, set("Node"), properties)
+            Neo4jConnector.add_node(tx, "Node", properties)
             tx.commit()
         with Test.conn._driver.session() as session:
             result = session.run("MATCH (a:Node) WHERE a.time = $val "

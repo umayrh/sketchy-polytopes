@@ -28,8 +28,8 @@ cache:
     - $HOME/.cache/pip
     - $HOME/.m2
     - $HOME/.cache
-    - $HOME/build/umayrh/sketchy-polytopes/R/*/packrat/lib
-    - $HOME/build/umayrh/sketchy-polytopes/python/*/build/venv/lib
+    - $TRAVIS_BUILD_DIR/umayrh/sketchy-polytopes/R/*/packrat/lib
+    - $TRAVIS_BUILD_DIR/umayrh/sketchy-polytopes/python/*/build/venv/lib
 
 branches:
   only:
