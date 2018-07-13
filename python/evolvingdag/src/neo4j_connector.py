@@ -10,6 +10,8 @@ class Neo4jConnector:
         """Adds a node to the database.
         https://neo4j.com/docs/developer-manual/current/cypher/clauses/merge/
 
+        TODO: support multiple labels
+
         Args:
             tx (transaction): a transaction object
             label (str): node label

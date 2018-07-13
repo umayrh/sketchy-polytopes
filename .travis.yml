@@ -5,7 +5,7 @@ dist: trusty
 before_install: ./travis/travis-setup.sh
 
 install:
-  - ./gradlew check
+  - ./gradlew check -x packratClean
 
 scala:
   - 2.12.3
@@ -16,8 +16,17 @@ jdk:
 python:
   - "2.7.10"
 
+r:
+  - release
+
+addons:
+  apt:
+    packages:
+      - qpdf
+
 cache:
   apt: true
+  packages: true
   directories:
     - $HOME/.m2
     - $HOME/.cache
@@ -25,8 +34,9 @@ cache:
     - /usr/lib/R/library
     - /usr/lib/R/site-library
     - /usr/local/lib/R/site-library
-    - $TRAVIS_BUILD_DIR/umayrh/sketchy-polytopes/R/*/packrat/lib
-    - $TRAVIS_BUILD_DIR/umayrh/sketchy-polytopes/python/*/build/venv/lib
+    - $TRAVIS_BUILD_DIR/packrat/src
+    - $TRAVIS_BUILD_DIR/packrat/lib
+    - $TRAVIS_BUILD_DIR/build/venv/lib
 
 before_cache:
     - mkdir -p /usr/lib/R/library && chmod 2777 /usr/lib/R/library

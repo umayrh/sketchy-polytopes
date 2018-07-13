@@ -23,13 +23,19 @@ Some tests require that a Neo4j server is running with default configuration.
 
 ## References
 
-### Libraries
+### Graph libraries
 
 * [NetworkX](https://networkx.github.io)
 * [NetworkX API for Neo4j Graph Algorithms](https://github.com/neo4j-graph-analytics/networkx-neo4j)
+
+### Neo4j
+
 * [NetworkX-Neo4j](https://medium.com/neo4j/experimental-a-networkx-esque-api-for-neo4j-graph-algorithms-4002baac45be)
 * [The Neo4j Developer Manual](https://neo4j.com/docs/developer-manual/current)
-* [Neo4j Driver for Python](https://neo4j.com/docs/api/python-driver/1.6/index.html)
+* [Driver for Python](https://neo4j.com/docs/api/python-driver/1.6/index.html)
+* [Files](https://neo4j.com/docs/operations-manual/current/configuration/file-locations/)
+* [Embedded Database](https://neo4j.com/docs/java-reference/current/tutorials-java-embedded/)
+* [Blog](https://maxdemarzi.com)
 
 ### Analysis
 
