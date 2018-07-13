@@ -21,7 +21,7 @@ bootstrap() {
 
 bootstrapLinux() {
     setupNeo4j
-    #setupR
+    setupR
     installLemon
 }
 

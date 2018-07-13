@@ -16,14 +16,6 @@ jdk:
 python:
   - "2.7.10"
 
-r:
-  - release
-
-addons:
-  apt:
-    packages:
-      - qpdf
-
 cache:
   apt: true
   packages: true
