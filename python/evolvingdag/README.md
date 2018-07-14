@@ -35,7 +35,8 @@ Some tests require that a Neo4j server is running with default configuration.
 * [Driver for Python](https://neo4j.com/docs/api/python-driver/1.6/index.html)
 * [Files](https://neo4j.com/docs/operations-manual/current/configuration/file-locations/)
 * [Embedded Database](https://neo4j.com/docs/java-reference/current/tutorials-java-embedded/)
-* [Blog](https://maxdemarzi.com)
+* [Extending Neo4j](https://maxdemarzi.com/2012/11/26/extending-neo4j/)
+* [Misc.](https://github.com/neueda/awesome-neo4j)
 
 ### Analysis
 

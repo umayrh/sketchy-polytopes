@@ -8,17 +8,27 @@ class Test(unittest.TestCase):
 
     TODO: basic auth is consistent with Travis' setup; use
     https://docs.travis-ci.com/user/environment-variables/#Defining-encrypted-variables-in-.travis.yml
+
+    TODO: use IntegrationTestCase for better isolation
+    https://github.com/neo4j/neo4j-python-driver/blob/1.6/test/integration/tools.py
     """
 
     @classmethod
     def setUpClass(cls):
+        """Initializes the Neo4j driver"""
         cls.conn = Neo4jConnector(
             "bolt://localhost",
             basic_auth("neo4j", "neo4j"))
 
     @classmethod
     def tearDownClass(cls):
+        """Shuts down the Neo4j driver"""
         cls.conn._driver.close()
+
+    def tearDown(self):
+        """Deletes all nodes in the current graph"""
+        with Test.conn._driver.session() as session:
+            session.run("MATCH (n) WITH n LIMIT 1000 DETACH DELETE n")
 
     def test_add_node(self):
         """Tests if Neo4j nodes can be created"""
