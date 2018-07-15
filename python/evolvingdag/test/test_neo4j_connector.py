@@ -23,7 +23,7 @@ class Test(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         """Shuts down the Neo4j driver"""
-        cls.conn._driver.close()
+        cls.conn.close()
 
     def tearDown(self):
         """Deletes all nodes in the current graph"""
@@ -43,3 +43,22 @@ class Test(unittest.TestCase):
                                  val=properties["time"])
             record = next(iter(result))
             self.assertEqual(properties["name"], record[0])
+
+    def test_add_edge(self):
+        """Tests if Neo4j nodes can be created"""
+        node_properties = {"name": "a"}
+        edge_properties = {"kind_of": "b"}
+        with Test.conn._driver.session() as session:
+            tx = session.begin_transaction()
+            Neo4jConnector.add_node(tx, "Node1", node_properties)
+            Neo4jConnector.add_node(tx, "Node2", node_properties)
+            Neo4jConnector.add_edge(
+                tx, "Node1", "Node2", "anticipates", edge_properties)
+            tx.commit()
+        with Test.conn._driver.session() as session:
+            result = session.run("MATCH (a:Node1)-[r]->(b:Node2) "
+                                 "WHERE a.name = b.name "
+                                 "RETURN r.kind_of, type(r)")
+            record = next(iter(result))
+            self.assertEqual(edge_properties["kind_of"], record[0])
+            self.assertEqual("anticipates", record[1])
