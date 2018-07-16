@@ -1,0 +1,17 @@
+version = "0.1"
+description = "Rust Projects"
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "gradle.plugin.org.ysb33r.gradle:rust-gradle-plugin:0.2"
+    }
+}
+
+apply plugin: "org.ysb33r.rust.base"
+apply plugin: "org.ysb33r.rust.exe"
