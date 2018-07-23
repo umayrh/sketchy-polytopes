@@ -13,5 +13,7 @@ buildscript {
     }
 }
 
-apply plugin: "org.ysb33r.rust.base"
-apply plugin: "org.ysb33r.rust.exe"
+subprojects {
+    apply plugin: "org.ysb33r.rust.base"
+    apply plugin: "org.ysb33r.rust.exe"
+}

@@ -2,6 +2,10 @@ from neo4j.v1 import GraphDatabase
 
 
 class Neo4jConnector:
+    """This class allows connecting to a Neo4j database, and adding objects
+    (nodes, edges) to the database in a transaction. For Cypher syntax, see
+    https://neo4j.com/docs/developer-manual/current/get-started/cypher
+    """
     def __init__(self, url, auth):
         self._driver = GraphDatabase.driver(url, auth=auth)
 
@@ -36,7 +40,7 @@ class Neo4jConnector:
 
     @staticmethod
     def add_edge(tx, from_node, to_node, edge_type="SUCCEEDS", data={}):
-        """Adds an edge to the database.
+        """Adds an edge (directed from from_node to to_node) to the database.
         https://neo4j.com/docs/developer-manual/current/cypher/clauses/create
 
         Args:
@@ -53,6 +57,13 @@ class Neo4jConnector:
                 "CREATE (a)-[r:{} {{ {} }}]->(b)" \
             .format(from_node, to_node, edge_type, ",".join(properties))
         tx.run(query, **data)
+
+    @staticmethod
+    def add_dag(tx):
+        """
+        Args:
+            tx (transaction): a transaction object
+        """
 
     def close(self):
         self._driver.close()

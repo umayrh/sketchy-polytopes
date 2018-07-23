@@ -4,18 +4,24 @@
 
 ### Projects
 
-* CI: Travis 
+* Infrastructure
+  * Continuous integration: Travis 
     * Set up matrix builds with [multiple os](https://docs.travis-ci.com/user/multi-os/) and [multiple 
 languages](https://stackoverflow.com/questions/27644586/how-to-set-up-travis-ci-with-multiple-languages)
-* Deployment: Docker, Terraform, Kubernetes
+  * Deployment: Docker, Terraform, Kubernetes
     * [No-VM Kubernetes](https://blog.travis-ci.com/2017-10-26-running-kubernetes-on-travis-ci-with-minikube)
-* Documentation:
+  * Documentation:
     * Can [bookdown](https://bookdown.org/yihui/bookdown/) help connect documents across projects? At least,
     Markdown docs.
 * Algorithms:
     * Min-cost network flow
     * Space-filling curves
     * Series-parallel graph
+    * Infer graph [classes](http://www.graphclasses.org/index.html) and 
+    [properties](https://gap-packages.github.io/Digraphs/doc/chap6.html#X7ADDEFD478D470D5),
+    or [network motifs](https://en.wikipedia.org/wiki/Network_motif). 
+    [Causal discovery](http://ftp.cs.ucla.edu/pub/stat_ser/R156.pdf), counterfactual
+    evaluation, and intervention effects.
 * Programming:
     * Haskell
     * Scalaz
