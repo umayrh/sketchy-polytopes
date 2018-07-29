@@ -5,7 +5,7 @@ from networkx.algorithms.dag import descendants
 class LongitudinalRandomDag:
     """This class represents a hierarchical time series of RandomDag objects.
 
-    Each node in the hierarchy represent a time rollup. The top level is
+    Each node in the hierarchy represents a time rollup. The top level is
     'year', the second-lowest level 'hour', and each event is a leaf node
     connected to an hour node. An event may trigger an time rollup rollover:
     events in a new day or month create a new node.
@@ -31,7 +31,7 @@ class LongitudinalRandomDag:
             timestamp (datetime.datetime): a timestamo for this event
         TODO: for timestamps, handle microseconds and UTC offset
         TODO: should time rollups be connected in a linked list?
-        TODO: is setting RandomDag as a node property ideal? It space-
+        TODO: is setting RandomDag as a node property ideal? It's space-
                efficient but are queries harmed in the process?
         """
         if len(event.dag.nodes) == 0:

@@ -1,0 +1,10 @@
+[package]
+
+name = "mincost-flow"
+version = "0.0.1"
+authors = ["umayrhassan <umayrh@gmail.com>"]
+
+[[bin]]
+
+name = "mincost-flow"
+path = "src/main/rust/main.rs"
