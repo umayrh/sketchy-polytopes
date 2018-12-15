@@ -29,6 +29,10 @@ sketchy-polytopes.iml
 .DS_Store
 ./*/.DS_Store
 
+# Rust
+
+./rust/*/target/*
+
 # other
 
 */*/metastore_db/*

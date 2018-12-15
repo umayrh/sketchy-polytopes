@@ -22,6 +22,33 @@ sufficient to run:
 
 * [PyGradle](https://github.com/linkedin/pygradle)
 
+In general, to create a new project:
+
+* `cp -R _template new_project`
+* `cd new_project && gradle generateSetupPy`
+* `nano new_project/setup.py` and update project description e.g.
+```
+setup(
+    distclass=GradleDistribution,
+    package_dir={'': 'src'},
+    packages=find_packages('src'),
+    include_package_data=True,
+    py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
+
+    name='sparktuner',
+    version='0.1.0',
+    author='Umayr Hassan',
+    author_email='umayrh@gmail.com',
+    url='https://github.com/umayrh/sketchy-polytopes/tree/master/python/sparktuner',
+    license='GPL-3.0',
+    description='OpenTuner wrapper for tuning Spark applications',
+    long_description=open('README.txt').read(),
+    install_requires=[
+    ]
+)
+```
+* `gradle build` to install basic dependencies
+
 ### Packaging
 
 * [Packaging a python library](https://blog.ionelmc.ro/2014/05/25/python-packaging/)
