@@ -33,6 +33,8 @@ setup(
 ```
 * `gradle build` to install basic dependencies
 
+For more information, see PyGradle [Example Project](https://github.com/linkedin/pygradle/tree/master/examples/example-project).
+
 ## Python
 
 * [Python Docs](https://docs.python.org/2.7/contents.html)

@@ -28,6 +28,15 @@ languages](https://stackoverflow.com/questions/27644586/how-to-set-up-travis-ci-
 
 ### Notes
 
+#### 2018-12-15
+
+* Figure out how to map all CF templates using [cloudformation-graph](https://github.com/umayrh/cloudformation-graph)
+* Revisit the [Datalog](https://github.com/frankmcsherry/blog/blob/master/posts/2018-05-19.md) abstraction for data flows
+* Move from Wordpress to Github [pages](https://yunmingzhang.wordpress.com/2018/06/15/how-to-use-github-pages/#more-2128)?
+* [Opentuner](http://opentuner.org/tutorial/setup/) for Spark
+* ConceptQL to Spark mapping
+* Structured Causal Model framework for policy evaluation
+
 #### 2018-06-31
 
 * Flesh out [README.md](python/evolvingdag/README.md).
