@@ -3,26 +3,11 @@
 ## Intro
 
 This setup requires that each Python package specify
-a requirements.txt that can be used with `pip`. It should be
-sufficient to run:
+a requirements.txt file that can be used with `pip`. It should suffice to run:
 
 `./gradlew build`
 
-## Python
-
-* [Python Docs](https://docs.python.org/2.7/contents.html)
-
-### Testing, style, documentation
-
-* [PyTest](https://docs.pytest.org/en/latest/goodpractices.html#test-discovery)
-* [YAPF](https://github.com/google/yapf)
-* [Sphinx-Napolean](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/index.html)
-
-### Building
-
-* [PyGradle](https://github.com/linkedin/pygradle)
-
-In general, to create a new project:
+To create a new project:
 
 * `cp -R _template new_project`
 * `cd new_project && gradle generateSetupPy`
@@ -33,7 +18,6 @@ setup(
     package_dir={'': 'src'},
     packages=find_packages('src'),
     include_package_data=True,
-    py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
 
     name='sparktuner',
     version='0.1.0',
@@ -48,6 +32,20 @@ setup(
 )
 ```
 * `gradle build` to install basic dependencies
+
+## Python
+
+* [Python Docs](https://docs.python.org/2.7/contents.html)
+
+### Testing, style, documentation
+
+* [PyTest](https://docs.pytest.org/en/latest/goodpractices.html#test-discovery)
+* [YAPF](https://github.com/google/yapf)
+* [Sphinx-Napolean](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/index.html)
+
+### Building
+
+* [PyGradle](https://github.com/linkedin/pygradle)
 
 ### Packaging
 
