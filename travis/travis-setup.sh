@@ -32,8 +32,8 @@ setupNeo4j() {
         wget -P $HOME/.cache dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
         cd $HOME/.cache && tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
         neo4j-community-${NEO4J_VERSION}/bin/neo4j start
-        sleep 10  # give Neo4J some time to start
-        curl -v POST http://neo4j:neo4j@localhost:7474/user/neo4j/password -d"password=neo4j2"
+        # give Neo4J some time to start
+        retry curl -v POST http://neo4j:neo4j@localhost:7474/user/neo4j/password -d"password=neo4j2"
         curl -v POST http://neo4j:neo4j2@localhost:7474/user/neo4j/password -d"password=neo4j"
     fi
 }
