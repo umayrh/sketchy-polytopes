@@ -2,6 +2,9 @@
 
 ## Intro
 
+To install Rust, see [rustup](https://rustup.rs). This will likely install all binaries
+under `$HOME/.cargo/bin`, so this path must be added to `PATH`.
+
 To build using the Gradle Rust plugin,
 * Ensure that the project structure follows the expected 
 [structure](https://ysb33rorg.gitlab.io/rust-gradle-plugin/0.2/docs/product-documentation.html). E.g.
