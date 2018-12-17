@@ -34,7 +34,9 @@ languages](https://stackoverflow.com/questions/27644586/how-to-set-up-travis-ci-
 * Revisit the [Datalog](https://github.com/frankmcsherry/blog/blob/master/posts/2018-05-19.md) abstraction for data flows
 * Move from Wordpress to Github [pages](https://yunmingzhang.wordpress.com/2018/06/15/how-to-use-github-pages/#more-2128)?
 * [Opentuner](http://opentuner.org/tutorial/setup/) for Spark
-* ConceptQL to Spark mapping
+* ConceptQL to Spark mapping. 
+  * [Indexing](http://hpc.isti.cnr.it/hpcworkshop2014/PartitionedEliasFanoIndexes.pdf) might be useful
+  * Map a clinical protocol to a Spark SQL DAG
 * Structured Causal Model framework for policy evaluation
 
 #### 2018-06-31

@@ -32,6 +32,7 @@ setup(
 )
 ```
 * `gradle build` to install basic dependencies
+* `pandoc --from=markdown --to=rst --output=README.txt README.md` to convert from Markdown
 
 For more information, see PyGradle [Example Project](https://github.com/linkedin/pygradle/tree/master/examples/example-project).
 
