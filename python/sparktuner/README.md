@@ -68,3 +68,6 @@ This would help pool run data, and track of significant outcome changes (e.g. as
 of a code change).  
 * The default parameters should be read from a file instead of being hard-coded. All
 parameters should be merged into a final map.
+* Since Spark parameters are many and jobs can take a while to run, warm starting
+autotuning might be useful.
+* Need to validate all Spark parameters.
