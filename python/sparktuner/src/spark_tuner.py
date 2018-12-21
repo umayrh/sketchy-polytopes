@@ -1,12 +1,13 @@
+"""
+Main module that is used for running a Spark application with different
+configurable parameters, possibly a given range instead of a point value.
+"""
 # import adddeps  # fix sys.path
 
 import logging
-
 from opentuner import (MeasurementInterface, Result)
-
 from opentuner.search.manipulator import (ConfigurationManipulator,
                                           IntegerParameter)
-
 from args import parser
 
 log = logging.getLogger(__name__)
@@ -51,7 +52,7 @@ class SparkConfigTuner(MeasurementInterface):
 
     @staticmethod
     def get_spark_default_configs():
-        """Return a space-delimited string of default
+        """Returns a space-delimited string of default
         Spark config parameters"""
         configs = " "
         configs += "--conf spark.dynamicAllocation.enabled=true "
@@ -66,5 +67,10 @@ class SparkConfigTuner(MeasurementInterface):
         return configs
 
 
+def get_parser():
+    """Returns the default parser"""
+    return parser
+
+
 if __name__ == '__main__':
-    SparkConfigTuner.main(parser.parse_args())
+    SparkConfigTuner.main(get_parser().parse_args())

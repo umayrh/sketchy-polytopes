@@ -90,5 +90,6 @@ class Test(unittest.TestCase):
         self.assertTrue(model.dag["a"]["b"]["w"] == 0)
         self.assertTrue(model.dag["b"]["c"]["w"] == 0)
 
+
 if __name__ == "__main__":
     unittest.main()

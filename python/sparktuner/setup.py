@@ -140,8 +140,8 @@ class GradleDistribution(Distribution, object):
 setup(
     distclass=GradleDistribution,
     package_dir={'': 'src'},
-    packages=find_packages('src'),
     include_package_data=True,
+    packages=find_packages('src'),
 
     name='sparktuner',
     version='0.1.0',
@@ -152,7 +152,8 @@ setup(
     description='OpenTuner wrapper for tuning Spark applications',
     long_description=open('README.txt').read(),
     install_requires=[
-        "opentuner"
+        "opentuner",
+        "humanfriendly"
     ]
 #    entry_points={
 #        'console_scripts': [

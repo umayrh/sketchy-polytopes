@@ -1,2 +1,2 @@
 version = "0.1"
-description = "Template PyGradle project"
+description = "Use OpenTuner to tune Spark applications"
