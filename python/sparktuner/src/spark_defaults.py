@@ -1,5 +1,6 @@
 """This module describes all Spark parameters and their defaults"""
 import csv
+import os
 
 # Required parameters for spark-submit when running Spark JARs
 SPARK_REQUIRED_PARAM = ["name", "main-class", "jar-path",
@@ -52,8 +53,11 @@ SPARK_CONF_PARAM = {
 # The result is placed into a dictionary that maps parameter name to a tuple
 # containing the parameter's Spark default value, and the meaning.
 SPARK_CONF_PARAM_DICT = {}
-# TODO fix this relative path
-with open('src/spark_2_4_params.csv', 'rb') as csv_file:
+# This indirection helps run these scripts from any path
+path = os.path.abspath(__file__)
+dir_path = os.path.dirname(path)
+conf_file = os.path.join(dir_path, "spark_2_4_params.csv")
+with open(conf_file, 'rb') as csv_file:
     param_reader = csv.reader(csv_file)
     next(param_reader)
     for row in param_reader:
