@@ -1,15 +1,14 @@
 """This module describes all Spark parameters and their defaults"""
+
 import csv
 import os
 
 # Required parameters for spark-submit when running Spark JARs
-SPARK_REQUIRED_PARAM = ["name", "main-class", "jar-path",
-                        "master", "deploy-mode"]
+SPARK_REQUIRED_DIRECT_PARAM = ["name", "class", "master", "deploy-mode"]
 
 SPARK_DIRECT_PARAM = {
     "name": "spark_program",
-    "main-class": "main_class",
-    "jar-path": "jar_path",
+    "class": "main_class",
     "master": "local[*]",
     "deploy-mode": "client",
     "driver-memory": 10485760,
@@ -19,8 +18,7 @@ SPARK_DIRECT_PARAM = {
 
 SPARK_DIRECT_PARAM_ARGS = {
     "name": (str, "Program name"),
-    "main-class": (str, "Fully qualified main class name"),
-    "jar-path": (str, "Full qualified JAR pathname"),
+    "class": (str, "Fully qualified main class name"),
     "master": (str, "Spark master type: local/yarn/mesos"),
     "deploy-mode": (str, "Deployment mode: client/cluster"),
     "driver-memory": (int, "Amount of driver memory"),

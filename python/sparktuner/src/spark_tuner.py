@@ -5,10 +5,10 @@ configurable parameters, possibly a given range instead of a point value.
 # import adddeps  # fix sys.path
 
 import logging
-from opentuner import (MeasurementInterface, Result)
+from opentuner import (MeasurementInterface, Result, argparsers)
 from opentuner.search.manipulator import (ConfigurationManipulator,
                                           IntegerParameter)
-from args import parser
+from args import ArgumentParser
 
 log = logging.getLogger(__name__)
 
@@ -66,11 +66,11 @@ class SparkConfigTuner(MeasurementInterface):
         configs += "--conf spark.yarn.maxAppAttempts=1 "
         return configs
 
-
-def get_parser():
-    """Returns the default parser"""
-    return parser
+    @staticmethod
+    def make_parser():
+        """Creates and returns the default parser"""
+        return ArgumentParser(parents=argparsers())
 
 
 if __name__ == '__main__':
-    SparkConfigTuner.main(get_parser().parse_args())
+    SparkConfigTuner.main(SparkConfigTuner.make_parser().parse_args())
