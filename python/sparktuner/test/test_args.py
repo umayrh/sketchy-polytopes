@@ -49,7 +49,7 @@ class ArgumentParserTest(unittest.TestCase):
         with self.assertRaises(ArgumentParserError):
             ArgumentParser.type_int_range("")
 
-    def optional_flags(self):
+    def test_optional_flags(self):
         args = self.make_required_flags()
         for param in SPARK_ALLOWED_CONF_PARAM:
             args.append(ArgumentParser.make_flag(param))
@@ -60,4 +60,4 @@ class ArgumentParserTest(unittest.TestCase):
         res_dict = vars(res)
         for param in SPARK_ALLOWED_CONF_PARAM:
             param_flag = ArgumentParser.to_flag(param)
-            self.assertEqual(res_dict[param_flag], "2")
+            self.assertEqual(res_dict[param_flag], (2, 2))

@@ -1,4 +1,4 @@
-from collections import ChoiceMap
+from chainmap import ChainMap
 from args import ArgumentParser
 from spark_defaults import SPARK_DIRECT_PARAM, SPARK_ALLOWED_CONF_PARAM
 
@@ -14,18 +14,22 @@ class SparkSubmitCmd:
     def make_spark_direct_flag(flag_param):
         """
         Converts a direct parameter into a flag by prefixing it with "--"
-        :param flag_param: a parameter
+
+        :param flag_param: a non-null, non-empty str parameter
         :return: parameter prefixed with "--"
         """
+        assert True if flag_param else False
         return "--" + flag_param
 
     @staticmethod
     def make_spark_conf_flag(flag_param):
         """
         Converts a parameter into a flag by prefixing it with "--conf "
-        :param flag_param: a parameter
+
+        :param flag_param: a non-null, non-empty str parameter
         :return: parameter prefixed with "--conf "
         """
+        assert True if flag_param else False
         return "--conf " + flag_param
 
     @staticmethod
@@ -43,40 +47,60 @@ class SparkSubmitCmd:
         dirc_flag = SparkSubmitCmd.make_spark_direct_flag
         conf_flag = SparkSubmitCmd.make_spark_conf_flag
         subcmd_list = []
-        for param, value in param_dict:
+        for param, value in param_dict.items():
             param_flag = dirc_flag(param) if is_direct else conf_flag(param)
-            subcmd_list.append(param_flag)
-            subcmd_list.append(value)
+            # TODO lower() seems hacky - find a better way
+            value_str = value if type(value) is str else str(value).lower()
+            if is_direct:
+                subcmd_list.append(param_flag)
+                subcmd_list.append(value_str)
+            else:
+                subcmd_list.append("=".join([param_flag, value_str]))
+
         return SparkSubmitCmd.CMD_SEPARATOR.join(subcmd_list)
 
     def merge_params(self, arg_dict, tuner_cfg_dict):
         """
-        XXX
-        :param arg_dict:
-        :param tuner_cfg_dict:
-        :return:
-        """
-        input_direct_params = dict()
-        input_conf_params = dict()
+        Extracts all Spark direct and conf parameters from program
+        arguments and from OpenTuner config dict, and merges them with
+        their respective Spark default parameters
 
-        # extract direct and conf param from input dicts
-        for param, value in arg_dict:
+        :param arg_dict: program argument dict that maps a program flag
+        to its value
+        :param tuner_cfg_dict: OpenTuner config dict, which map a Spark
+        parameter (not a program flag) to its value
+        :return: a tuple of two dicts, the first containing all
+        Spark direct parameters, and the second containing all
+        Spark conf parameters.
+        """
+        input_direct_params = {}
+        input_conf_params = {}
+
+        # Extract direct and conf param from input dicts.
+        # Note the order: tuner_cfg_dict takes precedence over arg_dict.
+        # This could have been more elegant alon the lines of:
+        #   k for k in SPARK_DIRECT_PARAM.items() if k[0] in arg_dict
+        # Yet cannot since arg_dict keys may need to be mapped to Spark param
+        # TODO rethink this - maybe iterate over SPARK_*_PARAM instead
+        for param, value in arg_dict.items():
             from_flag = ArgumentParser.from_flag(param)
             if from_flag in SPARK_DIRECT_PARAM:
-                input_direct_params[param] = value
+                input_direct_params[from_flag] = value
             elif from_flag in SPARK_ALLOWED_CONF_PARAM:
                 input_conf_params[SPARK_ALLOWED_CONF_PARAM[param]] = value
-        for param, value in tuner_cfg_dict:
+        for param, value in tuner_cfg_dict.items():
             from_flag = ArgumentParser.from_flag(param)
             if from_flag in SPARK_DIRECT_PARAM:
-                input_direct_params[param] = value
-            elif from_flag in SPARK_ALLOWED_CONF_PARAM:
-                input_conf_params[SPARK_ALLOWED_CONF_PARAM[param]] = value
+                input_direct_params[from_flag] = value
+            elif from_flag in SPARK_ALLOWED_CONF_PARAM.values():
+                # TODO make this flag-to-param mapping more explicit since
+                # it only exists for conf param and not for direct param
+                input_conf_params[from_flag] = value
 
         # merge input dicts with defaults
-        direct_params = ChoiceMap(
-            input_direct_params, self.direct_param_default)
-        conf_params = ChoiceMap(input_conf_params, self.conf_defaults)
+        direct_params = ChainMap(
+            {}, input_direct_params, self.direct_param_default)
+        conf_params = ChainMap({}, input_conf_params, self.conf_defaults)
 
         return dict(direct_params), dict(conf_params)
 

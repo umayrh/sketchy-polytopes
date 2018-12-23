@@ -3,6 +3,8 @@
 import csv
 import os
 
+# TODO: use immutables
+
 # Required parameters for spark-submit when running Spark JARs
 SPARK_REQUIRED_DIRECT_PARAM = ["name", "class", "master", "deploy-mode"]
 
