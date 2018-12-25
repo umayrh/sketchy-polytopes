@@ -1,6 +1,7 @@
 from chainmap import ChainMap
 from args import ArgumentParser
-from spark_defaults import SPARK_DIRECT_PARAM, SPARK_ALLOWED_CONF_PARAM
+from spark_param import SparkParamType
+from spark_default_param import FLAG_TO_DIRECT_PARAM, FLAG_TO_CONF_PARAM
 
 
 class SparkSubmitCmd:
@@ -66,44 +67,44 @@ class SparkSubmitCmd:
         """
         Extracts all Spark direct and conf parameters from program
         arguments and from OpenTuner config dict, and merges them with
-        their respective Spark default parameters
+        their respective Spark default parameters. The function assumes
+        that all configurable parameters (i.e. range types) in the
+        arg_dict are over-written by specific param values in
+        tuner_cfg_dict.
 
         :param arg_dict: program argument dict that maps a program flag
-        to its value
+        to corresponding SparkParamType
         :param tuner_cfg_dict: OpenTuner config dict, which map a Spark
-        parameter (not a program flag) to its value
+        parameter (not a program flag) to corresponding SparkParamType
         :return: a tuple of two dicts, the first containing all
         Spark direct parameters, and the second containing all
-        Spark conf parameters.
+        Spark conf parameters. The keys for both are Spark parameter names,
+        and not program flags.
         """
         input_direct_params = {}
         input_conf_params = {}
 
         # Extract direct and conf param from input dicts.
-        # Note the order: tuner_cfg_dict takes precedence over arg_dict.
-        # This could have been more elegant alon the lines of:
-        #   k for k in SPARK_DIRECT_PARAM.items() if k[0] in arg_dict
-        # Yet cannot since arg_dict keys may need to be mapped to Spark param
-        # TODO rethink this - maybe iterate over SPARK_*_PARAM instead
-        for param, value in arg_dict.items():
-            from_flag = ArgumentParser.from_flag(param)
-            if from_flag in SPARK_DIRECT_PARAM:
-                input_direct_params[from_flag] = value
-            elif from_flag in SPARK_ALLOWED_CONF_PARAM:
-                input_conf_params[SPARK_ALLOWED_CONF_PARAM[param]] = value
-        for param, value in tuner_cfg_dict.items():
-            from_flag = ArgumentParser.from_flag(param)
-            if from_flag in SPARK_DIRECT_PARAM:
-                input_direct_params[from_flag] = value
-            elif from_flag in SPARK_ALLOWED_CONF_PARAM.values():
-                # TODO make this flag-to-param mapping more explicit since
-                # it only exists for conf param and not for direct param
-                input_conf_params[from_flag] = value
+        # Note the order: tuner_cfg_dict takes precedence over arg_dict
+        # to ensure that all configurable parameters (i.e. range
+        # types) in the arg_dict are over-written by specific param
+        # values. TODO Might want to assert:
+        # type(param) is SparkParamType and type(param.value) is not tuple
+        input_dict = dict(ChainMap({}, tuner_cfg_dict, arg_dict))
+        for flag, param in input_dict.items():
+            if flag in FLAG_TO_DIRECT_PARAM:
+                input_direct_params[param.spark_name] = param.value
+            elif flag in FLAG_TO_CONF_PARAM:
+                input_conf_params[param.spark_name] = param.value
 
         # merge input dicts with defaults
+        direct_param_default = SparkParamType.get_value_map(
+            self.direct_param_default)
         direct_params = ChainMap(
-            {}, input_direct_params, self.direct_param_default)
-        conf_params = ChainMap({}, input_conf_params, self.conf_defaults)
+            {}, input_direct_params, direct_param_default)
+
+        conf_defaults = SparkParamType.get_value_map(self.conf_defaults)
+        conf_params = ChainMap({}, input_conf_params, conf_defaults)
 
         return dict(direct_params), dict(conf_params)
 
@@ -111,8 +112,8 @@ class SparkSubmitCmd:
         """
         Constructs spark-submit command
 
-        :param arg_dict: string dictionary of program arguments to their
-        values. This include Spark and non-Spark params. This dict is
+        :param arg_dict: maps program arguments to a SparkParamType object.
+        This include Spark and non-Spark params. This dict is
         required to contained the key ArgumentParser.JAR_PATH_ARG_NAME.
         :param tuner_cfg_dict:
         :return: a string representing an executable spark-submit
@@ -137,6 +138,14 @@ class SparkSubmitCmd:
         ])
 
     def __init__(self, direct_param_default=dict(), conf_defaults=dict()):
+        """
+        Note that these input dict are NOT keyed by program flags but
+        by native Spark parameter names
+        :param direct_param_default: maps direct Spark param name
+        to a SparkParamType object
+        :param conf_defaults: maps conf Spark param name
+        to a SparkParamType object
+        """
         self.direct_param_default = direct_param_default
         self.conf_defaults = conf_defaults
         return

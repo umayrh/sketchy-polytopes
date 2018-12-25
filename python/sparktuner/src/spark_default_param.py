@@ -75,7 +75,7 @@ class SparkParam(object):
 
 # Required parameters for spark-submit when running Spark JARs
 
-SPARK_REQUIRED_DIRECT_PARAM = ["name", "class", "master", "deploy_mode"]
+REQUIRED_FLAGS = ["name", "class", "master", "deploy_mode"]
 
 FLAG_TO_DIRECT_PARAM = {
     "name": SparkParam.NAME,
@@ -97,15 +97,18 @@ FLAG_TO_CONF_PARAM = {
     "spark_partitions": SparkParam.PARTITIONS
 }
 
+# These parameters are always included in a spark-submit command.
+# Default values are used where user input is unavailable.
 SPARK_CONF_PARAM = {
-    "spark.dynamicAllocation.enabled": True,
-    "spark.dynamicAllocation.maxExecutors": 2,
-    "spark.default.parallelism": 10,
-    "spark.sql.shuffle.partitions": 10,
-    "spark.eventLog.dir": "file:///tmp/spark-events",
-    "spark.eventLog.enabled": True,
-    "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version": 2,
-    "spark.shuffle.service.enabled": True,
-    "spark.sql.autoBroadcastJoinThreshold": 10485760,
-    "spark.yarn.maxAppAttempts": 1
+    "spark.dynamicAllocation.enabled": SparkParam.DA_ENABLED,
+    "spark.dynamicAllocation.maxExecutors": SparkParam.MAX_EXECUTORS,
+    "spark.default.parallelism": SparkParam.PARALLELISM,
+    "spark.sql.shuffle.partitions": SparkParam.PARTITIONS,
+    "spark.eventLog.dir": SparkParam.EVENTLOG_DIR,
+    "spark.eventLog.enabled": SparkParam.EVENTLOG_ENABLED,
+    "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version":
+        SparkParam.MR_OUTCOM_ALGO,
+    "spark.shuffle.service.enabled": SparkParam.SHUFFLE_ENABLED,
+    "spark.sql.autoBroadcastJoinThreshold": SparkParam.JOIN_THRESH,
+    "spark.yarn.maxAppAttempts": SparkParam.YARN_MAX_ATTEMPTS
 }

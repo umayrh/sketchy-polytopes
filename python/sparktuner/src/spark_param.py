@@ -27,6 +27,14 @@ class SparkParamType(object):
 
     RANGE_SEP = ","
 
+    @staticmethod
+    def get_value_map(arg_dict):
+        """
+        Returns the map from key to SparkParamType.value
+        for a given key-SparkParamType dict
+        """
+        return {k: arg_dict[k].value for k in arg_dict}
+
     def __init__(self,
                  spark_name,
                  value,

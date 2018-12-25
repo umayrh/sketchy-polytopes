@@ -1,24 +1,37 @@
 """This module tests spark-submit command formation"""
 
 import unittest
-from chainmap import ChainMap
 from args import ArgumentParser
 from spark_cmd import SparkSubmitCmd
-from spark_defaults import SPARK_REQUIRED_DIRECT_PARAM, \
-    SPARK_ALLOWED_CONF_PARAM
+from spark_default_param import SparkParam, \
+    REQUIRED_FLAGS, FLAG_TO_CONF_PARAM, \
+    FLAG_TO_DIRECT_PARAM
 
 
 class SparkSubmitCmdTest(unittest.TestCase):
     DEFAULT_PATH = "path/to"
+    REQ_DIRECT_PARAM = {
+        FLAG_TO_DIRECT_PARAM[k].spark_name: FLAG_TO_DIRECT_PARAM[k]
+        for k in REQUIRED_FLAGS}
+    DIRECT_PARAM = {
+        FLAG_TO_DIRECT_PARAM[k].spark_name: FLAG_TO_DIRECT_PARAM[k]
+        for k in FLAG_TO_DIRECT_PARAM}
+    CONF_PARAM = {
+        FLAG_TO_CONF_PARAM[k].spark_name: FLAG_TO_CONF_PARAM[k]
+        for k in FLAG_TO_CONF_PARAM}
 
     def setUp(self):
         self.cmder = SparkSubmitCmd()
 
     @staticmethod
     def make_required_args_dict():
-        args = {"path": SparkSubmitCmdTest.DEFAULT_PATH}
-        for param in SPARK_REQUIRED_DIRECT_PARAM:
-            args[ArgumentParser.to_flag(param)] = "test_value"
+        """Return a dict that map a required program flag to a
+        SparkParamType object"""
+        args = {ArgumentParser.JAR_PATH_ARG_NAME:
+                SparkSubmitCmdTest.DEFAULT_PATH}
+        for flag in REQUIRED_FLAGS:
+            args[flag] = \
+                FLAG_TO_DIRECT_PARAM[flag].make_param_from_str("test_value")
         return args
 
     @staticmethod
@@ -49,47 +62,60 @@ class SparkSubmitCmdTest(unittest.TestCase):
         args = self.make_required_args_dict()
         (direct, conf) = self.cmder.merge_params(args, {})
         self.assertTrue(len(conf) == 0)
-        for param in SPARK_REQUIRED_DIRECT_PARAM:
-            self.assertTrue(param in direct)
-            self.assertEqual(direct[param], "test_value")
+        for param in REQUIRED_FLAGS:
+            spark_name = FLAG_TO_DIRECT_PARAM[param].spark_name
+            self.assertTrue(spark_name in direct)
+            self.assertEqual(direct[spark_name], "test_value")
         # no conf param in direct
-        result_dict = {k for k in direct if k in SPARK_ALLOWED_CONF_PARAM}
-        self.assertTrue(len(result_dict) == 0)
+        conf_dict = {k for k in direct if k in SparkSubmitCmdTest.CONF_PARAM}
+        self.assertTrue(len(conf_dict) == 0)
 
     def test_merge_param_with_both_flags(self):
         args = self.make_required_args_dict()
-        for param in SPARK_ALLOWED_CONF_PARAM:
-            args[param] = (2, 2)
+        for flag, param in FLAG_TO_CONF_PARAM.items():
+            args[flag] = param.make_param_from_str("2,2")
         (direct, conf) = self.cmder.merge_params(args, {})
-        for param in SPARK_REQUIRED_DIRECT_PARAM:
+        for param in SparkSubmitCmdTest.REQ_DIRECT_PARAM:
             self.assertTrue(param in direct)
             self.assertEqual(direct[param], "test_value")
-        for param in SPARK_ALLOWED_CONF_PARAM:
-            self.assertTrue(SPARK_ALLOWED_CONF_PARAM[param] in conf)
-            self.assertEqual(conf[SPARK_ALLOWED_CONF_PARAM[param]], (2, 2))
+        for param in SparkSubmitCmdTest.CONF_PARAM:
+            self.assertTrue(param in conf)
+            self.assertEqual(conf[param], 2)
 
     def test_merge_param_with_tuner_cfg(self):
         args = self.make_required_args_dict()
         tuner_cfg = {}
-        for param in SPARK_ALLOWED_CONF_PARAM:
-            args[param] = (2, 2)
-            tuner_cfg[SPARK_ALLOWED_CONF_PARAM[param]] = (3, 3)
+        for flag, param in FLAG_TO_CONF_PARAM.items():
+            args[flag] = param.make_param_from_str("2,2")
+            tuner_cfg[flag] = param.make_param_from_str("3,3")
         (direct, conf) = self.cmder.merge_params(args, tuner_cfg)
-        for param in SPARK_ALLOWED_CONF_PARAM:
-            self.assertTrue(SPARK_ALLOWED_CONF_PARAM[param] in conf)
-            self.assertEqual(conf[SPARK_ALLOWED_CONF_PARAM[param]], (3, 3))
+        for spark_name in SparkSubmitCmdTest.CONF_PARAM:
+            self.assertTrue(spark_name in conf)
+            self.assertEqual(conf[spark_name], 3)
 
     def test_merge_param_with_defaults(self):
         args = self.make_required_args_dict()
-        tuner_cfg = {"spark.dynamicAllocation.maxExecutors": 23}
-        direct_default = {"executor-cores": 111, "driver-memory": 12000}
-        conf_default = {"spark.eventLog.dir": "file:///tmp/spark-events",
-                        "spark.yarn.maxAppAttempts": 123}
+        tuner_cfg = {
+            "max_executors":
+                SparkParam.MAX_EXECUTORS.make_param_from_str("23")}
+        direct_default = {
+            "executor-cores":
+                SparkParam.EXECUTOR_CORES.make_param_from_str("111"),
+            "driver-memory":
+                SparkParam.DRIVER_MEM.make_param_from_str("12000")}
+        conf_default = {
+            "spark.eventLog.dir":
+                SparkParam.EVENTLOG_DIR.make_param_from_str(
+                    "file:///tmp/spark-events"),
+            "spark.yarn.maxAppAttempts":
+                SparkParam.YARN_MAX_ATTEMPTS.make_param_from_str("123")}
+        expected_conf_dict = {
+            "spark.dynamicAllocation.maxExecutors": 23,
+            "spark.eventLog.dir": "file:///tmp/spark-events",
+            "spark.yarn.maxAppAttempts": 123}
+
         spark_cmd = SparkSubmitCmd(direct_default, conf_default)
         (direct, conf) = spark_cmd.merge_params(args, tuner_cfg)
-        expected_conf_dict = dict(ChainMap(
-            {"spark.dynamicAllocation.maxExecutors": 23},
-            conf_default))
 
         self.assertEqual(conf, expected_conf_dict)
         self.assertTrue("executor-cores" in direct)
@@ -99,9 +125,18 @@ class SparkSubmitCmdTest(unittest.TestCase):
 
     def test_make_cmd_no_prog_args(self):
         args = self.make_required_args_dict()
-        tuner_cfg = {"spark.default.parallelism": 231}
-        direct_default = {"executor-cores": 111, "driver-memory": 12000}
-        conf_default = {"spark.dynamicAllocation.maxExecutors": 23}
+        tuner_cfg = {
+            "spark_parallelism":
+                SparkParam.PARALLELISM.make_param_from_str("231")}
+        direct_default = {
+            "executor-cores":
+                SparkParam.EXECUTOR_CORES.make_param_from_str("111"),
+            "driver-memory":
+                SparkParam.DRIVER_MEM.make_param_from_str("12000")}
+        conf_default = {
+            "spark.dynamicAllocation.maxExecutors":
+                SparkParam.MAX_EXECUTORS.make_param_from_str("23")}
+
         spark_cmd = SparkSubmitCmd(direct_default, conf_default)
         cmd = spark_cmd.make_cmd(args, tuner_cfg).strip()
 
@@ -110,7 +145,7 @@ class SparkSubmitCmdTest(unittest.TestCase):
 
         (actual_direct, actual_conf) = self.parse_spark_cmd(cmd)
 
-        for param in SPARK_REQUIRED_DIRECT_PARAM:
+        for param in SparkSubmitCmdTest.REQ_DIRECT_PARAM:
             self.assertTrue(param in actual_direct)
         self.assertTrue("executor-cores" in actual_direct)
         self.assertEqual(actual_direct["executor-cores"], "111")
