@@ -35,6 +35,16 @@ class SparkParamType(object):
         """
         return {k: arg_dict[k].value for k in arg_dict}
 
+    @staticmethod
+    def get_range_param_map(param_dict):
+        """
+        :param param_dict: dict mapping to a SparkParamType
+        :return: the map from key to SparkParamType iff
+        SparkParamType.is_range_val is True
+        """
+        return dict(
+            filter(lambda p: p[1].is_range_val, param_dict.items()))
+
     def __init__(self,
                  spark_name,
                  value,
@@ -60,20 +70,48 @@ class SparkParamType(object):
     def cast_from_str(self, str_value):
         return str_value
 
-    """
-    Creates a new SparkParamType initialized using this object but with
-    value set by parsing the input string version of the value. str_value
-    may be a point or a range value.
-    """
     @abc.abstractmethod
     def make_param_from_str(self, str_value):
+        """
+        Creates a new SparkParamType initialized using this object but with
+        value set by parsing the input string version of the value. str_value
+        may be a point or a range value.
+        """
+        pass
+
+    @abc.abstractmethod
+    def make_param(self, value):
+        """
+        Creates a new SparkParamType initialized using this object but with
+        value set using the given value, which must be a point (or, non-range)
+        value, and hence not a tuple.
+        """
         pass
 
 
 class SparkNumericType(SparkParamType):
+    @staticmethod
+    def parse_range(str_value):
+        SparkParamParseError.raise_if_empty(str_value)
+        return str_value.split(SparkParamType.RANGE_SEP)
+
     @abc.abstractmethod
     def get_maybe_range_from_str(self, str_value):
         pass
+
+    @abc.abstractmethod
+    def make_param_from_str(self, str_value):
+        pass
+
+    def get_range_start(self):
+        if self.is_range_val:
+            return self.value[0]
+        return self.value
+
+    def get_range_end(self):
+        if self.is_range_val:
+            return self.value[1]
+        return self.value
 
     def cast_range_1(self, range_list):
         return self.cast_from_str(range_list[0])
@@ -86,25 +124,6 @@ class SparkNumericType(SparkParamType):
         return self.cast_from_str(range_list[0]), \
                self.cast_from_str(range_list[1]), \
                self.cast_from_str(range_list[2])
-
-    @abc.abstractmethod
-    def make_param_from_str(self, str_value):
-        pass
-
-    @staticmethod
-    def parse_range(str_value):
-        SparkParamParseError.raise_if_empty(str_value)
-        return str_value.split(SparkParamType.RANGE_SEP)
-
-    def get_range_start(self):
-        if self.is_range_val:
-            return self.value[0]
-        return self.value
-
-    def get_range_end(self):
-        if self.is_range_val:
-            return self.value[1]
-        return self.value
 
 
 class SparkStringType(SparkParamType):
@@ -121,15 +140,24 @@ class SparkStringType(SparkParamType):
     def make_param_from_str(self, str_value):
         return SparkStringType(self.spark_name, str_value, self.desc)
 
+    def make_param(self, value):
+        return self.make_param_from_str(value)
+
 
 class SparkIntType(SparkNumericType):
+    @staticmethod
+    def check_if_legal(int_value):
+        assert type(int_value) is int and int_value > 0
+
     def __init__(self, name, value, desc):
         assert type(value) is int or type(value) is tuple
         super(SparkIntType, self).__init__(name, value, True, desc)
 
     def cast_from_str(self, str_value):
         if str_value.isdigit():
-            return int(str_value)
+            int_value = int(str_value)
+            SparkIntType.check_if_legal(int_value)
+            return int_value
         raise SparkParamParseError(ValueError, "Expected int value")
 
     def get_maybe_range_from_str(self, str_value):
@@ -146,11 +174,20 @@ class SparkIntType(SparkNumericType):
                             self.get_maybe_range_from_str(str_value),
                             self.desc)
 
+    def make_param(self, value):
+        SparkIntType.check_if_legal(value)
+        return SparkIntType(self.spark_name, value, self.desc)
+
 
 class SparkMemoryType(SparkNumericType):
     def __init__(self, name, value, desc):
         assert type(value) is int or type(value) is tuple
         super(SparkMemoryType, self).__init__(name, value, True, desc)
+
+    def get_scale(self):
+        if type(self.value) is tuple:
+            return self.value[2]
+        return 1
 
     def cast_from_str(self, str_value):
         try:
@@ -176,8 +213,16 @@ class SparkMemoryType(SparkNumericType):
                                self.get_maybe_range_from_str(str_value),
                                self.desc)
 
+    def make_param(self, value):
+        SparkIntType.check_if_legal(value)
+        return SparkMemoryType(self.spark_name, value, self.desc)
+
 
 class SparkBooleanType(SparkParamType):
+    @staticmethod
+    def check_if_legal(value):
+        assert type(value) is bool
+
     def __init__(self, name, value, desc):
         assert type(value) is bool
         super(SparkBooleanType, self).__init__(name, value, True, desc)
@@ -194,3 +239,7 @@ class SparkBooleanType(SparkParamType):
         return SparkBooleanType(self.spark_name,
                                 self.cast_from_str(str_value),
                                 self.desc)
+
+    def make_param(self, value):
+        SparkBooleanType.check_if_legal(value)
+        return SparkBooleanType(self.spark_name, value, self.desc)

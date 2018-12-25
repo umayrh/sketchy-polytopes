@@ -6,15 +6,12 @@ from spark_param import SparkStringType, \
     SparkBooleanType, SparkIntType, SparkMemoryType
 
 
-class SparkParam(object):
-    """
-    Holds all Spark parameter objects
-    """
+class _SparkParam(object):
     # Parse the CSV file containing Spark conf param names, defaults,
     # and meaning. The result is placed into a dictionary that maps
     # parameter name to a tuple containing the parameter's Spark
     # default value, and the meaning.
-    SPARK_CONF_DICT = {}
+    __DICT = {}
     # This indirection helps run these scripts from any path
     __path = os.path.abspath(__file__)
     __dir_path = os.path.dirname(__path)
@@ -24,57 +21,75 @@ class SparkParam(object):
         next(param_reader)
         for row in param_reader:
             param_name = row[0].strip()
-            SPARK_CONF_DICT[param_name] = (row[1].strip(), row[2].strip())
-    # shorter alias
-    __DICT = SPARK_CONF_DICT
+            __DICT[param_name] = (row[1].strip(), row[2].strip())
+
+    # Maps Spark name to SparkParamType
+    def __init__(self, spark_param_dict):
+        self.spark_param_dict = spark_param_dict
+
+    def mk_string(self, spark_name, default_val, desc=None):
+        desc = desc if desc else _SparkParam.__DICT.get(spark_name, "")
+        param = SparkStringType(spark_name, default_val, desc)
+        self.spark_param_dict[spark_name] = param
+        return param
+
+    def mk_int(self, spark_name, default_val, desc=None):
+        desc = desc if desc else _SparkParam.__DICT.get(spark_name, "")
+        param = SparkIntType(spark_name, default_val, desc)
+        self.spark_param_dict[spark_name] = param
+        return param
+
+    def mk_memory(self, spark_name, default_val, desc=None):
+        desc = desc if desc else _SparkParam.__DICT.get(spark_name, "")
+        param = SparkMemoryType(spark_name, default_val, desc)
+        self.spark_param_dict[spark_name] = param
+        return param
+
+    def mk_boolean(self, spark_name, default_val, desc=None):
+        desc = desc if desc else _SparkParam.__DICT.get(spark_name, "")
+        param = SparkBooleanType(spark_name, default_val, desc)
+        self.spark_param_dict[spark_name] = param
+        return param
+
+
+class SparkParam(object):
+    """
+    Holds all Spark parameter objects
+    """
+    SPARK_PARAM_DICT = {}
+    __sp = _SparkParam(SPARK_PARAM_DICT)
+    mk_string = __sp.mk_string
+    mk_memory = __sp.mk_memory
+    mk_int = __sp.mk_int
+    mk_boolean = __sp.mk_boolean
 
     # All Spark parameters
-    NAME = SparkStringType("name", "spark_program", "Program name")
-    CLASS = SparkStringType(
+    NAME = mk_string("name", "spark_program", "Program name")
+    CLASS = mk_string(
         "class", "MainClass", "Fully qualified main class name")
-    MASTER = SparkStringType(
+    MASTER = mk_string(
         "master", "local[*]", "Spark master type: local/yarn/mesos")
-    DEPLOY_MODE = SparkStringType(
+    DEPLOY_MODE = mk_string(
         "deploy-mode", "client", "Deployment mode: client/cluster")
-    DRIVER_MEM = SparkMemoryType(
+    DRIVER_MEM = mk_memory(
         "driver-memory", 10485760, "Amount of driver memory")
-    EXECUTOR_MEM = SparkMemoryType(
+    EXECUTOR_MEM = mk_memory(
         "executor-memory", 10485760, "Amount of executor memory")
-    EXECUTOR_CORES = SparkIntType(
-        "executor-cores", 2, "Number of executor cores")
-    MAX_EXECUTORS = SparkIntType(
-        "spark.dynamicAllocation.maxExecutors", 2, "")
-    PARALLELISM = SparkIntType(
-        "spark.default.parallelism", 10,
-        __DICT["spark.default.parallelism"])
-    PARTITIONS = SparkIntType(
-        "spark.sql.shuffle.partitions", 10,
-        __DICT["spark.sql.shuffle.partitions"])
-    DA_ENABLED = SparkBooleanType(
-        "spark.dynamicAllocation.enabled", True,
-        __DICT["spark.dynamicAllocation.enabled"])
-    EVENTLOG_DIR = SparkStringType(
-        "spark.eventLog.dir", "file:///tmp/spark-events",
-        __DICT["spark.eventLog.dir"])
-    EVENTLOG_ENABLED = SparkBooleanType(
-        "spark.eventLog.enabled", True, __DICT["spark.eventLog.enabled"])
-    MR_OUTCOM_ALGO = SparkStringType(
-        "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version", "2",
-        __DICT["spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version"]
-    )
-    SHUFFLE_ENABLED = SparkBooleanType(
-        "spark.shuffle.service.enabled", True,
-        __DICT["spark.shuffle.service.enabled"])
-    JOIN_THRESH = SparkMemoryType(
-        "spark.sql.autoBroadcastJoinThreshold", 10485760,
-        __DICT["spark.sql.autoBroadcastJoinThreshold"])
-    YARN_MAX_ATTEMPTS = SparkIntType(
-        "spark.yarn.maxAppAttempts", 1,
-        __DICT["spark.yarn.maxAppAttempts"])
+    EXECUTOR_CORES = mk_int("executor-cores", 2, "Number of executor cores")
+    MAX_EXECUTORS = mk_int("spark.dynamicAllocation.maxExecutors", 2)
+    PARALLELISM = mk_int("spark.default.parallelism", 10)
+    PARTITIONS = mk_int("spark.sql.shuffle.partitions", 10)
+    DA_ENABLED = mk_boolean("spark.dynamicAllocation.enabled", True)
+    EVENTLOG_DIR = mk_string("spark.eventLog.dir", "file:///tmp/spark-events")
+    EVENTLOG_ENABLED = mk_boolean("spark.eventLog.enabled", True)
+    MR_OUTCOM_ALGO = mk_string(
+        "spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version", "2")
+    SHUFFLE_ENABLED = mk_boolean("spark.shuffle.service.enabled", True)
+    JOIN_THRESH = mk_memory("spark.sql.autoBroadcastJoinThreshold", 10485760)
+    YARN_MAX_ATTEMPTS = mk_int("spark.yarn.maxAppAttempts", 1)
 
 
 # Required parameters for spark-submit when running Spark JARs
-
 REQUIRED_FLAGS = ["name", "class", "master", "deploy_mode"]
 
 FLAG_TO_DIRECT_PARAM = {

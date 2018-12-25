@@ -74,8 +74,9 @@ class SparkSubmitCmd:
 
         :param arg_dict: program argument dict that maps a program flag
         to corresponding SparkParamType
-        :param tuner_cfg_dict: OpenTuner config dict, which map a Spark
-        parameter (not a program flag) to corresponding SparkParamType
+        :param tuner_cfg_dict: OpenTuner config dict, which map a program
+        flag to a corresponding SparkParamType, which is guaranteed to be
+        a non-range value
         :return: a tuple of two dicts, the first containing all
         Spark direct parameters, and the second containing all
         Spark conf parameters. The keys for both are Spark parameter names,
@@ -113,9 +114,9 @@ class SparkSubmitCmd:
         Constructs spark-submit command
 
         :param arg_dict: maps program arguments to a SparkParamType object.
-        This include Spark and non-Spark params. This dict is
-        required to contained the key ArgumentParser.JAR_PATH_ARG_NAME.
-        :param tuner_cfg_dict:
+        This include Spark and non-Spark params. This dict must contain
+        the key: ArgumentParser.JAR_PATH_ARG_NAME.
+        :param tuner_cfg_dict: maps a Spark parameter to a specific value
         :return: a string representing an executable spark-submit
         command
         """
