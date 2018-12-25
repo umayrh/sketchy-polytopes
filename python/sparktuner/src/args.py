@@ -3,8 +3,9 @@
 import argparse
 from humanfriendly import parse_size
 from spark_defaults import SPARK_REQUIRED_DIRECT_PARAM,\
-    SPARK_ALLOWED_CONF_PARAM, SPARK_CONF_PARAM_DICT, \
+    SPARK_ALLOWED_CONF_PARAM, \
     SPARK_DIRECT_PARAM, SPARK_DIRECT_PARAM_ARGS
+from spark_default_param import SparkParam
 
 
 class ArgumentParserError(Exception):
@@ -17,6 +18,33 @@ class ArgumentParserError(Exception):
 class ArgumentParser(argparse.ArgumentParser):
     JAR_PATH_ARG_NAME = "path"
     PROGRAM_CONF_ARG_NAME = "program_conf"
+
+    @staticmethod
+    def is_range(param_value):
+        """
+        TODO fine-tune this method to account for non-integer or user-given
+        step sizes
+        :param param_value: a parameter values that should be a tuple
+        expressing a range. The method expects this to be of type tuple
+        :return: true iff the first value of the tuple is strictly less
+        than the second value.
+        """
+        assert type(param_value) is tuple
+        return param_value[0] < param_value[1]
+
+    @staticmethod
+    def get_conf_parameters(arg_dict):
+        """
+        Returns parameters that are allowed for used in tuning AND
+        associated with a range of values.
+        :param arg_dict: a dict of all program input arguments
+        :return: a dict of Spark parameters (direct and/or conf) and
+        associated ranges
+        """
+        # TODO
+        # find configurable direct params
+        # find configurable conf params
+        pass
 
     @staticmethod
     def cast(str_value):
@@ -113,7 +141,7 @@ class ArgumentParser(argparse.ArgumentParser):
             param_flag = self.make_flag(param)
             conf_name = SPARK_ALLOWED_CONF_PARAM[param]
             param_meaning = \
-                SPARK_CONF_PARAM_DICT.get(conf_name, ("", conf_name))[1]
+                SparkParam.SPARK_CONF_DICT.get(conf_name, ("", conf_name))[1]
             self.add_argument(param_flag, type=self.type_int_range,
                               help=param_meaning)
 

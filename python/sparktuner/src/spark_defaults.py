@@ -1,8 +1,5 @@
 """This module describes all Spark parameters and their defaults"""
 
-import csv
-import os
-
 # TODO: use immutables
 
 # Required parameters for spark-submit when running Spark JARs
@@ -30,6 +27,8 @@ SPARK_DIRECT_PARAM_ARGS = {
 
 # Conf whitelist
 
+# These are allowed in the sense that they may be
+# manipulated by OpenTuner for tuning
 SPARK_ALLOWED_CONF_PARAM = {
     "max-executors": "spark.dynamicAllocation.maxExecutors",
     "spark-parallelism": "spark.default.parallelism",
@@ -48,19 +47,3 @@ SPARK_CONF_PARAM = {
     "spark.sql.autoBroadcastJoinThreshold": 10485760,
     "spark.yarn.maxAppAttempts": 1
 }
-
-# Parse the CSV file containing Spark conf param names, defaults, and meaning.
-# The result is placed into a dictionary that maps parameter name to a tuple
-# containing the parameter's Spark default value, and the meaning.
-SPARK_CONF_PARAM_DICT = {}
-# This indirection helps run these scripts from any path
-path = os.path.abspath(__file__)
-dir_path = os.path.dirname(path)
-conf_file = os.path.join(dir_path, "spark_2_4_params.csv")
-with open(conf_file, 'rb') as csv_file:
-    param_reader = csv.reader(csv_file)
-    next(param_reader)
-    for row in param_reader:
-        param_name = row[0].strip
-        if param_name in SPARK_CONF_PARAM:
-            SPARK_CONF_PARAM_DICT[param_name] = (row[1].strip, row[2].strip)

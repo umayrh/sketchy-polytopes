@@ -8,6 +8,7 @@ class SparkSubmitCmd:
     Constructs spark-submit command
     """
     CMD_SEPARATOR = " "
+    CONF_SEPARATOR = "="
     SPARK_SUBMIT_PATH = "/usr/local/bin/spark-submit"
 
     @staticmethod
@@ -55,7 +56,9 @@ class SparkSubmitCmd:
                 subcmd_list.append(param_flag)
                 subcmd_list.append(value_str)
             else:
-                subcmd_list.append("=".join([param_flag, value_str]))
+                cmd_phrase = SparkSubmitCmd.CONF_SEPARATOR.join(
+                    [param_flag, value_str])
+                subcmd_list.append(cmd_phrase)
 
         return SparkSubmitCmd.CMD_SEPARATOR.join(subcmd_list)
 

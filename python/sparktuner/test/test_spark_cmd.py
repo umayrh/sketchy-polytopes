@@ -12,7 +12,6 @@ class SparkSubmitCmdTest(unittest.TestCase):
     DEFAULT_PATH = "path/to"
 
     def setUp(self):
-        self.parser = ArgumentParser()
         self.cmder = SparkSubmitCmd()
 
     @staticmethod
@@ -91,6 +90,7 @@ class SparkSubmitCmdTest(unittest.TestCase):
         expected_conf_dict = dict(ChainMap(
             {"spark.dynamicAllocation.maxExecutors": 23},
             conf_default))
+
         self.assertEqual(conf, expected_conf_dict)
         self.assertTrue("executor-cores" in direct)
         self.assertEqual(direct["executor-cores"], 111)
@@ -104,9 +104,12 @@ class SparkSubmitCmdTest(unittest.TestCase):
         conf_default = {"spark.dynamicAllocation.maxExecutors": 23}
         spark_cmd = SparkSubmitCmd(direct_default, conf_default)
         cmd = spark_cmd.make_cmd(args, tuner_cfg).strip()
+
         self.assertTrue(cmd.startswith(SparkSubmitCmd.SPARK_SUBMIT_PATH))
         self.assertTrue(cmd.endswith(SparkSubmitCmdTest.DEFAULT_PATH))
+
         (actual_direct, actual_conf) = self.parse_spark_cmd(cmd)
+
         for param in SPARK_REQUIRED_DIRECT_PARAM:
             self.assertTrue(param in actual_direct)
         self.assertTrue("executor-cores" in actual_direct)
