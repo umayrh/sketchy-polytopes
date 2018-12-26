@@ -1,3 +1,5 @@
+# R projects
+
 ## Perfunctory preamble
 
 This directory contains R code, that is structured using [devtools](https://github.com/hadley/devtools), documented using

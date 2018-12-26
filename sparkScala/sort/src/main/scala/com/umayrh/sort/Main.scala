@@ -2,7 +2,7 @@ package com.umayrh.sort
 
 import org.apache.spark.sql.SparkSession
 
-import scala.util.Random
+import org.apache.spark.mllib.random.RandomRDDs._
 
 /**
   * Trait for Spark applications
@@ -21,6 +21,24 @@ trait SparkBase {
   }
 }
 
+/**
+  * A simple utility for generating, sorting and writing a given
+  * number of uniformly random doubles.
+  *
+  * The utility uses Spark Mllib's RandomRDD API. The simple
+  * alternative is:
+  *
+  *   val randNums = spark.sparkContext
+  *     .parallelize(
+  *       Seq.fill(args(0).toInt)(Random.nextInt),
+  *       partitions
+  *   )
+  *   .toDF(COL_NAME)
+  *
+  * Nonetheless, it will cause:
+  *   Exception in thread "main" java.lang.OutOfMemoryError: GC overhead limit exceeded
+  *       at scala.collection.mutable.ListBuffer.$plus$eq(ListBuffer.scala:174)
+  */
 object Main extends SparkBase {
   val COL_NAME = "col"
 
@@ -31,21 +49,24 @@ object Main extends SparkBase {
       System.exit(1)
     }
 
+    val dataSize = args(0).toLong
+    val outputDirPath = args(1)
+    val partitions =
+      spark.sparkContext.getConf.get("spark.default.parallelism", "1").toInt
+    val outputPartitions = 1
+
     import spark.implicits._
-    val randNums = spark.sparkContext
-      .parallelize(
-        Seq.fill(args(0).toInt)(Random.nextInt),
-        spark.sparkContext.getConf.get("spark.default.parallelism", "1").toInt
-      )
-      .toDF(COL_NAME)
+
+    val randNums =
+      uniformRDD(spark.sparkContext, dataSize, partitions).toDF(COL_NAME)
 
     val sortedRands = randNums.sort(COL_NAME)
     sortedRands
-      .coalesce(1)
+      .coalesce(outputPartitions)
       .write
       .format("com.databricks.spark.csv")
       .option("header", "false")
-      .save(args(1))
+      .save(outputDirPath)
     spark.stop()
   }
 }

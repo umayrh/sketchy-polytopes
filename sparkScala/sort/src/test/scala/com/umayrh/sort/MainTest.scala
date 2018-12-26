@@ -1,6 +1,6 @@
 package com.umayrh.sort
 
-import com.holdenkarau.spark.testing.{DataFrameSuiteBase, SharedSparkContext}
+import com.holdenkarau.spark.testing.DataFrameSuiteBase
 import com.google.common.io.{MoreFiles, RecursiveDeleteOption}
 import java.io.{File, FilenameFilter}
 
