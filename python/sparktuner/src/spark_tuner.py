@@ -90,14 +90,15 @@ class SparkConfigTuner(MeasurementInterface):
         """
         Runs a program for given configuration and returns the result
         """
+        arg_dict = vars(self.args)
         cfg_data = desired_result.configuration.data
-        param_dict = SparkParamType.get_range_param_map(vars(self.args))
+        param_dict = SparkParamType.get_range_param_map(arg_dict)
         # Seems strange making a SparkParamType out of a value but it helps
         # maintain a consistent interface to SparkSubmitCmd
         tuner_cfg = {k: param_dict[k].make_param(
             cfg_data[param_dict[k].spark_name]) for k in param_dict}
 
-        run_cmd = SparkSubmitCmd.make_cmd(vars(self.args), tuner_cfg)
+        run_cmd = SparkSubmitCmd.make_cmd(arg_dict, tuner_cfg)
 
         run_result = self.call_program(run_cmd)
         assert run_result['returncode'] == 0
