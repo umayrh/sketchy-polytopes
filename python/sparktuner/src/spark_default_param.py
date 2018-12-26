@@ -56,6 +56,7 @@ class SparkParam(object):
     """
     Holds all Spark parameter objects
     """
+    # Map all parameters from Spark name to SparkParamType
     SPARK_PARAM_DICT = {}
     __sp = _SparkParam(SPARK_PARAM_DICT)
     mk_string = __sp.mk_string

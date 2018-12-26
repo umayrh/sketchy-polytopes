@@ -1,5 +1,4 @@
 from chainmap import ChainMap
-from args import ArgumentParser
 from spark_param import SparkParamType
 from spark_default_param import FLAG_TO_DIRECT_PARAM, FLAG_TO_CONF_PARAM
 
@@ -109,23 +108,21 @@ class SparkSubmitCmd:
 
         return dict(direct_params), dict(conf_params)
 
-    def make_cmd(self, arg_dict, tuner_cfg_dict):
+    def make_cmd(self, jar_path, program_conf, arg_dict, tuner_cfg_dict):
         """
         Constructs spark-submit command
 
+        :param jar_path: string path to a JAR file
+        :param program_conf: string representing arguments to program in
+        the JAR
         :param arg_dict: maps program arguments to a SparkParamType object.
-        This include Spark and non-Spark params. This dict must contain
-        the key: ArgumentParser.JAR_PATH_ARG_NAME.
-        :param tuner_cfg_dict: maps a Spark parameter to a specific value
+        This dict must contain the key: ArgumentParser.JAR_PATH_ARG_NAME.
+        :param tuner_cfg_dict: config dict, which map a program
+        flag to a corresponding SparkParamType, which is guaranteed to be
+        a non-range value
         :return: a string representing an executable spark-submit
         command
         """
-        # extract path and program_conf args
-        assert ArgumentParser.JAR_PATH_ARG_NAME in arg_dict
-        jar_path = arg_dict.get(ArgumentParser.JAR_PATH_ARG_NAME)
-        program_conf = \
-            arg_dict.get(ArgumentParser.PROGRAM_CONF_ARG_NAME, "")
-
         # merge input parameter
         (direct_params, conf_params) = \
             self.merge_params(arg_dict, tuner_cfg_dict)

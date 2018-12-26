@@ -15,6 +15,10 @@ The Java source directories may only contain Java source code. None of these
 directories need to exist or have anything in them; the Scala plugin will simply 
 compile whatever it finds."
 
+## Spark
+
+See [SPARK.md](./SPARK.md)
+
 ## References
 
 * [Gradle Scala plugin](https://docs.gradle.org/current/userguide/scala_plugin.html)

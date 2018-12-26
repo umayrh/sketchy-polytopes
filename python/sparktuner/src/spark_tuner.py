@@ -5,6 +5,7 @@ configurable parameters, possibly a given range instead of a point value.
 # import adddeps  # fix sys.path
 
 import logging
+import os
 from opentuner import (MeasurementInterface, Result, argparsers)
 from opentuner.search.manipulator import (ConfigurationManipulator,
                                           IntegerParameter,
@@ -62,24 +63,26 @@ class SparkConfigTuner(MeasurementInterface):
         Defines the search space across configuration parameters
         """
         manipulator = ConfigurationManipulator()
-        param_dict = SparkParamType.get_range_param_map(vars(self.args))
-        for param in param_dict.values():
-            spark_name = param.spark_name
+        # Extract ranged SparkParamType objects from arguments
+        param_dict = SparkParamType.get_param_map(
+            vars(self.args), lambda p: p.is_range_val)
+
+        for flag, param in param_dict.items():
             param_type = type(param)
             tuner_param = None
             if param_type is SparkIntType:
                 tuner_param = IntegerParameter(
-                    spark_name,
+                    flag,
                     param.get_range_start(),
                     param.get_range_end)
             elif param_type is SparkMemoryType:
                 tuner_param = ScaledIntegerParameter(
-                    spark_name,
+                    flag,
                     param.get_range_start(),
                     param.get_range_end,
                     param.get_scale)
             elif param_type is SparkBooleanType:
-                tuner_param = BooleanParameter(spark_name)
+                tuner_param = BooleanParameter(flag)
             else:
                 raise SparkTunerConfigError(
                     ValueError, "Invalid type for ConfigurationManipulator")
@@ -91,14 +94,24 @@ class SparkConfigTuner(MeasurementInterface):
         Runs a program for given configuration and returns the result
         """
         arg_dict = vars(self.args)
+        jar_path = arg_dict.get(ArgumentParser.JAR_PATH_ARG_NAME)
+        program_conf = arg_dict.get(ArgumentParser.PROGRAM_CONF_ARG_NAME, "")
+        # This config dict is keyed by the program flag. See
+        # manipulator().
         cfg_data = desired_result.configuration.data
-        param_dict = SparkParamType.get_range_param_map(arg_dict)
+        # Extract all SparkParamType objects from map
+        param_dict = SparkParamType.get_param_map(arg_dict)
         # Seems strange making a SparkParamType out of a value but it helps
         # maintain a consistent interface to SparkSubmitCmd
-        tuner_cfg = {k: param_dict[k].make_param(
-            cfg_data[param_dict[k].spark_name]) for k in param_dict}
+        tuner_cfg = {flag: param_dict[flag].make_param(
+            cfg_data[flag]) for flag in cfg_data}
 
-        run_cmd = SparkSubmitCmd.make_cmd(arg_dict, tuner_cfg)
+        # TODO figure out appropriate defaults
+        spark_submit = SparkSubmitCmd({}, {})
+        # make_cmd() expects only dicts of flags to SparkParamType as input
+        run_cmd = spark_submit.make_cmd(
+            jar_path, program_conf, param_dict, tuner_cfg)
+        log.info(run_cmd)
 
         run_result = self.call_program(run_cmd)
         assert run_result['returncode'] == 0
@@ -107,10 +120,12 @@ class SparkConfigTuner(MeasurementInterface):
 
     def save_final_config(self, configuration):
         """Saves optimal configuration, after tuning, to a file"""
-        program_name = self.args.get("name", "spark_program")
-        file_name = program_name + "_final_config.json"
-        log.info("Writing final config", file_name, configuration.data)
-        self.manipulator().save_to_file(configuration.data, file_name)
+        if self.args.out_config is not None:
+            file_name = os.path.join(
+                self.args.output_config,
+                self.args.name + "_final_config.json")
+            log.info("Writing final config", file_name, configuration.data)
+            self.manipulator().save_to_file(configuration.data, file_name)
 
     @staticmethod
     def make_parser():

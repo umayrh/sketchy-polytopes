@@ -1,5 +1,7 @@
 # Sort
 
+## Intro
+
 A simple utility for generating, sorting and writing a given
 number of uniformly random doubles. The utility uses Spark Mllib's 
 RandomRDD API. The simple alternative is:
@@ -34,3 +36,7 @@ spark-submit \
 ```
 
 The output CSV file should be inside the `/tmp/maintestout` directory.
+
+## References
+
+* [Random data generation](https://spark.apache.org/docs/2.3.0/mllib-statistics.html#random-data-generation)

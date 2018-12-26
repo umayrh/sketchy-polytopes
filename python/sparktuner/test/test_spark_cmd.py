@@ -1,7 +1,6 @@
 """This module tests spark-submit command formation"""
 
 import unittest
-from args import ArgumentParser
 from spark_cmd import SparkSubmitCmd
 from spark_default_param import SparkParam, \
     REQUIRED_FLAGS, FLAG_TO_CONF_PARAM, \
@@ -22,13 +21,13 @@ class SparkSubmitCmdTest(unittest.TestCase):
 
     def setUp(self):
         self.cmder = SparkSubmitCmd()
+        self.jar = SparkSubmitCmdTest.DEFAULT_PATH
 
     @staticmethod
     def make_required_args_dict():
         """Return a dict that map a required program flag to a
         SparkParamType object"""
-        args = {ArgumentParser.JAR_PATH_ARG_NAME:
-                SparkSubmitCmdTest.DEFAULT_PATH}
+        args = {}
         for flag in REQUIRED_FLAGS:
             args[flag] = \
                 FLAG_TO_DIRECT_PARAM[flag].make_param_from_str("test_value")
@@ -138,7 +137,7 @@ class SparkSubmitCmdTest(unittest.TestCase):
                 SparkParam.MAX_EXECUTORS.make_param_from_str("23")}
 
         spark_cmd = SparkSubmitCmd(direct_default, conf_default)
-        cmd = spark_cmd.make_cmd(args, tuner_cfg).strip()
+        cmd = spark_cmd.make_cmd(self.jar, "", args, tuner_cfg).strip()
 
         self.assertTrue(cmd.startswith(SparkSubmitCmd.SPARK_SUBMIT_PATH))
         self.assertTrue(cmd.endswith(SparkSubmitCmdTest.DEFAULT_PATH))

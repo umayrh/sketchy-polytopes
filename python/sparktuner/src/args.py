@@ -19,6 +19,7 @@ class ArgumentParser(argparse.ArgumentParser):
     """
     JAR_PATH_ARG_NAME = "path"
     PROGRAM_CONF_ARG_NAME = "program_conf"
+    CONFIG_OUTPUT_PATH = "out_config"
     PROGRAM_FLAGS = ChainMap(FLAG_TO_DIRECT_PARAM, FLAG_TO_CONF_PARAM)
 
     @staticmethod
@@ -35,6 +36,9 @@ class ArgumentParser(argparse.ArgumentParser):
         self.add_argument(ArgumentParser.make_flag(self.PROGRAM_CONF_ARG_NAME),
                           type=str, required=False,
                           help="Program-specific parameters")
+        self.add_argument(ArgumentParser.make_flag(self.CONFIG_OUTPUT_PATH),
+                          type=str, required=False,
+                          help="Output config storage location")
 
         for param in ArgumentParser.PROGRAM_FLAGS:
             required = True if param in REQUIRED_FLAGS else False

@@ -36,14 +36,19 @@ class SparkParamType(object):
         return {k: arg_dict[k].value for k in arg_dict}
 
     @staticmethod
-    def get_range_param_map(param_dict):
+    def get_param_map(param_dict, filter_lambda=lambda a: True):
         """
-        :param param_dict: dict mapping to a SparkParamType
-        :return: the map from key to SparkParamType iff
-        SparkParamType.is_range_val is True
+        :param param_dict: dict mapping to objects, including of
+        type SparkParamType
+        :param filter_lambda: one-arg lambda function that operates
+        on a SparkParamType object
+        :return: the map from key to SparkParamType iff both
+        object type is SparkParamType and given lambda is True
         """
-        return dict(
-            filter(lambda p: p[1].is_range_val, param_dict.items()))
+        return dict(filter(
+            lambda p:
+            issubclass(type(p[1]), SparkParamType) and filter_lambda(p[1]),
+            param_dict.items()))
 
     def __init__(self,
                  spark_name,
