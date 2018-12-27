@@ -31,9 +31,9 @@ class MainTest
 
   Feature("Class to generate, sort and write random numbers to a CSV file") {
 
-    Scenario("A million random numbers are generated") {
-      Given("Program inputs: a million, and output file location")
-      val dataSize = math.pow(10, 6).toInt
+    Scenario("A thousand random numbers are generated") {
+      Given("Program inputs: a thousand, and output file location")
+      val dataSize = math.pow(10, 3).toInt
       val outputLocation = outputFile.getAbsolutePath
       outputFile.delete()
 
