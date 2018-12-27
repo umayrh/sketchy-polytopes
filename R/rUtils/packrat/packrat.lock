@@ -89,7 +89,7 @@ Hash: e53fb8c58673df868183697e39a6a4d6
 
 Package: git2r
 Source: CRAN
-Version: 0.19.0
+Version: 0.23.0
 Hash: f4f7966fc357f60dc62dbffcea917eef
 
 Package: httr
@@ -201,7 +201,7 @@ Hash: e2ebaff8160aff3e6b32e6e78a693c2d
 
 Package: stringi
 Source: CRAN
-Version: 1.1.5
+Version: 1.2.4
 Hash: b6308e49357a0b475f433599e0d8b5eb
 
 Package: stringr

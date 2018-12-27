@@ -44,7 +44,7 @@ Compiling R packages on Mac is a bit more [involved](https://github.com/Rdatatab
 
 * Get the latest XCode from AppStore
 * Install `clang`: `brew update && brew install llvm`
-* Update `~/R/.Makevars` to use `clang`:
+* Update `~/.R/Makevars` to use `clang`:
 ```
 CC=/usr/local/opt/llvm/bin/clang -fopenmp
 CXX=/usr/local/opt/llvm/bin/clang++
