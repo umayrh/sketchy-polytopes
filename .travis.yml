@@ -5,7 +5,7 @@ dist: trusty
 before_install: ./travis/travis-setup.sh
 
 install:
-  - ./gradlew check -x packratClean
+  - ./gradlew check -x packratClean --parallel
 
 scala:
   - 2.12.3
