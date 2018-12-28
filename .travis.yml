@@ -1,6 +1,6 @@
 language: generic
 sudo: required
-dist: xenial
+dist: trusty # promote to xenial when Neo4j works with Java 11
 
 before_install: ./travis/travis-setup.sh
 
@@ -23,9 +23,6 @@ cache:
     - $HOME/.m2
     - $HOME/.cache
     - $HOME/.cache/pip
-    - /usr/lib/R/library
-    - /usr/lib/R/site-library
-    - /usr/local/lib/R/site-library
     - $TRAVIS_BUILD_DIR/packrat/src
     - $TRAVIS_BUILD_DIR/packrat/lib
     - $TRAVIS_BUILD_DIR/build/venv/lib
