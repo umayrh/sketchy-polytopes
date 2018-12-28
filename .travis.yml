@@ -4,6 +4,11 @@ sudo: required
 # https://travis-ci.community/t/oracle-jdk-11-and-10-are-pre-installed-not-the-openjdk-builds/785/6
 dist: trusty
 
+addons:
+  apt:
+    packages:
+      - axel
+
 before_install: ./travis/travis-setup.sh
 
 install:

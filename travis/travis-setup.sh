@@ -7,7 +7,15 @@ set -ex
 
 CRAN=${CRAN:-"http://cran.rstudio.com"}
 OS=$(uname -s)
+
+## Service versions
 NEO4J_VERSION=${NEO4J_VERSION:-"3.4.1"}
+# TODO: this should really come from sparkScala/gradle.properties
+SPARK_VERSION=${SPARK_VERSION:-"2.4.0"}
+HADOOP_VERSION=${HADOOP_VERSION:-"2.7"}
+
+## Software versions
+LEMON_VERSION=${LEMON_VERSION:-"1.3.1"}
 
 ## Check OS type
 bootstrap() {
@@ -20,9 +28,26 @@ bootstrap() {
 }
 
 bootstrapLinux() {
+    # These functions should be independent and idempotent
+    setupSpark
     setupNeo4j
     setupR
     installLemon
+}
+
+## Installs a specific version of Spark
+setupSpark() {
+    local SPARK_DIR_NAME=spark-${SPARK_VERSION}
+    if [ ! -d "$HOME/.cache/${SPARK_DIR_NAME}" ]; then
+        cd $HOME/.cache
+        SPARK_DIST_NAME=${SPARK_DIR_NAME}-bin-hadoop${HADOOP_VERSION}
+        axel http://www-us.apache.org/dist/spark/${SPARK_DIR_NAME}/${SPARK_DIST_NAME}.tgz
+        tar -xf ./${SPARK_DIST_NAME}.tgz
+        export SPARK_HOME=`pwd`/${SPARK_DIST_NAME}
+        # TODO: need a more systematic method for setting up Spark properties
+        echo "spark.yarn.jars=${SPARK_HOME}/jars/*.jar" > ${SPARK_HOME}/conf/spark-defaults.conf
+        cd ..
+    fi
 }
 
 ## Installs a specific version of Neo4j
@@ -30,7 +55,7 @@ bootstrapLinux() {
 setupNeo4j() {
     cd $HOME/.cache
     if [ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]; then
-        wget -P . dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
+        axel dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
         tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
     fi
     neo4j-community-${NEO4J_VERSION}/bin/neo4j start
@@ -57,13 +82,15 @@ setupR() {
 
 # Build and installs LEMON from source
 installLemon() {
-    if [ ! -d "$HOME/.cache/lemon-1.3.1" ]; then
-        wget -P $HOME/.cache http://lemon.cs.elte.hu/pub/sources/lemon-1.3.1.tar.gz
-        cd $HOME/.cache && tar xzvf lemon-1.3.1.tar.gz
-        cd lemon-1.3.1 && mkdir build && cd build
+    if [ ! -d "$HOME/.cache/lemon-${LEMON_VERSION}" ]; then
+        cd $HOME/.cache
+        axel http://lemon.cs.elte.hu/pub/sources/${LEMON_VERSION}.tar.gz
+        cd $HOME/.cache && tar xzvf lemon-${LEMON_VERSION}.tar.gz
+        cd lemon-${LEMON_VERSION} && mkdir build && cd build
         cmake ..
         make
         sudo make install
+        cd $HOME
     fi
 }
 
