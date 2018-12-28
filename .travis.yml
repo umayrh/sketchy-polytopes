@@ -1,6 +1,8 @@
 language: generic
 sudo: required
-dist: trusty # promote to xenial when Neo4j works with Java 11
+# Promote to xenial when Travis fixes
+# https://travis-ci.community/t/oracle-jdk-11-and-10-are-pre-installed-not-the-openjdk-builds/785/6
+dist: trusty
 
 before_install: ./travis/travis-setup.sh
 
@@ -26,10 +28,6 @@ cache:
     - $TRAVIS_BUILD_DIR/packrat/src
     - $TRAVIS_BUILD_DIR/packrat/lib
     - $TRAVIS_BUILD_DIR/build/venv/lib
-
-before_cache:
-    - mkdir -p /usr/lib/R/library && chmod -R 2777 /usr/lib/R/library
-    - mkdir -p /usr/lib/R/site-library && chmod -R 2777 /usr/lib/R/site-library
 
 branches:
   only:
