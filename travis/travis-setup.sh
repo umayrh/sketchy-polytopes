@@ -28,14 +28,16 @@ bootstrapLinux() {
 ## Installs a specific version of Neo4j
 ## see https://github.com/travis-ci/travis-ci/issues/3243
 setupNeo4j() {
+    cd $HOME/.cache
     if [ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]; then
-        wget -P $HOME/.cache dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
-        cd $HOME/.cache && tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
-        neo4j-community-${NEO4J_VERSION}/bin/neo4j start
-        # give Neo4J some time to start
-        retry curl -v POST http://neo4j:neo4j@localhost:7474/user/neo4j/password -d"password=neo4j2"
-        curl -v POST http://neo4j:neo4j2@localhost:7474/user/neo4j/password -d"password=neo4j"
+        wget -P . dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
+        tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
     fi
+    neo4j-community-${NEO4J_VERSION}/bin/neo4j start
+    # give Neo4J some time to start
+    retry curl -v POST http://neo4j:neo4j@localhost:7474/user/neo4j/password -d"password=neo4j2"
+    curl -v POST http://neo4j:neo4j2@localhost:7474/user/neo4j/password -d"password=neo4j"
+    cd ..
 }
 
 ## Installs r-base and make R libs writable
@@ -48,7 +50,6 @@ setupR() {
     sudo add-apt-repository -y "ppa:marutter/c2d4u"
 
     retry sudo apt-get update -qq
-
     retry sudo apt-get install -y --no-install-recommends r-base-dev r-recommended qpdf
 
     sudo chmod 2777 /usr/local/lib/R /usr/local/lib/R/site-library
