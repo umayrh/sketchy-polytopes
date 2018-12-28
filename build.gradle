@@ -7,6 +7,7 @@ subprojects {
     apply plugin: 'project-report'
 
     task listAllDependencies(type: DependencyReportTask) {}
+
     configurations {
         compileProject.extendsFrom compile, archives
         runtimeProject.extendsFrom runtime, archives
@@ -15,5 +16,5 @@ subprojects {
 
 htmlDependencyReport {
     projects = project.allprojects
-    reports.html.destination = file("build/reports/project/dependencies")
+    reports.html.setDestination(file("build/reports/project/dependencies"))
 }

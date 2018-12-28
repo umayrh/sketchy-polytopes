@@ -60,6 +60,7 @@ is desired.
 * Using Spark to Tune Spark [link](https://www.slideshare.net/databricks/using-apache-spark-to-tune-spark-with-shivnath-babu-and-adrian-popescu)
 * A Novel Method for Tuning Configuration Parameters of Spark Based on Machine Learning [link](https://www.computer.org/csdl/proceedings/hpcc/2016/4297/00/07828429.pdf)
 * A Methodology for Spark Parameter Tuning [link](delab.csd.auth.gr/papers/BDR2017gt.pdf)
+* Towards Better Understanding of Black-box Auto-Tuning [link](https://www.usenix.org/system/files/conference/atc18/atc18-cao.pdf)
 
 ## TODO
 
