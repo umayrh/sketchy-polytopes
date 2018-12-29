@@ -1,4 +1,4 @@
-"""This module tests spark-tuner"""
+"""Tests spark-tuner module"""
 
 import unittest
 import os
@@ -36,10 +36,9 @@ class SparkTunerTest(unittest.TestCase):
         if os.path.exists(self.temp_file):
             shutil.rmtree(self.temp_file)
 
-    def _test_spark_tuner_main(self):
-        """
-        TODO: re-enable after setting up Spark for Travis CI
-        """
+    @unittest.skipIf("SPARK_HOME" not in os.environ,
+                     "SPARK_HOME environment variable not set.")
+    def test_spark_tuner_main(self):
         arg_list = SparkTunerTest.make_args(self.temp_file)
         args = SparkConfigTuner.make_parser().parse_args(arg_list)
         SparkConfigTuner.main(args)

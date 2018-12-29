@@ -1,3 +1,4 @@
+from os import environ
 from chainmap import ChainMap
 from spark_param import SparkParamType
 from spark_default_param import FLAG_TO_DIRECT_PARAM, FLAG_TO_CONF_PARAM
@@ -9,7 +10,8 @@ class SparkSubmitCmd:
     """
     CMD_SEPARATOR = " "
     CONF_SEPARATOR = "="
-    SPARK_SUBMIT_PATH = "/usr/local/bin/spark-submit"
+    SPARK_SUBMIT_PATH = environ["SPARK_HOME"] + "/bin/spark-submit" \
+        if "SPARK_HOME" in environ else "spark-submit"
 
     @staticmethod
     def make_spark_direct_flag(flag_param):

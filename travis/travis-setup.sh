@@ -28,7 +28,10 @@ bootstrap() {
 }
 
 bootstrapLinux() {
-    # These functions should be independent and idempotent
+    # These functions should be independent and idempotent.
+    # Even though caching offsets some of the long setup times here,
+    # it might be useful to parallelize these functions using GNU
+    # Parallel.
     setupSpark
     setupNeo4j
     setupR
