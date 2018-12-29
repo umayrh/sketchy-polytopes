@@ -154,10 +154,10 @@ setup(
     install_requires=[
         "opentuner",
         "humanfriendly"
-    ]
-#    entry_points={
-#        'console_scripts': [
-#            'hello_world = foo.hello:main',
-#        ],
-#    }
+    ],
+    entry_points={
+        'console_scripts': [
+            'sparktuner = src.spark_tuner.SparkTuner.__main__:main',
+        ],
+    }
 )

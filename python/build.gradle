@@ -13,8 +13,9 @@ buildscript {
 }
 
 subprojects {
-    apply plugin: 'com.linkedin.python'
+    apply plugin: "java-library"
     apply plugin: "idea"
+    apply plugin: 'com.linkedin.python'
 
     idea {
         module {
