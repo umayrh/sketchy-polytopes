@@ -50,6 +50,7 @@ For more information, see PyGradle [Example Project](https://github.com/linkedin
 ### Building
 
 * [PyGradle](https://github.com/linkedin/pygradle)
+* [Dependencies](https://necromuralist.github.io/posts/pip-tools-and-pipdeptree/)
 
 ### Packaging
 

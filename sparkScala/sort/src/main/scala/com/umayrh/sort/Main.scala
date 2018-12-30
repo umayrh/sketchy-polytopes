@@ -1,7 +1,9 @@
 package com.umayrh.sort
 
-import org.apache.spark.sql.SparkSession
+import java.io.File
 
+import com.google.common.io.{MoreFiles, RecursiveDeleteOption}
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.mllib.random.RandomRDDs._
 
 /**
@@ -49,11 +51,20 @@ object Main extends SparkBase {
       System.exit(1)
     }
 
+    // TODO: argument checks. Use scopt.
     val dataSize = args(0).toLong
     val outputDirPath = args(1)
     val partitions =
       spark.sparkContext.getConf.get("spark.default.parallelism", "1").toInt
     val outputPartitions = 1
+
+    // Delete outputDir if it already exists.
+    // Makes it easier to rerun this program on the same inputs.
+    val outputDirFile = new File(outputDirPath)
+    if (outputDirFile.exists()) {
+      MoreFiles.deleteRecursively(outputDirFile.toPath,
+                                  RecursiveDeleteOption.ALLOW_INSECURE)
+    }
 
     import spark.implicits._
 

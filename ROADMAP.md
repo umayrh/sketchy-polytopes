@@ -26,7 +26,23 @@ languages](https://stackoverflow.com/questions/27644586/how-to-set-up-travis-ci-
     * Haskell
     * Scalaz
 
+### Open Issues
+
+* IntelliJ doesn't recognize Python src and test dirs automatically (despite
+build.gradle) and I need to mark those explicitly to be able to run tests.
+See issue [41](https://github.com/linkedin/pygradle/issues/41).
+* Gradle/IntelliJ issue with syncing the repo. See issue 
+[7787](https://github.com/gradle/gradle/issues/7787).
+
 ### Notes
+
+#### 2018-12-29
+
+* Need to a publish packages to internal and external repos. Maybe use Github
+release - see e.g. [this](https://www.victorhurdugaci.com/github-releases-travis). 
+* Need a deployment story. See [this](https://medium.com/build-acl/docker-deployments-using-terraform-d2bf36ec7bdf).
+* Investigate [AWS](https://aws.amazon.com/free/) and 
+[GCP](https://cloud.google.com/free/docs/gcp-free-tier) free tiers.
 
 #### 2018-12-15
 

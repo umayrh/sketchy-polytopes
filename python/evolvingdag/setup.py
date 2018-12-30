@@ -18,7 +18,7 @@ setup(
     description='Create and analyze random, longitudinal directed acyclic graphs',
     long_description=open('README.txt').read(),
     install_requires=[
-        "networkx>=2.1",
+        "networkx>=2.2",
         "numpy>=1.14.5",
         "neo4j-driver>=1.6.0"
     ]
