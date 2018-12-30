@@ -50,10 +50,18 @@ For more information, see PyGradle [Example Project](https://github.com/linkedin
 ### Building
 
 * [PyGradle](https://github.com/linkedin/pygradle)
+  * [Prez](https://www.slideshare.net/StephenHolsapple/pythongradle-57668227)
+  * [pivy-importer](https://github.com/linkedin/pygradle/blob/master/docs/pivy-importer.md) 
 * [Dependencies](https://necromuralist.github.io/posts/pip-tools-and-pipdeptree/)
 
 ### Packaging
 
-* [Packaging a python library](https://blog.ionelmc.ro/2014/05/25/python-packaging/)
-* [Python Packaging](http://python-packaging.readthedocs.io/en/latest/index.html)
-* [Guide to Packaging](http://the-hitchhikers-guide-to-packaging.readthedocs.io/en/latest/index.html)
+* PyPi
+  * [Packaging a python library](https://blog.ionelmc.ro/2014/05/25/python-packaging/)
+  * [Python Packaging](http://python-packaging.readthedocs.io/en/latest/index.html)
+  * [Guide to Packaging](http://the-hitchhikers-guide-to-packaging.readthedocs.io/en/latest/index.html)
+  * [Packing projects](https://packaging.python.org/tutorials/packaging-projects/)
+  * [How to publish to PyPi](https://blog.jetbrains.com/pycharm/2017/05/how-to-publish-your-package-on-pypi/)
+* Pex
+  * [Simple Pex](https://idle.run/simple-pex)
+  

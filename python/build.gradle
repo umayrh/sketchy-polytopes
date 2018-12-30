@@ -8,7 +8,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath "gradle.plugin.com.linkedin.pygradle:pygradle-plugin:0.7.18"
+        classpath "gradle.plugin.com.linkedin.pygradle:pygradle-plugin:0.9.11"
     }
 }
 
@@ -17,6 +17,7 @@ subprojects {
     apply plugin: "idea"
     apply plugin: 'com.linkedin.python'
     apply plugin: 'com.linkedin.python-sdist'
+    apply plugin: 'com.linkedin.python-cli'
     // TODO: Adding  apply plugin: 'com.linkedin.python-cli'
     // results in buildPex task failure
 
@@ -29,6 +30,16 @@ subprojects {
 
     repositories {
         pyGradlePyPi()
+        ivy {
+            // Can't easily use a "global" local repo since
+            // pivy-importer clobbers pre-existing libraries.
+            url "build/local-ivy-repo"
+            layout('pattern') {
+                ivy "[organisation]/[module]/[revision]/[module]-[revision].ivy"
+                artifact "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
+                m2compatible true
+            }
+        }
     }
 
     // Workaround due to PyGradle's lack of support for native PyPi repos
@@ -36,5 +47,23 @@ subprojects {
         commandLine "bash", "-c", "source build/venv/bin/activate && pip install -r requirements.txt && deactivate"
     }
 
-    installBuildRequirements.dependsOn pipInstallRequirements
+    task pipInstallRequests(type: Exec) {
+        commandLine "pip", "install", "-q", "requests"
+    }
+
+    task getRequirements(type: Exec) {
+        dependsOn pipInstallRequests
+        commandLine "python", "../etc/get_requirements.py", "build/local-ivy-repo"
+        standardOutput = new ByteArrayOutputStream()
+        ext.output = {
+            return standardOutput.toString()
+        }
+    }
+
+    task printReq {
+        dependsOn getRequirements
+        println tasks.getRequirements.output()
+    }
+
+    installBuildRequirements.dependsOn getRequirements
 }

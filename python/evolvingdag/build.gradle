@@ -1,2 +1,8 @@
 version = "0.1"
 description = "Create and analyze random, longitudinal directed acyclic graphs"
+
+dependencies {
+    python 'pypi:networkx:2.2'
+    python 'pypi:numpy:1.14.5'
+    python 'pypi:neo4j-driver:1.6.1'
+}

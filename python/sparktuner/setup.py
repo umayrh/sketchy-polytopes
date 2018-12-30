@@ -144,7 +144,7 @@ setup(
     packages=find_packages('src'),
 
     name='sparktuner',
-    version='0.1.0',
+    version='0.1',
     author='Umayr Hassan',
     author_email='umayrh@gmail.com',
     url='https://github.com/umayrh/sketchy-polytopes/tree/master/python/sparktuner',
@@ -153,7 +153,7 @@ setup(
     long_description=open('README.txt').read(),
     install_requires=[
         "opentuner",
-        "humanfriendly"
+        "humanfriendly",
     ],
     entry_points={
         'console_scripts': [

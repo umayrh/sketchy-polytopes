@@ -13,8 +13,7 @@ class _SparkParam(object):
     # default value, and the meaning.
     __DICT = {}
     # This indirection helps run these scripts from any path
-    __path = os.path.abspath(__file__)
-    __dir_path = os.path.dirname(__path)
+    __dir_path = os.path.dirname(os.path.abspath(__file__))
     __conf_file = os.path.join(__dir_path, "spark_2_4_params.csv")
     with open(__conf_file, 'rb') as csv_file:
         param_reader = csv.reader(csv_file)
