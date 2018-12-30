@@ -21,6 +21,10 @@ import sys
 import pkg_resources
 import platform
 
+from glob import glob
+from os.path import basename
+from os.path import splitext
+
 from setuptools import setup, find_packages, Command
 from setuptools.command.install_egg_info import install_egg_info as _install_egg_info
 from setuptools.dist import Distribution
@@ -142,9 +146,10 @@ setup(
     package_dir={'': 'src'},
     include_package_data=True,
     packages=find_packages('src'),
+    py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
 
     name='sparktuner',
-    version='0.1',
+    version='0.1.0',
     author='Umayr Hassan',
     author_email='umayrh@gmail.com',
     url='https://github.com/umayrh/sketchy-polytopes/tree/master/python/sparktuner',
@@ -154,6 +159,7 @@ setup(
     install_requires=[
         "opentuner",
         "humanfriendly",
+        "chainmap"
     ],
     entry_points={
         'console_scripts': [

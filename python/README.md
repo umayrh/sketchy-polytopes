@@ -64,4 +64,21 @@ For more information, see PyGradle [Example Project](https://github.com/linkedin
   * [How to publish to PyPi](https://blog.jetbrains.com/pycharm/2017/05/how-to-publish-your-package-on-pypi/)
 * Pex
   * [Simple Pex](https://idle.run/simple-pex)
-  
+
+### TODOs
+
+* IntelliJ might be deployment dependencies from one project into another's
+site-packages. This is because the Python SDK classpath refers to a project-specific
+virtual env.
+  * Creating an SDK per PyGradle project right now, which is manual, annoying and redundant
+* Follow up on https://github.com/linkedin/pygradle/issues/273
+* Follow up on https://github.com/xolox/python-humanfriendly/issues/34 and the related
+https://github.com/garbas/pypi2nix/issues/135
+* Consolidate the multiple places (setup.py, requirements.txt, build.gradle) where
+dependencies are declared.
+  * There's seemingly a vicious loop in fixing this 
+  * Resources: 
+    * [Dep using foreach](https://hackernoon.com/android-how-to-add-gradle-dependencies-using-foreach-c4cbcc070458)
+    * [Install sequence](https://github.com/linkedin/pygradle/issues/75)
+    * [PyGradle example](https://github.com/linkedin/pygradle/blob/master/examples/example-project/build.gradle)
+    

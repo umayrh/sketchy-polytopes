@@ -4,7 +4,10 @@ description = "Use OpenTuner to tune Spark applications"
 
 dependencies {
     python 'pypi:opentuner:0.8.0'
-    python 'pypi:humanfriendly:4.17'
+    // dunno why this was packaged anyway but cannot
+    // build wheel for unittest2
+    python ('pypi:humanfriendly:4.17') {
+        exclude module: 'unittest2'
+    }
     python 'pypi:chainmap:1.0.2'
 }
-

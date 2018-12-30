@@ -48,7 +48,8 @@ def get_dependencies():
 
 if __name__ == '__main__':
     pivyRepo = sys.argv[1] if len(sys.argv) > 1 else None
-    outputSep = sys.argv[2] if len(sys.argv) > 2 else " "
+    debug = str(sys.argv[2]).lower() == "true" if len(sys.argv) > 2 else False
+    outputSep = sys.argv[3] if len(sys.argv) > 3 else " "
 
     dependency_list = get_dependencies()
     prefixed_dep = map(lambda p: "pypi:" + p, dependency_list)
@@ -58,5 +59,7 @@ if __name__ == '__main__':
         dir_path = os.path.dirname(os.path.abspath(__file__))
         jar_file = os.path.join(dir_path, "pivy-importer-0.9.9-all.jar")
         cmd = ['java', '-jar', jar_file, '--repo', pivyRepo]
+        if debug:
+            cmd.extend(['--debug'])
         cmd.extend(dependency_list)
-        subprocess.check_output(cmd)
+        print(subprocess.check_output(cmd, stderr=subprocess.STDOUT))
