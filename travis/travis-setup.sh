@@ -60,6 +60,7 @@ setupNeo4j() {
     cd $HOME/.cache
     if [[ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]]; then
         rm -fr neo4j-community-${NEO4J_VERSION}-unix.tar.gz*
+        # axel, instead of wget, fails for unknown reason
         wget dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
         tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
     fi
@@ -79,7 +80,7 @@ setupR() {
     sudo add-apt-repository -y "ppa:marutter/rrutter"
     sudo add-apt-repository -y "ppa:marutter/c2d4u"
 
-    retry sudo apt-get update -qq
+    retry sudo apt-get -qq update
     retry sudo apt-get install -y --no-install-recommends r-base-dev r-recommended qpdf
 
     sudo chmod 2777 /usr/local/lib/R /usr/local/lib/R/site-library
@@ -90,7 +91,8 @@ installLemon() {
     if [[ ! -d "$HOME/.cache/lemon-${LEMON_VERSION}" ]]; then
         cd $HOME/.cache
         rm -fr lemon-${LEMON_VERSION}.tar.gz*
-        axel --quiet http://lemon.cs.elte.hu/pub/sources/${LEMON_VERSION}.tar.gz
+        # axel, instead of wget, fails for unknown reason
+        wget http://lemon.cs.elte.hu/pub/sources/${LEMON_VERSION}.tar.gz
         cd $HOME/.cache && tar xzvf lemon-${LEMON_VERSION}.tar.gz
         cd lemon-${LEMON_VERSION} && mkdir build && cd build
         cmake ..
