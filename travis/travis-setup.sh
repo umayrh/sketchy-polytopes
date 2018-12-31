@@ -44,7 +44,7 @@ setupSpark() {
     if [ ! -d "$HOME/.cache/${SPARK_DIR_NAME}" ]; then
         cd $HOME/.cache
         SPARK_DIST_NAME=${SPARK_DIR_NAME}-bin-hadoop${HADOOP_VERSION}
-        axel http://www-us.apache.org/dist/spark/${SPARK_DIR_NAME}/${SPARK_DIST_NAME}.tgz
+        axel --quiet http://www-us.apache.org/dist/spark/${SPARK_DIR_NAME}/${SPARK_DIST_NAME}.tgz
         tar -xf ./${SPARK_DIST_NAME}.tgz
         export SPARK_HOME=`pwd`/${SPARK_DIST_NAME}
         # TODO: need a more systematic method for setting up Spark properties
@@ -58,7 +58,7 @@ setupSpark() {
 setupNeo4j() {
     cd $HOME/.cache
     if [ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]; then
-        axel dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
+        axel --quiet dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
         tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
     fi
     neo4j-community-${NEO4J_VERSION}/bin/neo4j start
@@ -87,7 +87,7 @@ setupR() {
 installLemon() {
     if [ ! -d "$HOME/.cache/lemon-${LEMON_VERSION}" ]; then
         cd $HOME/.cache
-        axel http://lemon.cs.elte.hu/pub/sources/${LEMON_VERSION}.tar.gz
+        axel --quiet http://lemon.cs.elte.hu/pub/sources/${LEMON_VERSION}.tar.gz
         cd $HOME/.cache && tar xzvf lemon-${LEMON_VERSION}.tar.gz
         cd lemon-${LEMON_VERSION} && mkdir build && cd build
         cmake ..
