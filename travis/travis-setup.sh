@@ -92,7 +92,7 @@ installLemon() {
         cd $HOME/.cache
         rm -fr lemon-${LEMON_VERSION}.tar.gz*
         axel --quiet http://lemon.cs.elte.hu/pub/sources/lemon-${LEMON_VERSION}.tar.gz
-        cd $HOME/.cache && tar xzvf lemon-${LEMON_VERSION}.tar.gz
+        tar xzvf lemon-${LEMON_VERSION}.tar.gz
         cd lemon-${LEMON_VERSION} && mkdir build && cd build
         cmake ..
         make
