@@ -103,3 +103,27 @@ dependencies are declared.
       File "<console>", line 1, in <module>
     ImportError: No module named SQLAlchemy
     ```
+  * Maybe a bad wheel. No packages were included:
+  ```
+   $ unzip -l  build/wheel-cache/sparktuner-0.1.0-py2-none-any.whl
+
+  Archive:  build/wheel-cache/sparktuner-0.1.0-py2-none-any.whl
+    Length      Date    Time    Name
+  ---------  ---------- -----   ----
+         49  12-31-2018 01:14   sparktuner-0.1.0.dist-info/entry_points.txt
+          1  12-31-2018 01:14   sparktuner-0.1.0.dist-info/top_level.txt
+         92  12-31-2018 01:14   sparktuner-0.1.0.dist-info/WHEEL
+       6234  12-31-2018 01:14   sparktuner-0.1.0.dist-info/METADATA
+        412  12-31-2018 01:14   sparktuner-0.1.0.dist-info/RECORD
+  ---------                     -------
+       6788                     5 files
+   $ unzip -l  build/wheel-cache/opentuner-0.8.0-py2-none-any.whl
+
+  Archive:  build/wheel-cache/opentuner-0.8.0-py2-none-any.whl
+    Length      Date    Time    Name
+  ---------  ---------- -----   ----
+       1357  06-01-2017 01:46   opentuner/__init__.py
+
+  ```
+  Ugh. My project structure is messed up!
+  

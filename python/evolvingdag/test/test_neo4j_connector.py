@@ -1,6 +1,6 @@
 import unittest
 from neo4j.v1 import basic_auth
-from neo4j_connector import Neo4jConnector
+from evolvingdag.neo4j_connector import Neo4jConnector
 
 
 class Test(unittest.TestCase):

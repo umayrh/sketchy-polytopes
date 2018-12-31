@@ -1,8 +1,8 @@
 """This module tests spark-submit command formation"""
 
 import unittest
-from spark_cmd import SparkSubmitCmd
-from spark_default_param import SparkParam, \
+from sparktuner.spark_cmd import SparkSubmitCmd
+from sparktuner.spark_default_param import SparkParam, \
     REQUIRED_FLAGS, FLAG_TO_CONF_PARAM, \
     FLAG_TO_DIRECT_PARAM
 

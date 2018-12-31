@@ -21,10 +21,6 @@ import sys
 import pkg_resources
 import platform
 
-from glob import glob
-from os.path import basename
-from os.path import splitext
-
 from setuptools import setup, find_packages, Command
 from setuptools.command.install_egg_info import install_egg_info as _install_egg_info
 from setuptools.dist import Distribution
@@ -162,7 +158,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'sparktuner=spark_tuner:main',
+            'sparktuner=sparktuner.spark_tuner:main',
         ],
     }
 )
