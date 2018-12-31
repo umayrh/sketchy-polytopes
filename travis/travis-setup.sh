@@ -44,6 +44,7 @@ setupSpark() {
     if [ ! -d "$HOME/.cache/${SPARK_DIR_NAME}" ]; then
         cd $HOME/.cache
         SPARK_DIST_NAME=${SPARK_DIR_NAME}-bin-hadoop${HADOOP_VERSION}
+        rm -fr ./${SPARK_DIST_NAME}.tgz*
         axel --quiet http://www-us.apache.org/dist/spark/${SPARK_DIR_NAME}/${SPARK_DIST_NAME}.tgz
         tar -xf ./${SPARK_DIST_NAME}.tgz
         export SPARK_HOME=`pwd`/${SPARK_DIST_NAME}
@@ -58,6 +59,7 @@ setupSpark() {
 setupNeo4j() {
     cd $HOME/.cache
     if [ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]; then
+        rm -fr dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz*
         axel --quiet dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
         tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
     fi
@@ -87,6 +89,7 @@ setupR() {
 installLemon() {
     if [ ! -d "$HOME/.cache/lemon-${LEMON_VERSION}" ]; then
         cd $HOME/.cache
+        rm -fr lemon-${LEMON_VERSION}.tar.gz*
         axel --quiet http://lemon.cs.elte.hu/pub/sources/${LEMON_VERSION}.tar.gz
         cd $HOME/.cache && tar xzvf lemon-${LEMON_VERSION}.tar.gz
         cd lemon-${LEMON_VERSION} && mkdir build && cd build
