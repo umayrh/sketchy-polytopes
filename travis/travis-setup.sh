@@ -59,7 +59,8 @@ setupSpark() {
 setupNeo4j() {
     cd $HOME/.cache
     if [ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]; then
-        rm -fr dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz*
+        rm -fr neo4j-community-${NEO4J_VERSION}-unix.tar.gz*
+        ls
         axel --quiet dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
         tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
     fi
