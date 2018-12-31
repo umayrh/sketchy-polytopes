@@ -41,7 +41,7 @@ bootstrapLinux() {
 ## Installs a specific version of Spark
 setupSpark() {
     local SPARK_DIR_NAME=spark-${SPARK_VERSION}
-    if [ ! -d "$HOME/.cache/${SPARK_DIR_NAME}" ]; then
+    if [[ ! -d "$HOME/.cache/${SPARK_DIR_NAME}" ]]; then
         cd $HOME/.cache
         SPARK_DIST_NAME=${SPARK_DIR_NAME}-bin-hadoop${HADOOP_VERSION}
         rm -fr ./${SPARK_DIST_NAME}.tgz*
@@ -58,10 +58,9 @@ setupSpark() {
 ## see https://github.com/travis-ci/travis-ci/issues/3243
 setupNeo4j() {
     cd $HOME/.cache
-    if [ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]; then
+    if [[ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]]; then
         rm -fr neo4j-community-${NEO4J_VERSION}-unix.tar.gz*
-        ls
-        axel --quiet dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
+        wget dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
         tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
     fi
     neo4j-community-${NEO4J_VERSION}/bin/neo4j start
@@ -88,7 +87,7 @@ setupR() {
 
 # Build and installs LEMON from source
 installLemon() {
-    if [ ! -d "$HOME/.cache/lemon-${LEMON_VERSION}" ]; then
+    if [[ ! -d "$HOME/.cache/lemon-${LEMON_VERSION}" ]]; then
         cd $HOME/.cache
         rm -fr lemon-${LEMON_VERSION}.tar.gz*
         axel --quiet http://lemon.cs.elte.hu/pub/sources/${LEMON_VERSION}.tar.gz
