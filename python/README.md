@@ -31,6 +31,7 @@ setup(
     ]
 )
 ```
+* Ensure that all .py files are under `new_project/src/new_package`
 * `gradle build` to install basic dependencies
 * If using IntelliJ, ensure that the module has a Python SDK
 * `pandoc --from=markdown --to=rst --output=README.txt README.md` to convert from Markdown
@@ -67,6 +68,7 @@ For more information, see PyGradle [Example Project](https://github.com/linkedin
 
 ### TODOs
 
+* Tests take a long time. Cache packages for Travis. 
 * IntelliJ might be deployment dependencies from one project into another's
 site-packages. This is because the Python SDK classpath refers to a project-specific
 virtual env.
@@ -76,11 +78,13 @@ virtual env.
 https://github.com/garbas/pypi2nix/issues/135
 * Consolidate the multiple places (setup.py, requirements.txt, build.gradle) where
 dependencies are declared.
-  * There's seemingly a vicious loop in fixing this 
-  * Resources: 
+  * There's seemingly a vicious loop in fixing this. Resources: 
     * [Dep using foreach](https://hackernoon.com/android-how-to-add-gradle-dependencies-using-foreach-c4cbcc070458)
     * [Install sequence](https://github.com/linkedin/pygradle/issues/75)
     * [PyGradle example](https://github.com/linkedin/pygradle/blob/master/examples/example-project/build.gradle)
+
+### Past issues
+
 * Unable to build a useful pex. Some dependencies don't seem to make it in.
     ```
     Starting process 'command '/Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/venv/bin/python''. 
