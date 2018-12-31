@@ -133,5 +133,9 @@ class SparkConfigTuner(MeasurementInterface):
         return ArgumentParser(parents=argparsers())
 
 
-if __name__ == '__main__':
+def main():
     SparkConfigTuner.main(SparkConfigTuner.make_parser().parse_args())
+
+
+if __name__ == '__main__':
+    main()

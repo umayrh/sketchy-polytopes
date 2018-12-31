@@ -13,13 +13,10 @@ buildscript {
 }
 
 subprojects {
-    apply plugin: "java-library"
     apply plugin: "idea"
     apply plugin: 'com.linkedin.python'
     apply plugin: 'com.linkedin.python-sdist'
     apply plugin: 'com.linkedin.python-cli'
-    // TODO: Adding  apply plugin: 'com.linkedin.python-cli'
-    // results in buildPex task failure
 
     idea {
         module {

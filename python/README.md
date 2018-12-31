@@ -81,4 +81,25 @@ dependencies are declared.
     * [Dep using foreach](https://hackernoon.com/android-how-to-add-gradle-dependencies-using-foreach-c4cbcc070458)
     * [Install sequence](https://github.com/linkedin/pygradle/issues/75)
     * [PyGradle example](https://github.com/linkedin/pygradle/blob/master/examples/example-project/build.gradle)
-    
+* Unable to build a useful pex. Some dependencies don't seem to make it in.
+    ```
+    Starting process 'command '/Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/venv/bin/python''. 
+    Working directory: /Users/umayrhassan/sketchy-polytopes/python/sparktuner 
+    Command: /Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/venv/bin/python 
+        /Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/venv/bin/pex 
+        --no-pypi 
+        --cache-dir 
+        /Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/pex-cache 
+        --output-file /Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/deployable/bin/sparktuner.pex 
+        --repo /Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/wheel-cache 
+        --python-shebang /usr/bin/python importlib==1.0.4 opentuner==0.8.0 chainmap==1.0.2 SQLAlchemy==0.8.2 fn==0.2.12 monotonic==1.5 numpy==1.8.0 pysqlite==2.6.3 sparktuner==0.1.0 humanfriendly==4.17 pyreadline==2.1
+    ```
+    And yet:
+    ```
+    $ build/deployable/bin/sparktuner.pex
+    >>> import humanfriendly
+    >>> import SQLAlchemy
+    Traceback (most recent call last):
+      File "<console>", line 1, in <module>
+    ImportError: No module named SQLAlchemy
+    ```

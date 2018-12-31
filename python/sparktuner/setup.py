@@ -146,7 +146,6 @@ setup(
     package_dir={'': 'src'},
     include_package_data=True,
     packages=find_packages('src'),
-    py_modules=[splitext(basename(path))[0] for path in glob('src/*.py')],
 
     name='sparktuner',
     version='0.1.0',
@@ -157,13 +156,13 @@ setup(
     description='OpenTuner wrapper for tuning Spark applications',
     long_description=open('README.txt').read(),
     install_requires=[
-        "opentuner",
-        "humanfriendly",
-        "chainmap"
+        "opentuner==0.8.0",
+        "humanfriendly==4.17",
+        "chainmap==1.0.2"
     ],
     entry_points={
         'console_scripts': [
-            'sparktuner = src.spark_tuner.SparkTuner.__main__:main',
+            'sparktuner=spark_tuner:main',
         ],
     }
 )
