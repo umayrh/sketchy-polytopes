@@ -7,6 +7,25 @@
 * [Lessons from Using Spark...](https://www.indix.com/blog/engineering/lessons-from-using-spark-to-process-large-amounts-of-data-part-i/)
 * [What I learned from...](https://dlab.epfl.ch/2017-09-30-what-i-learned-from-processing-big-data-with-spark/)
 
+## The Occasional Surprise
+
+#### Debugging a long-running Apache Spark application: A War Story
+
+"The default garbage-collection interval was simply too long for our use case: 
+30 minutes. Running every 30mins was way too little since we generate hundreds of 
+thousands of classes during peak load. This means that the keepCleaning thread is 
+doing nothing for the first 30 minutes, and then is suddenly swamped with way too 
+many tasks to keep up with. This problem then keeps getting worse and worse since 
+the cleanup tasks are generated faster than they can be processed, which in turn 
+leads to bigger and bigger GC heaps, a truly overwhelming task for the GC, until 
+it can’t keep up any more and then the whole cluster dies in a slow and agonizing death."
+
+"... we further paid more attention to the fact that the 
+ContextCleaner thread was blocking by default, meaning that it would sequentially tell 
+each worker server to delete e.g. a specific BroadCastVariable and wait until that 
+worker confirmed the deletion, before moving on to the next worker."
+[More...](https://tech.channable.com/posts/2018-04-10-debugging-a-long-running-apache-spark-application.html)
+
 ## Common errors
 
 ##### `java.lang.OutOfMemoryError: Java heap space java.lang.OutOfMemoryError: GC overhead limit exceeded`

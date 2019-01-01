@@ -30,7 +30,8 @@ Some commonly used Spark (2.0.2+) parameters:
 |spark.memory.fraction|No|0.6|
 |spark.memory.storageFraction|No|0.5|
 
-For all available configurations, see [this](https://spark.apache.org/docs/2.4.0/configuration.html).
+For commonly used configurations, see 
+[this](https://spark.apache.org/docs/2.4.0/configuration.html).
 
 ## Creating an OpenTuner configuration
 

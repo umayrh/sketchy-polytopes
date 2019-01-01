@@ -52,7 +52,10 @@ For more information, see PyGradle [Example Project](https://github.com/linkedin
 
 * [PyGradle](https://github.com/linkedin/pygradle)
   * [Prez](https://www.slideshare.net/StephenHolsapple/pythongradle-57668227)
-  * [pivy-importer](https://github.com/linkedin/pygradle/blob/master/docs/pivy-importer.md) 
+  * [pivy-importer](https://github.com/linkedin/pygradle/blob/master/docs/pivy-importer.md)
+  * Interesting issues:
+    * [Exclude dependency](https://github.com/linkedin/pygradle/issues/96)
+    * [Dep in another project](https://github.com/linkedin/pygradle/issues/218)
 * [Dependencies](https://necromuralist.github.io/posts/pip-tools-and-pipdeptree/)
 
 ### Packaging
@@ -68,7 +71,11 @@ For more information, see PyGradle [Example Project](https://github.com/linkedin
 
 ### TODOs
 
-* Tests take a long time. Cache packages for Travis. 
+* Tests take a long time (15min -> 25min). Cache packages for Travis.
+  * Since Travis doesn't support wildcards in cache dir names, a hack might be to
+    create symlink from python/some_project/build/something_to_cache to 
+    $HOME/.cache/py_cache.
+* `gradle check --parallel` runs into https://github.com/pyenv/pyenv/pull/1092
 * IntelliJ might be deployment dependencies from one project into another's
 site-packages. This is because the Python SDK classpath refers to a project-specific
 virtual env.
