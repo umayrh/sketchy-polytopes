@@ -4,7 +4,7 @@ import unittest
 import os
 import shutil
 import tempfile
-from spark_tuner import SparkConfigTuner
+from sparktuner.spark_tuner import SparkConfigTuner
 
 
 class SparkTunerTest(unittest.TestCase):

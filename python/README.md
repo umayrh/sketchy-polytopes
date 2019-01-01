@@ -31,6 +31,7 @@ setup(
     ]
 )
 ```
+* Ensure that all .py files are under `new_project/src/new_package`
 * `gradle build` to install basic dependencies
 * If using IntelliJ, ensure that the module has a Python SDK
 * `pandoc --from=markdown --to=rst --output=README.txt README.md` to convert from Markdown
@@ -50,10 +51,83 @@ For more information, see PyGradle [Example Project](https://github.com/linkedin
 ### Building
 
 * [PyGradle](https://github.com/linkedin/pygradle)
+  * [Prez](https://www.slideshare.net/StephenHolsapple/pythongradle-57668227)
+  * [pivy-importer](https://github.com/linkedin/pygradle/blob/master/docs/pivy-importer.md) 
 * [Dependencies](https://necromuralist.github.io/posts/pip-tools-and-pipdeptree/)
 
 ### Packaging
 
-* [Packaging a python library](https://blog.ionelmc.ro/2014/05/25/python-packaging/)
-* [Python Packaging](http://python-packaging.readthedocs.io/en/latest/index.html)
-* [Guide to Packaging](http://the-hitchhikers-guide-to-packaging.readthedocs.io/en/latest/index.html)
+* PyPi
+  * [Packaging a python library](https://blog.ionelmc.ro/2014/05/25/python-packaging/)
+  * [Python Packaging](http://python-packaging.readthedocs.io/en/latest/index.html)
+  * [Guide to Packaging](http://the-hitchhikers-guide-to-packaging.readthedocs.io/en/latest/index.html)
+  * [Packing projects](https://packaging.python.org/tutorials/packaging-projects/)
+  * [How to publish to PyPi](https://blog.jetbrains.com/pycharm/2017/05/how-to-publish-your-package-on-pypi/)
+* Pex
+  * [Simple Pex](https://idle.run/simple-pex)
+
+### TODOs
+
+* Tests take a long time. Cache packages for Travis. 
+* IntelliJ might be deployment dependencies from one project into another's
+site-packages. This is because the Python SDK classpath refers to a project-specific
+virtual env.
+  * Creating an SDK per PyGradle project right now, which is manual, annoying and redundant
+* Follow up on https://github.com/linkedin/pygradle/issues/273
+* Follow up on https://github.com/xolox/python-humanfriendly/issues/34 and the related
+https://github.com/garbas/pypi2nix/issues/135
+* Consolidate the multiple places (setup.py, requirements.txt, build.gradle) where
+dependencies are declared.
+  * There's seemingly a vicious loop in fixing this. Resources: 
+    * [Dep using foreach](https://hackernoon.com/android-how-to-add-gradle-dependencies-using-foreach-c4cbcc070458)
+    * [Install sequence](https://github.com/linkedin/pygradle/issues/75)
+    * [PyGradle example](https://github.com/linkedin/pygradle/blob/master/examples/example-project/build.gradle)
+
+### Past issues
+
+* Unable to build a useful pex. Some dependencies don't seem to make it in.
+    ```
+    Starting process 'command '/Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/venv/bin/python''. 
+    Working directory: /Users/umayrhassan/sketchy-polytopes/python/sparktuner 
+    Command: /Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/venv/bin/python 
+        /Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/venv/bin/pex 
+        --no-pypi 
+        --cache-dir 
+        /Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/pex-cache 
+        --output-file /Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/deployable/bin/sparktuner.pex 
+        --repo /Users/umayrhassan/sketchy-polytopes/python/sparktuner/build/wheel-cache 
+        --python-shebang /usr/bin/python importlib==1.0.4 opentuner==0.8.0 chainmap==1.0.2 SQLAlchemy==0.8.2 fn==0.2.12 monotonic==1.5 numpy==1.8.0 pysqlite==2.6.3 sparktuner==0.1.0 humanfriendly==4.17 pyreadline==2.1
+    ```
+    And yet:
+    ```
+    $ build/deployable/bin/sparktuner.pex
+    >>> import humanfriendly
+    >>> import SQLAlchemy
+    Traceback (most recent call last):
+      File "<console>", line 1, in <module>
+    ImportError: No module named SQLAlchemy
+    ```
+  * Maybe a bad wheel. No packages were included:
+  ```
+   $ unzip -l  build/wheel-cache/sparktuner-0.1.0-py2-none-any.whl
+
+  Archive:  build/wheel-cache/sparktuner-0.1.0-py2-none-any.whl
+    Length      Date    Time    Name
+  ---------  ---------- -----   ----
+         49  12-31-2018 01:14   sparktuner-0.1.0.dist-info/entry_points.txt
+          1  12-31-2018 01:14   sparktuner-0.1.0.dist-info/top_level.txt
+         92  12-31-2018 01:14   sparktuner-0.1.0.dist-info/WHEEL
+       6234  12-31-2018 01:14   sparktuner-0.1.0.dist-info/METADATA
+        412  12-31-2018 01:14   sparktuner-0.1.0.dist-info/RECORD
+  ---------                     -------
+       6788                     5 files
+   $ unzip -l  build/wheel-cache/opentuner-0.8.0-py2-none-any.whl
+
+  Archive:  build/wheel-cache/opentuner-0.8.0-py2-none-any.whl
+    Length      Date    Time    Name
+  ---------  ---------- -----   ----
+       1357  06-01-2017 01:46   opentuner/__init__.py
+
+  ```
+  Ugh. My project structure is messed up!
+  

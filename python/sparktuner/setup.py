@@ -152,12 +152,13 @@ setup(
     description='OpenTuner wrapper for tuning Spark applications',
     long_description=open('README.txt').read(),
     install_requires=[
-        "opentuner",
-        "humanfriendly"
+        "opentuner==0.8.0",
+        "humanfriendly==4.17",
+        "chainmap==1.0.2"
     ],
     entry_points={
         'console_scripts': [
-            'sparktuner = src.spark_tuner.SparkTuner.__main__:main',
+            'sparktuner=sparktuner.spark_tuner:main',
         ],
     }
 )

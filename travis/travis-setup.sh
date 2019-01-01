@@ -41,10 +41,11 @@ bootstrapLinux() {
 ## Installs a specific version of Spark
 setupSpark() {
     local SPARK_DIR_NAME=spark-${SPARK_VERSION}
-    if [ ! -d "$HOME/.cache/${SPARK_DIR_NAME}" ]; then
+    if [[ ! -d "$HOME/.cache/${SPARK_DIR_NAME}" ]]; then
         cd $HOME/.cache
         SPARK_DIST_NAME=${SPARK_DIR_NAME}-bin-hadoop${HADOOP_VERSION}
-        axel http://www-us.apache.org/dist/spark/${SPARK_DIR_NAME}/${SPARK_DIST_NAME}.tgz
+        rm -fr ./${SPARK_DIST_NAME}.tgz*
+        axel --quiet http://www-us.apache.org/dist/spark/${SPARK_DIR_NAME}/${SPARK_DIST_NAME}.tgz
         tar -xf ./${SPARK_DIST_NAME}.tgz
         export SPARK_HOME=`pwd`/${SPARK_DIST_NAME}
         # TODO: need a more systematic method for setting up Spark properties
@@ -57,8 +58,10 @@ setupSpark() {
 ## see https://github.com/travis-ci/travis-ci/issues/3243
 setupNeo4j() {
     cd $HOME/.cache
-    if [ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]; then
-        axel dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
+    if [[ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]]; then
+        rm -fr neo4j-community-${NEO4J_VERSION}-unix.tar.gz*
+        # axel, instead of wget, fails for unknown reason
+        wget dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
         tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
     fi
     neo4j-community-${NEO4J_VERSION}/bin/neo4j start
@@ -77,18 +80,19 @@ setupR() {
     sudo add-apt-repository -y "ppa:marutter/rrutter"
     sudo add-apt-repository -y "ppa:marutter/c2d4u"
 
-    retry sudo apt-get update -qq
-    retry sudo apt-get install -y --no-install-recommends r-base-dev r-recommended qpdf
+    retry sudo apt-get -qq update
+    retry sudo apt-get -qq install -y --no-install-recommends r-base-dev r-recommended qpdf
 
     sudo chmod 2777 /usr/local/lib/R /usr/local/lib/R/site-library
 }
 
 # Build and installs LEMON from source
 installLemon() {
-    if [ ! -d "$HOME/.cache/lemon-${LEMON_VERSION}" ]; then
+    if [[ ! -d "$HOME/.cache/lemon-${LEMON_VERSION}" ]]; then
         cd $HOME/.cache
-        axel http://lemon.cs.elte.hu/pub/sources/${LEMON_VERSION}.tar.gz
-        cd $HOME/.cache && tar xzvf lemon-${LEMON_VERSION}.tar.gz
+        rm -fr lemon-${LEMON_VERSION}.tar.gz*
+        axel --quiet http://lemon.cs.elte.hu/pub/sources/lemon-${LEMON_VERSION}.tar.gz
+        tar xzvf lemon-${LEMON_VERSION}.tar.gz
         cd lemon-${LEMON_VERSION} && mkdir build && cd build
         cmake ..
         make

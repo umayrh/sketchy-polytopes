@@ -33,6 +33,10 @@ sketchy-polytopes.iml
 
 ./rust/*/target/*
 
+# Python
+
+**/*.pyc
+
 # other
 
 */*/metastore_db/*

@@ -1,2 +1,11 @@
-version = "0.1"
+version = "0.1.0"
 description = "Create and analyze random, longitudinal directed acyclic graphs"
+
+dependencies {
+    // remove this when https://github.com/linkedin/pygradle/issues/273
+    // is fixed
+    python 'pypi:decorator:4.3.0'
+    python 'pypi:networkx:2.2'
+    python 'pypi:numpy:1.14.5'
+    python 'pypi:neo4j-driver:1.6.1'
+}

@@ -1,7 +1,7 @@
 """This module tests Spark parameter parsing"""
 
 import unittest
-from spark_param import SparkParamParseError, \
+from sparktuner.spark_param import SparkParamParseError, \
     SparkStringType, SparkBooleanType, SparkIntType, SparkMemoryType
 
 

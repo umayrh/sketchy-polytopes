@@ -1,6 +1,6 @@
 import unittest
 import pytest
-from random_dag import Node, RandomDag
+from evolvingdag.random_dag import Node, RandomDag
 from numpy.random import uniform
 
 

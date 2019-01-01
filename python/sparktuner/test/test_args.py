@@ -1,8 +1,8 @@
 """This module tests argument parsing"""
 
 import unittest
-from args import ArgumentParserError, ArgumentParser
-from spark_default_param import REQUIRED_FLAGS, \
+from sparktuner.args import ArgumentParserError, ArgumentParser
+from sparktuner.spark_default_param import REQUIRED_FLAGS, \
     FLAG_TO_CONF_PARAM
 
 
