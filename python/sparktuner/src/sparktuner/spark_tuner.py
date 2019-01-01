@@ -66,21 +66,23 @@ class SparkConfigTuner(MeasurementInterface):
         # Extract ranged SparkParamType objects from arguments
         param_dict = SparkParamType.get_param_map(
             vars(self.args), lambda p: p.is_range_val)
+        log.info(str(param_dict))
 
         for flag, param in param_dict.items():
+            log.info("Adding param: " + str(flag) + ", " + str(param))
             param_type = type(param)
             tuner_param = None
             if param_type is SparkIntType:
                 tuner_param = IntegerParameter(
                     flag,
                     param.get_range_start(),
-                    param.get_range_end)
+                    param.get_range_end())
             elif param_type is SparkMemoryType:
                 tuner_param = ScaledIntegerParameter(
                     flag,
                     param.get_range_start(),
-                    param.get_range_end,
-                    param.get_scale)
+                    param.get_range_end(),
+                    param.get_scale())
             elif param_type is SparkBooleanType:
                 tuner_param = BooleanParameter(flag)
             else:
@@ -114,7 +116,7 @@ class SparkConfigTuner(MeasurementInterface):
         log.info(run_cmd)
 
         run_result = self.call_program(run_cmd)
-        assert run_result['returncode'] == 0
+        assert run_result['returncode'] == 0, run_result['stderr']
 
         return Result(time=run_result['time'])
 
@@ -130,7 +132,7 @@ class SparkConfigTuner(MeasurementInterface):
     @staticmethod
     def make_parser():
         """Creates and returns the default parser"""
-        return ArgumentParser(parents=argparsers())
+        return ArgumentParser(parents=argparsers(), add_help=True)
 
 
 def main():

@@ -71,6 +71,12 @@ class SparkParamType(object):
             self.value = value[0]
         self.desc = desc
 
+    def __str__(self):
+        return ",".join([self.spark_name,
+                         str(self.is_range_val),
+                         str(type(self.value)),
+                         str(self.value)])
+
     @abc.abstractmethod
     def cast_from_str(self, str_value):
         return str_value

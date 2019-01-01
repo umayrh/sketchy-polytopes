@@ -1,5 +1,8 @@
 """This module handles argument parsing"""
 
+from __future__ import print_function
+
+from sys import stderr
 import argparse
 from chainmap import ChainMap
 from spark_default_param import REQUIRED_FLAGS, \
@@ -49,4 +52,6 @@ class ArgumentParser(argparse.ArgumentParser):
 
     def error(self, message):
         """Overwrites default error function"""
+        print("Error: " + message, file=stderr)
+        self.print_usage(stderr)
         raise ArgumentParserError("ArgumentParserError", message)

@@ -65,11 +65,18 @@ is desired.
 
 ## TODO
 
-* Ideally, all tuning run details are published to a central location as a time-series.
+* Urgent
+  * Implement a new objective function that, over _similar_ values of run-time, minimizes
+resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
+same runtime in all cases, the optimal configuration value should be 1.
+  * `SparkParamType.get_param_map` is called twice, so is `manipulator()`. Redundant.  
+
+* Nice to have
+  * Ideally, all tuning run details are published to a central location as a time-series.
 This would help pool run data, and track of significant outcome changes (e.g. as a result
 of a code change).  
-* The default parameters should be read from a file instead of being hard-coded. All
+  * The default parameters should be read from a file instead of being hard-coded. All
 parameters should be merged into a final map.
-* Since Spark parameters are many and jobs can take a while to run, warm starting
+  * Since Spark parameters are many and jobs can take a while to run, warm starting
 autotuning might be useful.
-* Need to validate all Spark parameters.
+  * Need to validate all Spark parameters.

@@ -8,6 +8,10 @@ from sparktuner.spark_tuner import SparkConfigTuner
 
 
 class SparkTunerTest(unittest.TestCase):
+    """
+    Note: the JAR used here is a slim, unshaded file, and
+    so should not be used for full functionality.
+    """
     JAR_NAME = "sort-0.1.jar"
 
     @staticmethod
@@ -45,3 +49,17 @@ class SparkTunerTest(unittest.TestCase):
 
         if not os.path.exists(self.temp_file):
             self.fail("Expected output file")
+
+    def test_no_config_args(self):
+        """
+        build/deployable/bin/sparktuner --name blah --path test/sort-0.1.jar
+        --deploy_mode client --master "local[*]" --class Main
+        """
+        pass
+
+    def test_no_bad_class_name(self):
+        """
+        build/deployable/bin/sparktuner --name blah --path test/sort-0.1.jar
+        --deploy_mode client --master "local[*]" --class Main
+        """
+        pass

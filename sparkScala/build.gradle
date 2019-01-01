@@ -10,6 +10,7 @@ buildscript {
 
   dependencies {
     classpath 'cz.alenkacz:gradle-scalafmt:1.6.0'
+    classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3+'
   }
 }
 
@@ -22,6 +23,7 @@ subprojects {
 
   apply plugin: 'scala'
   apply plugin: 'scalafmt'
+  apply plugin: 'com.github.johnrengelman.shadow'
 
   dependencies {
     compile group: 'org.scala-lang', name: 'scala-library', version: scalaVersion + ".+"
@@ -42,6 +44,15 @@ subprojects {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
     testCompile group: 'com.holdenkarau', name: 'spark-testing-base_' + scalaVersion, version: sparkVersion + "_0.+"
+  }
+
+  shadowJar {
+    // See https://github.com/johnrengelman/shadow/issues/107
+    // This can produce is really fat JAR (5k -> 188M), so might
+    // want to prune some libs here, maybe Spark ones.
+    // Alternatively, the Spark libs may be set to 'compileOnly'
+    // instead of 'compile'.
+    zip64 true
   }
 
   task scalaTest(dependsOn: ['testClasses'], type: JavaExec) {
