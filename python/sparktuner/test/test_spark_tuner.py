@@ -40,6 +40,11 @@ class SparkTunerTest(unittest.TestCase):
         if os.path.exists(self.temp_file):
             shutil.rmtree(self.temp_file)
 
+    def _test_help(self):
+        # TODO debug and enable
+        args = SparkConfigTuner.make_parser().parse_args(['--help'])
+        SparkConfigTuner.main(args)
+
     @unittest.skipIf("SPARK_HOME" not in os.environ,
                      "SPARK_HOME environment variable not set.")
     def test_spark_tuner_main(self):

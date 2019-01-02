@@ -7,6 +7,19 @@
 * [Lessons from Using Spark...](https://www.indix.com/blog/engineering/lessons-from-using-spark-to-process-large-amounts-of-data-part-i/)
 * [What I learned from...](https://dlab.epfl.ch/2017-09-30-what-i-learned-from-processing-big-data-with-spark/)
 
+### Tuning
+
+* [Tuning Spark](https://spark.apache.org/docs/latest/tuning.html)
+* [Spark Performance Tuning: A Checklist](https://zerogravitylabs.ca/spark-performance-tuning-checklist/)
+
+### Research
+
+* Tuning
+  * Using Spark to Tune Spark [link](https://www.slideshare.net/databricks/using-apache-spark-to-tune-spark-with-shivnath-babu-and-adrian-popescu)
+  * A Novel Method for Tuning Configuration Parameters of Spark Based on Machine Learning [link](https://www.computer.org/csdl/proceedings/hpcc/2016/4297/00/07828429.pdf)
+  * A Methodology for Spark Parameter Tuning [link](delab.csd.auth.gr/papers/BDR2017gt.pdf)
+  * Towards Better Understanding of Black-box Auto-Tuning [link](https://www.usenix.org/system/files/conference/atc18/atc18-cao.pdf)
+
 ## The Occasional Surprise
 
 #### Debugging a long-running Apache Spark application: A War Story

@@ -32,10 +32,10 @@ class ScaledIntegerParameter(ScaledNumericParameter, IntegerParameter):
         self.scale = float(scale)
 
     def _scale(self, v):
-        return round(v / self.scale)
+        return int(round(v / self.scale))
 
     def _unscale(self, v):
-        return round(v * self.scale)
+        return int(round(v * self.scale))
 
     def legal_range(self, config):
         return self._scale(self.min_value), self._scale(self.max_value)
@@ -69,9 +69,8 @@ class SparkConfigTuner(MeasurementInterface):
         log.info(str(param_dict))
 
         for flag, param in param_dict.items():
-            log.info("Adding param: " + str(flag) + ", " + str(param))
+            log.info("Adding flag: " + str(flag) + ", " + str(type(param)))
             param_type = type(param)
-            tuner_param = None
             if param_type is SparkIntType:
                 tuner_param = IntegerParameter(
                     flag,
@@ -88,6 +87,8 @@ class SparkConfigTuner(MeasurementInterface):
             else:
                 raise SparkTunerConfigError(
                     ValueError, "Invalid type for ConfigurationManipulator")
+            log.info("Added config: " + str(type(tuner_param)) + ", " +
+                     str([tuner_param.min_value, tuner_param.max_value]))
             manipulator.add_parameter(tuner_param)
         return manipulator
 
@@ -101,6 +102,7 @@ class SparkConfigTuner(MeasurementInterface):
         # This config dict is keyed by the program flag. See
         # manipulator().
         cfg_data = desired_result.configuration.data
+        log.info("Config dict: " + str(cfg_data))
         # Extract all SparkParamType objects from map
         param_dict = SparkParamType.get_param_map(arg_dict)
         # Seems strange making a SparkParamType out of a value but it helps

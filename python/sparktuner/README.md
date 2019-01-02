@@ -51,32 +51,39 @@ is desired.
 
 * [OpenTuner](http://opentuner.org)
 
-### Spark tuning guides
+### Spark 
 
-* [Tuning Spark](https://spark.apache.org/docs/latest/tuning.html)
-* [Spark Performance Tuning: A Checklist](https://zerogravitylabs.ca/spark-performance-tuning-checklist/)
-
-### Spark tuning research
-
-* Using Spark to Tune Spark [link](https://www.slideshare.net/databricks/using-apache-spark-to-tune-spark-with-shivnath-babu-and-adrian-popescu)
-* A Novel Method for Tuning Configuration Parameters of Spark Based on Machine Learning [link](https://www.computer.org/csdl/proceedings/hpcc/2016/4297/00/07828429.pdf)
-* A Methodology for Spark Parameter Tuning [link](delab.csd.auth.gr/papers/BDR2017gt.pdf)
-* Towards Better Understanding of Black-box Auto-Tuning [link](https://www.usenix.org/system/files/conference/atc18/atc18-cao.pdf)
+* See [here](../../sparkScala/SPARK.md).
 
 ## TODO
 
 * Urgent
+  * Fix sparktuner --help
+  * Experiment sort using different config
+    * `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --spark_parallelism "1,10" --program_conf "10000 /tmp/sparktuner_sort"`
+    * `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --executor_memory "50mb,1gb" --program_conf "10000 /tmp/sparktuner_sort"`
+  * Finish test_spark_tuner
+  * Need LongParameter to store memory values larger than 2G
+  * Allow JAR parameters to also be configurable.  
+  * Add tests for: ScaledIntegerParameter
+
+* Next steps
   * Implement a new objective function that, over _similar_ values of run-time, minimizes
-resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
-same runtime in all cases, the optimal configuration value should be 1.
-  * `SparkParamType.get_param_map` is called twice, so is `manipulator()`. Redundant.  
+    resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
+    same runtime in all cases, the optimal configuration value should be 1.
+  * `SparkParamType.get_param_map` is called twice, so is `manipulator()`. Redundant.
+  * Figure out some DoWhy basics. 
+    * In particular, figure out a sensible causal graph for Spark parameters.
 
 * Nice to have
+  * Tuner as a service. Opentuner issue [25](https://github.com/jansel/opentuner/issues/25).
+  * New objective that optimizes the construction of a causal graph.
   * Ideally, all tuning run details are published to a central location as a time-series.
-This would help pool run data, and track of significant outcome changes (e.g. as a result
-of a code change).  
+    This would help pool run data, and track of significant outcome changes (e.g. as a result
+    of a code change). Even better if they can be easily visualized (see e.g. 
+    [opentuner-visualizer](https://github.com/danula/opentuner-visualizer)).
   * The default parameters should be read from a file instead of being hard-coded. All
-parameters should be merged into a final map.
+    parameters should be merged into a final map.
   * Since Spark parameters are many and jobs can take a while to run, warm starting
-autotuning might be useful.
+    autotuning might be useful.
   * Need to validate all Spark parameters.
