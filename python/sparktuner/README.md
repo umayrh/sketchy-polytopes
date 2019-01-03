@@ -59,15 +59,28 @@ is desired.
 
 * Urgent
   * Fix sparktuner --help
-  * Experiment sort using different config
+  * Experiment with `sort` using different config
     * `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --spark_parallelism "1,10" --program_conf "10000 /tmp/sparktuner_sort"`
     * `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --executor_memory "50mb,1gb" --program_conf "10000 /tmp/sparktuner_sort"`
+    * `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --driver_memory "1GB,6GB" --program_conf "1000000 /tmp/sparktuner_sort"`
+      * There's an issue somewhere here: somehow invalid values (< specified min value) 
+      are generated. Maybe because the search space is small.
+      ```
+        [     1s]    INFO sparktuner.spark_tuner: Setting value: 3, unscaled: 3221225472
+        [     1s]    INFO sparktuner.spark_tuner: get_value: 3221225472
+        [     1s]    INFO sparktuner.spark_tuner: get_value: 3221225472
+        [     1s]    INFO sparktuner.spark_tuner: Config dict: {'driver_memory': 104857600}
+        [     1s]    INFO sparktuner.spark_tuner: /usr/local/Cellar/apache-spark/2.4.0/libexec/bin/spark-submit --deploy-mode client --driver-memory 104857600 --master local[*] --name sartre_spark_sortre --class com.umayrh.sort.Main  ../../sparkScala/sort/build/libs/sort-0.1-all.jar 1000000 /tmp/sparktuner_sort
+        ...
+      Caused by: java.lang.IllegalArgumentException: System memory 93323264 must be at least 471859200. Please increase heap size using the --driver-memory option or spark.driver.memory in Spark configuration.
+        at org.apache.spark.memory.UnifiedMemoryManager$.getMaxMemory(UnifiedMemoryManager.scala:217)
+      ```
   * Finish test_spark_tuner
-  * Need LongParameter to store memory values larger than 2G
-  * Allow JAR parameters to also be configurable.  
   * Add tests for: ScaledIntegerParameter
+  * Replace `type` with `isinstance`
 
 * Next steps
+  * Allow JAR parameters to also be configurable.  
   * Implement a new objective function that, over _similar_ values of run-time, minimizes
     resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
     same runtime in all cases, the optimal configuration value should be 1.

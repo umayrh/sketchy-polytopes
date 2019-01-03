@@ -2,12 +2,11 @@
 Main module that is used for running a Spark application with different
 configurable parameters, possibly a given range instead of a point value.
 """
-# import adddeps  # fix sys.path
-
 import logging
 import os
 from opentuner import (MeasurementInterface, Result, argparsers)
 from opentuner.search.manipulator import (ConfigurationManipulator,
+                                          NumericParameter,
                                           IntegerParameter,
                                           ScaledNumericParameter,
                                           BooleanParameter)
@@ -24,21 +23,21 @@ class ScaledIntegerParameter(ScaledNumericParameter, IntegerParameter):
     An integer parameter that is searched on a
     linear scale after normalization, but stored without scaling
     """
-    def __init__(self, name, min_value, max_value, scale, **kwargs):
+    def __init__(self, name, min_value, max_value, scaling, **kwargs):
+        assert scaling > 0
         kwargs['value_type'] = int
         super(ScaledNumericParameter, self).__init__(
             name, min_value, max_value, **kwargs)
-        assert scale > 0
-        self.scale = float(scale)
+        self.scaling = scaling
 
     def _scale(self, v):
-        return int(round(v / self.scale))
+        return int(v / self.scaling)
 
     def _unscale(self, v):
-        return int(round(v * self.scale))
+        return int(v * self.scaling)
 
     def legal_range(self, config):
-        return self._scale(self.min_value), self._scale(self.max_value)
+        return map(self._scale, NumericParameter.legal_range(self, config))
 
     def search_space_size(self):
         return self._scale(
@@ -87,8 +86,10 @@ class SparkConfigTuner(MeasurementInterface):
             else:
                 raise SparkTunerConfigError(
                     ValueError, "Invalid type for ConfigurationManipulator")
-            log.info("Added config: " + str(type(tuner_param)) + ", " +
-                     str([tuner_param.min_value, tuner_param.max_value]))
+            log.info("Added config: " + str(type(tuner_param)) +
+                     ": legal range " + str(tuner_param.legal_range(None)) +
+                     ", search space size " +
+                     str(tuner_param.search_space_size()))
             manipulator.add_parameter(tuner_param)
         return manipulator
 
