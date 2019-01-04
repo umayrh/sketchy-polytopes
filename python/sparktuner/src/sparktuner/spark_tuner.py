@@ -6,42 +6,15 @@ import logging
 import os
 from opentuner import (MeasurementInterface, Result, argparsers)
 from opentuner.search.manipulator import (ConfigurationManipulator,
-                                          NumericParameter,
                                           IntegerParameter,
-                                          ScaledNumericParameter,
                                           BooleanParameter)
 from args import ArgumentParser
 from spark_param import SparkParamType, \
     SparkIntType, SparkMemoryType, SparkBooleanType
 from spark_cmd import SparkSubmitCmd
+from tuner_cfg import ScaledIntegerParameter, MinimizeTimeAndResource
 
 log = logging.getLogger(__name__)
-
-
-class ScaledIntegerParameter(ScaledNumericParameter, IntegerParameter):
-    """
-    An integer parameter that is searched on a
-    linear scale after normalization, but stored without scaling
-    """
-    def __init__(self, name, min_value, max_value, scaling, **kwargs):
-        assert scaling > 0
-        kwargs['value_type'] = int
-        super(ScaledNumericParameter, self).__init__(
-            name, min_value, max_value, **kwargs)
-        self.scaling = scaling
-
-    def _scale(self, v):
-        return int(v / self.scaling)
-
-    def _unscale(self, v):
-        return int(v * self.scaling)
-
-    def legal_range(self, config):
-        return map(self._scale, NumericParameter.legal_range(self, config))
-
-    def search_space_size(self):
-        return self._scale(
-            super(ScaledIntegerParameter, self).search_space_size())
 
 
 class SparkTunerConfigError(Exception):
@@ -119,9 +92,11 @@ class SparkConfigTuner(MeasurementInterface):
         log.info(run_cmd)
 
         run_result = self.call_program(run_cmd)
+        # TODO differentiate between config errors and errors due to
+        # insufficient resources
         assert run_result['returncode'] == 0, run_result['stderr']
 
-        return Result(time=run_result['time'])
+        return Result(time=run_result['time'], size=0)
 
     def save_final_config(self, configuration):
         """Saves optimal configuration, after tuning, to a file"""
@@ -131,6 +106,10 @@ class SparkConfigTuner(MeasurementInterface):
                 self.args.name + "_final_config.json")
             log.info("Writing final config", file_name, configuration.data)
             self.manipulator().save_to_file(configuration.data, file_name)
+
+    def objective(self):
+        # TODO: add a flag to allow using a different objective function
+        return MinimizeTimeAndResource()
 
     @staticmethod
     def make_parser():
