@@ -30,13 +30,17 @@ class ScaledIntegerParameter(ScaledNumericParameter, IntegerParameter):
         self.scaling = scaling
 
     def _scale(self, v):
-        return int(v / self.scaling)
+        return (v + 1.0 - self.min_value) / float(self.scaling)
 
     def _unscale(self, v):
-        return int(v * self.scaling)
+        v = v * self.scaling - 1.0 + self.min_value
+        v = int(round(v))
+        return v
 
     def legal_range(self, config):
-        return map(self._scale, NumericParameter.legal_range(self, config))
+        low, high = NumericParameter.legal_range(self, config)
+        # increase the bounds account for rounding
+        return self._scale(low - 0.4999), self._scale(high + 0.4999)
 
     def search_space_size(self):
         return self._scale(
@@ -76,11 +80,16 @@ class MinimizeTimeAndResource(SearchObjective):
         """
         Produce a string version of a resultsdb.models.Result()
         """
-        return "accuracy=%.8f, size=%.1f" % (result.time, result.size)
+        return "time=%.2f, size=%.1f" % (result.time, result.size)
+
+    @staticmethod
+    def _ratio(a, b):
+        if b == 0:
+            return float('inf') * a
+        return a / b
 
     def result_relative(self, result1, result2):
-        """Return None, or a relative goodness of resultsdb.models.Result"""
-        # unimplemented for now
-        log.warning('result_relative() not yet implemented for %s',
-                    self.__class__.__name__)
-        return None
+        """return None, or a relative goodness of resultsdb.models.Result"""
+        if isclose(result1.time, result2.time, self.rel_tol, self.abs_tol):
+            return MinimizeTimeAndResource._ratio(result1.time, result2.time)
+        return MinimizeTimeAndResource._ratio(result1.size, result2.size)
