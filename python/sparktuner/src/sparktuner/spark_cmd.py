@@ -53,7 +53,7 @@ class SparkSubmitCmd:
         for param, value in param_dict.items():
             param_flag = dirc_flag(param) if is_direct else conf_flag(param)
             # TODO lower() seems hacky - find a better way
-            value_str = value if type(value) is str else str(value).lower()
+            value_str = value if isinstance(value, str) else str(value).lower()
             if is_direct:
                 subcmd_list.append(param_flag)
                 subcmd_list.append(value_str)

@@ -42,19 +42,18 @@ class SparkConfigTuner(MeasurementInterface):
 
         for flag, param in param_dict.items():
             log.info("Adding flag: " + str(flag) + ", " + str(type(param)))
-            param_type = type(param)
-            if param_type is SparkIntType:
+            if isinstance(param, SparkIntType):
                 tuner_param = IntegerParameter(
                     flag,
                     param.get_range_start(),
                     param.get_range_end())
-            elif param_type is SparkMemoryType:
+            elif isinstance(param, SparkMemoryType):
                 tuner_param = ScaledIntegerParameter(
                     flag,
                     param.get_range_start(),
                     param.get_range_end(),
                     param.get_scale())
-            elif param_type is SparkBooleanType:
+            elif isinstance(param, SparkBooleanType):
                 tuner_param = BooleanParameter(flag)
             else:
                 raise SparkTunerConfigError(

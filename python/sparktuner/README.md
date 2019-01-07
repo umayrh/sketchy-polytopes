@@ -76,7 +76,6 @@ is desired.
         at org.apache.spark.memory.UnifiedMemoryManager$.getMaxMemory(UnifiedMemoryManager.scala:217)
       ```
   * Finish test_spark_tuner
-  * Replace `type` with `isinstance`
 
 * Next steps
   * Allow JAR parameters to also be configurable.  

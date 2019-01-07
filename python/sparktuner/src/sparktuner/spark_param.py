@@ -47,7 +47,7 @@ class SparkParamType(object):
         """
         return dict(filter(
             lambda p:
-            issubclass(type(p[1]), SparkParamType) and filter_lambda(p[1]),
+            isinstance(p[1], SparkParamType) and filter_lambda(p[1]),
             param_dict.items()))
 
     def __init__(self,
@@ -65,9 +65,10 @@ class SparkParamType(object):
         """
         self.spark_name = spark_name
         self.is_range_val = \
-            maybe_range and type(value) is tuple and value[0] < value[1]
+            maybe_range and isinstance(value, tuple) and value[0] < value[1]
         self.value = value
-        if maybe_range and type(value) is tuple and value[0] == value[1]:
+        # Inferring a non-range value that's supplied as a range e.g. (2, 2)
+        if maybe_range and isinstance(value, tuple) and value[0] == value[1]:
             self.value = value[0]
         self.desc = desc
 
@@ -142,7 +143,7 @@ class SparkStringType(SparkParamType):
     String types are assumed to have fixed values
     """
     def __init__(self, name, value, desc):
-        assert type(value) is str
+        assert isinstance(value, str)
         super(SparkStringType, self).__init__(name, value, False, desc)
 
     def cast_from_str(self, str_value):
@@ -158,10 +159,10 @@ class SparkStringType(SparkParamType):
 class SparkIntType(SparkNumericType):
     @staticmethod
     def check_if_legal(int_value):
-        assert type(int_value) is int and int_value > 0
+        assert isinstance(int_value, int) and int_value > 0
 
     def __init__(self, name, value, desc):
-        assert type(value) is int or type(value) is tuple
+        assert isinstance(value, int) or isinstance(value, tuple)
         super(SparkIntType, self).__init__(name, value, True, desc)
 
     def cast_from_str(self, str_value):
@@ -192,11 +193,11 @@ class SparkIntType(SparkNumericType):
 
 class SparkMemoryType(SparkNumericType):
     def __init__(self, name, value, desc):
-        assert type(value) is int or type(value) is tuple
+        assert isinstance(value, int) or isinstance(value, tuple)
         super(SparkMemoryType, self).__init__(name, value, True, desc)
 
     def get_scale(self):
-        if type(self.value) is tuple:
+        if isinstance(self.value, tuple):
             return self.value[2]
         return 1
 
@@ -232,10 +233,10 @@ class SparkMemoryType(SparkNumericType):
 class SparkBooleanType(SparkParamType):
     @staticmethod
     def check_if_legal(value):
-        assert type(value) is bool
+        assert isinstance(value, bool)
 
     def __init__(self, name, value, desc):
-        assert type(value) is bool
+        assert isinstance(value, bool)
         super(SparkBooleanType, self).__init__(name, value, True, desc)
 
     def cast_from_str(self, str_value):
