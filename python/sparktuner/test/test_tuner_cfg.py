@@ -1,10 +1,13 @@
 import unittest
 import random
-from sparktuner.tuner_cfg import ScaledIntegerParameter
+from math import isnan
+from opentuner import Result
+from sparktuner.tuner_cfg import (ScaledIntegerParameter,
+                                  MinimizeTimeAndResource)
 
 
 class ScaledIntegerParameterTest(unittest.TestCase):
-    def test_bad_scaling_values(self):
+    def test_invalid_scaling_values(self):
         with self.assertRaises(AssertionError):
             ScaledIntegerParameter("a", 1, 2, 0)
         with self.assertRaises(AssertionError):
@@ -12,7 +15,7 @@ class ScaledIntegerParameterTest(unittest.TestCase):
         with self.assertRaises(AssertionError):
             ScaledIntegerParameter("a", 30, 100, 1000)
 
-    def test_if_scaling_respects_bounds(self):
+    def test_scaling_boundedness(self):
         """
         Test if scaling and unscaling, in any order,
         cause a parameter values to go out of bounds
@@ -41,7 +44,40 @@ class ScaledIntegerParameterTest(unittest.TestCase):
 
 class MinimizeTimeAndResourceTest(unittest.TestCase):
     def test_result_compare(self):
-        pass
+        obj = MinimizeTimeAndResource()
+        # ((actual.time, actual.size), (expected.time, expected.size):
+        #   result
+        test_cases = {
+            ((2, 3), (2, 3)): 0,
+            ((2.0, 3.0), (2.0, 3.0)): 0,
+            ((2.0, 3.0), (1.0, 3.0)): 1,
+            ((2.0, 3.0), (2.0, 2.0)): 1,
+            ((2.0, 3.0), (10.0, 3.0)): -1,
+            ((2.0, 3.0), (2.0, 30)): -1,
+        }
+        for k, v in test_cases.items():
+            a = Result(time=k[0][0], size=k[0][1])
+            b = Result(time=k[1][0], size=k[1][1])
+            self.assertEquals(obj.result_compare(a, b), v)
 
     def test_result_relative(self):
-        pass
+        obj = MinimizeTimeAndResource()
+        # ((actual.time, actual.size), (expected.time, expected.size):
+        #   result
+        test_cases = {
+            ((2, 3), (2, 3)): 1,
+            ((2.0, 3.0), (2.0, 3.0)): 1,
+            ((2.0, 3.0), (1.0, 3.0)): 2,
+            ((2.0, 3.0), (2.0, 2.0)): 1.5,
+            ((2.0, 3.0), (10.0, 3.0)): 0.2,
+            ((2.0, 3.0), (2.0, 30)): 0.1,
+            ((0, 0), (0, 0)): float('nan'),
+            ((0, 1), (0, 0)): float('inf'),
+        }
+        for k, v in test_cases.items():
+            a = Result(time=k[0][0], size=k[0][1])
+            b = Result(time=k[1][0], size=k[1][1])
+            if isnan(float(v)):
+                self.assertTrue(isnan(float(obj.result_relative(a, b))))
+            else:
+                self.assertEquals(obj.result_relative(a, b), v)

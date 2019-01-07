@@ -149,7 +149,7 @@ setup(
     author_email='umayrh@gmail.com',
     url='https://github.com/umayrh/sketchy-polytopes/tree/master/python/sparktuner',
     license='GPL-3.0',
-    description='OpenTuner wrapper for tuning Spark applications',
+    description='Package for automating Spark application tuning',
     long_description=open('README.txt').read(),
     install_requires=[
         "opentuner==0.8.0",

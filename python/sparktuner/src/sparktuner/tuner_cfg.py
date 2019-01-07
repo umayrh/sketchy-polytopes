@@ -91,5 +91,5 @@ class MinimizeTimeAndResource(SearchObjective):
     def result_relative(self, result1, result2):
         """return None, or a relative goodness of resultsdb.models.Result"""
         if isclose(result1.time, result2.time, self.rel_tol, self.abs_tol):
-            return MinimizeTimeAndResource._ratio(result1.time, result2.time)
-        return MinimizeTimeAndResource._ratio(result1.size, result2.size)
+            return MinimizeTimeAndResource._ratio(result1.size, result2.size)
+        return MinimizeTimeAndResource._ratio(result1.time, result2.time)

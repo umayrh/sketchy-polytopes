@@ -76,7 +76,6 @@ is desired.
         at org.apache.spark.memory.UnifiedMemoryManager$.getMaxMemory(UnifiedMemoryManager.scala:217)
       ```
   * Finish test_spark_tuner
-  * Add tests for: ScaledIntegerParameter
   * Replace `type` with `isinstance`
 
 * Next steps

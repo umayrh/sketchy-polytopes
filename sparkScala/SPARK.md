@@ -50,6 +50,10 @@ of using RDD or Dataframe directly.
 May also respond to:
 * Using a different garbage collection algorithm
 
+#### `Expected hostname (not IP) but got ...`
+Spark issue. Need to set `--conf spark.driver.host=localhost`
+
+
 ## Quick notes
 
 ### Projects

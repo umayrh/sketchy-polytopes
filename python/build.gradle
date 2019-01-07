@@ -29,7 +29,9 @@ subprojects {
         pyGradlePyPi()
         ivy {
             // Can't easily use a "global" local repo since
-            // pivy-importer clobbers pre-existing libraries.
+            // pivy-importer clobbers pre-existing libraries, which
+            // could possibly create build problems for other packages
+            // when builds are running in parallel.
             url "build/local-ivy-repo"
             layout('pattern') {
                 ivy "[organisation]/[module]/[revision]/[module]-[revision].ivy"
@@ -48,6 +50,8 @@ subprojects {
         commandLine "pip", "install", "-q", "requests"
     }
 
+    // TODO: Offline test requires  gradle check -x getRequirements since
+    // we're clobbering the local Ivy repo every time
     task getRequirements(type: Exec) {
         dependsOn pipInstallRequests
         commandLine "python", "../etc/get_requirements.py", "build/local-ivy-repo"
@@ -60,6 +64,15 @@ subprojects {
     task printReq {
         dependsOn getRequirements
         println tasks.getRequirements.output()
+    }
+
+    task printExternalDependencies {
+        // it would be nice for setup.py to reference these
+        // dependencies, and, separately, to use `pip freeze`
+        // to write a requirements.txt
+        doLast {
+            println(project.configurations.python.allDependencies)
+        }
     }
 
     installBuildRequirements.dependsOn getRequirements
