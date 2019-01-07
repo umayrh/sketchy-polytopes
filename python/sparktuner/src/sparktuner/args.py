@@ -29,6 +29,13 @@ class ArgumentParser(argparse.ArgumentParser):
     def make_flag(param):
         return "--" + param
 
+    @staticmethod
+    def make_help_msg(desc):
+        if isinstance(desc, tuple):
+            return str(desc[1]).replace('\r\n', '').rstrip('.') + \
+                   ". Default: " + str(desc[0]) + "."
+        return desc
+
     def __init__(self, *args, **kwargs):
         super(ArgumentParser, self).__init__(*args, **kwargs)
 
@@ -47,8 +54,11 @@ class ArgumentParser(argparse.ArgumentParser):
             required = True if param in REQUIRED_FLAGS else False
             param_obj = ArgumentParser.PROGRAM_FLAGS[param]
             param_flag = ArgumentParser.make_flag(param)
+            # param_obj.desc will be a tuple if a default value is
+            # present (as it is for many param in spark_2_4_params.csv.).
+            param_desc = ArgumentParser.make_help_msg(param_obj.desc)
             self.add_argument(param_flag, type=param_obj.make_param_from_str,
-                              required=required, help=param_obj.desc)
+                              required=required, help=param_desc)
 
     def error(self, message):
         """Overwrites default error function"""
