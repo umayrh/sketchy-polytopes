@@ -2,7 +2,7 @@
 
 ## Themes
 
-### Counting
+### Counting, Order statistics
 
 #### Counting the number of distinct elements
 
@@ -15,6 +15,16 @@
   more efficient (in terms of execution time) than the naive algorithm 
   (bitwise-AND two bit vectors together and count the number of 1’s in it)."
   [More](https://www.cc.gatech.edu/classes/AY2011/cs7260_fall/count-distinct.pdf)
+
+#### Computing median
+
+* "Binmedian and binapprox are algorithms to compute the median, resp. an 
+  approximation to the median. Binmedian has O(n) average running time and 
+  binapprox has O(n) worst-case running time. These algorithms are highly competitive 
+  with the standard algorithm---quickselect---when computing the median of a single 
+  data set, but are significantly faster in updating the median when more data is 
+  added. Furthermore, their strategies are able to be parallelized/distributed..." 
+  [More](www.stat.cmu.edu/~ryantibs/median/)
 
 ## Problems
 

@@ -25,6 +25,12 @@ subprojects {
         }
     }
 
+    python {
+        details {
+            pythonVersion = '2.7'
+        }
+    }
+
     repositories {
         pyGradlePyPi()
         ivy {

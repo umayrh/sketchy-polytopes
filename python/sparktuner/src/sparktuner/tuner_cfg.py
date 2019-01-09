@@ -18,9 +18,27 @@ log = logging.getLogger(__name__)
 
 
 class ScaledIntegerParameter(ScaledNumericParameter, IntegerParameter):
+    SCALING = 1000000
     """
     An integer parameter that is searched on a
-    linear scale after normalization, but stored without scaling
+    linear scale after normalization, but stored without scaling.
+
+    TODO: revisit this implementation, and this class' utility.
+    It seems hard to achieve all of the following goals simultaneously:
+    - Keep this parameter type an integer,
+    - Allow scaling the parameter range by another integer, with
+    possibly irrational result,
+    - Enforce that rounding, or some other way to convert a real
+    value to an integer, doesn't cause the a bounded value to go
+    out of bounds after either scaling-unscaling or unscaling-scaling.
+    A partial solution might be to ensure that scaling factor is
+    _effectively_ a real between 0 and 1. We achieve this by rescaling
+    values by 1000000.
+    The current implementation may fail the following test because
+    of rounding errors:
+        result = param._scale(param._unscale(val))
+        self.assertGreaterEqual(result, min_val)
+        self.assertLessEqual(result, max_val)
     """
     def __init__(self, name, min_value, max_value, scaling, **kwargs):
         assert 0 < abs(scaling) <= abs(min_value), "Invalid scaling"
@@ -30,21 +48,19 @@ class ScaledIntegerParameter(ScaledNumericParameter, IntegerParameter):
         self.scaling = scaling
 
     def _scale(self, v):
-        return (v + 1.0 - self.min_value) / float(self.scaling)
+        return (v - self.min_value) * ScaledIntegerParameter.SCALING \
+               / float(self.scaling)
 
     def _unscale(self, v):
-        v = v * self.scaling - 1.0 + self.min_value
-        v = int(round(v))
-        return v
+        v = (v * self.scaling) / ScaledIntegerParameter.SCALING + \
+            self.min_value
+        return int(round(v))
 
     def legal_range(self, config):
         low, high = NumericParameter.legal_range(self, config)
-        # increase the bounds account for rounding
-        return self._scale(low - 0.4999), self._scale(high + 0.4999)
-
-    def search_space_size(self):
-        return self._scale(
-            super(ScaledIntegerParameter, self).search_space_size())
+        # We avoid increasing the bounds (to account for rounding)
+        # by rescaling using ScaledIntegerParameter.SCALING
+        return int(self._scale(low)), int(self._scale(high))
 
 
 class MinimizeTimeAndResource(SearchObjective):

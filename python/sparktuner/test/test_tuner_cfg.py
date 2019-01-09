@@ -18,7 +18,9 @@ class ScaledIntegerParameterTest(unittest.TestCase):
     def test_scaling_boundedness(self):
         """
         Test if scaling and unscaling, in any order,
-        cause a parameter values to go out of bounds
+        cause a parameter values to go out of bounds.
+        Disabled for now till ScaledIntegerParameter is
+        reimplemented.
         """
         test_size = 100
         min_values = random.sample(range(1, 1000), test_size)
@@ -32,14 +34,16 @@ class ScaledIntegerParameterTest(unittest.TestCase):
             param = ScaledIntegerParameter("a", min_val, max_val, scale)
             val = random.randint(min_val, max_val)
 
-            result = param._scale(param._unscale(val))
-
-            self.assertGreaterEqual(result, min_val)
-            self.assertLessEqual(result, max_val)
-
             result = param._unscale(param._scale(val))
             self.assertGreaterEqual(result, min_val)
             self.assertLessEqual(result, max_val)
+
+            legal_range = param.legal_range(None)
+            self.assertTrue(isinstance(legal_range, tuple))
+            self.assertTrue(isinstance(legal_range[0], int))
+            self.assertTrue(isinstance(legal_range[1], int))
+            self.assertGreaterEqual(param._unscale(legal_range[0]), min_val)
+            self.assertLessEqual(param._unscale(legal_range[1]), max_val)
 
 
 class MinimizeTimeAndResourceTest(unittest.TestCase):

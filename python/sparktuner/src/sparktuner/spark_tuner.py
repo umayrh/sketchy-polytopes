@@ -2,17 +2,17 @@
 Main module that is used for running a Spark application with different
 configurable parameters, possibly a given range instead of a point value.
 """
-import logging
 import os
+import logging
+from args import ArgumentParser
 from opentuner import (MeasurementInterface, Result, argparsers)
 from opentuner.search.manipulator import (ConfigurationManipulator,
                                           IntegerParameter,
                                           BooleanParameter)
-from args import ArgumentParser
 from spark_param import SparkParamType, \
     SparkIntType, SparkMemoryType, SparkBooleanType
 from spark_cmd import SparkSubmitCmd
-from tuner_cfg import ScaledIntegerParameter, MinimizeTimeAndResource
+from tuner_cfg import MinimizeTimeAndResource
 
 log = logging.getLogger(__name__)
 
@@ -48,11 +48,10 @@ class SparkConfigTuner(MeasurementInterface):
                     param.get_range_start(),
                     param.get_range_end())
             elif isinstance(param, SparkMemoryType):
-                tuner_param = ScaledIntegerParameter(
+                tuner_param = IntegerParameter(
                     flag,
                     param.get_range_start(),
-                    param.get_range_end(),
-                    param.get_scale())
+                    param.get_range_end())
             elif isinstance(param, SparkBooleanType):
                 tuner_param = BooleanParameter(flag)
             else:
