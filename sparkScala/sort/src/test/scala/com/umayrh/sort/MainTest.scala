@@ -1,13 +1,13 @@
 package com.umayrh.sort
 
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
-import com.google.common.io.{MoreFiles, RecursiveDeleteOption}
 import java.io.{File, FilenameFilter}
 
 import org.scalatest.{FeatureSpec, GivenWhenThen, Matchers}
 import org.scalatest.junit.AssertionsForJUnit
 
 import scala.io.Source
+import scala.reflect.io.Directory
 
 class MainTest
     extends FeatureSpec
@@ -25,8 +25,8 @@ class MainTest
 
   override def afterAll(): Unit = {
     super.afterAll()
-    MoreFiles.deleteRecursively(outputFile.toPath,
-                                RecursiveDeleteOption.ALLOW_INSECURE)
+    val directory = new Directory(outputFile)
+    directory.deleteRecursively()
   }
 
   Feature("Class to generate, sort and write random numbers to a CSV file") {

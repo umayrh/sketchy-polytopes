@@ -2,5 +2,8 @@ version = "0.1"
 description = "Interval Graph"
 
 dependencies {
-    compile group: 'org.roaringbitmap', name: 'RoaringBitmap', version: "0.6.+"
+    compile group: 'org.roaringbitmap', name: 'RoaringBitmap',             version: "0.6.+"
+    compile group: 'com.esotericsoftware', name: "kryo",                   version: '4.0.2'
+    compile group: 'com.google.guava', name: "guava",                      version: '25.0-jre'
+    compile group: 'me.lemire.integercompression', name: "JavaFastPFOR",   version: '0.1.+'
 }

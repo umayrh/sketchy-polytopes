@@ -29,7 +29,7 @@ class ScaledIntegerParameter(ScaledNumericParameter, IntegerParameter):
     - Allow scaling the parameter range by another integer, with
     possibly irrational result,
     - Enforce that rounding, or some other way to convert a real
-    value to an integer, doesn't cause the a bounded value to go
+    value to an integer, doesn't cause a bounded value to go
     out of bounds after either scaling-unscaling or unscaling-scaling.
     A partial solution might be to ensure that scaling factor is
     _effectively_ a real between 0 and 1. We achieve this by rescaling

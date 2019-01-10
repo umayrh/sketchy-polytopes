@@ -12,7 +12,7 @@ class SparkTunerTest(unittest.TestCase):
     Note: the JAR used here is a slim, unshaded file, and
     so should not be used for full functionality.
     """
-    JAR_NAME = "sort-0.1.jar"
+    JAR_NAME = "sort-0.1-all.jar"
 
     @staticmethod
     def get_tempfile_name():
@@ -44,11 +44,15 @@ class SparkTunerTest(unittest.TestCase):
         try:
             SparkConfigTuner.make_parser().print_help()
         except Exception:
-            self.fail()
+            self.fail("Error using --help")
 
     @unittest.skipIf("SPARK_HOME" not in os.environ,
                      "SPARK_HOME environment variable not set.")
-    def test_spark_tuner_main(self):
+    def test_no_config_args(self):
+        """
+        build/deployable/bin/sparktuner --name blah --path test/sort-0.1-all.jar
+        --deploy_mode client --master "local[*]" --class Main
+        """
         arg_list = SparkTunerTest.make_args(self.temp_file)
         args = SparkConfigTuner.make_parser().parse_args(arg_list)
         SparkConfigTuner.main(args)
@@ -56,16 +60,13 @@ class SparkTunerTest(unittest.TestCase):
         if not os.path.exists(self.temp_file):
             self.fail("Expected output file")
 
-    def test_no_config_args(self):
-        """
-        build/deployable/bin/sparktuner --name blah --path test/sort-0.1.jar
-        --deploy_mode client --master "local[*]" --class Main
-        """
-        pass
+    @unittest.skipIf("SPARK_HOME" not in os.environ,
+                     "SPARK_HOME environment variable not set.")
+    def test_with_driver_memory(self):
+        arg_list = SparkTunerTest.make_args(self.temp_file)
+        arg_list.extend(['--driver_memory', '0.75G,1G'])
+        args = SparkConfigTuner.make_parser().parse_args(arg_list)
+        SparkConfigTuner.main(args)
 
-    def test_no_bad_class_name(self):
-        """
-        build/deployable/bin/sparktuner --name blah --path test/sort-0.1.jar
-        --deploy_mode client --master "local[*]" --class Main
-        """
-        pass
+        if not os.path.exists(self.temp_file):
+            self.fail("Expected output file")

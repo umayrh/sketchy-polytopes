@@ -2,9 +2,9 @@ package com.umayrh.sort
 
 import java.io.File
 
-import com.google.common.io.{MoreFiles, RecursiveDeleteOption}
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.mllib.random.RandomRDDs._
+import scala.reflect.io.Directory
 
 /**
   * Trait for Spark applications
@@ -62,8 +62,8 @@ object Main extends SparkBase {
     // Makes it easier to rerun this program on the same inputs.
     val outputDirFile = new File(outputDirPath)
     if (outputDirFile.exists()) {
-      MoreFiles.deleteRecursively(outputDirFile.toPath,
-                                  RecursiveDeleteOption.ALLOW_INSECURE)
+      val directory = new Directory(outputDirFile)
+      directory.deleteRecursively()
     }
 
     import spark.implicits._

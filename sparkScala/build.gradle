@@ -26,18 +26,17 @@ subprojects {
   apply plugin: 'com.github.johnrengelman.shadow'
 
   dependencies {
-    compile group: 'org.scala-lang', name: 'scala-library', version: scalaVersion + ".+"
+    compileOnly group: 'org.scala-lang', name: 'scala-library', version: scalaVersion + ".+"
 
-    compile group: 'org.apache.spark', name: "spark-core_"     + scalaVersion, version: sparkVersion
-    compile group: 'org.apache.spark', name: "spark-sql_"      + scalaVersion, version: sparkVersion
-    compile group: 'org.apache.spark', name: "spark-mllib_"    + scalaVersion, version: sparkVersion
-    compile group: 'org.apache.spark', name: "spark-graphx_"   + scalaVersion, version: sparkVersion
-    compile group: 'org.apache.spark', name: "spark-streaming_"+ scalaVersion, version: sparkVersion
-    compile group: 'org.apache.spark', name: "spark-hive_"     + scalaVersion, version: sparkVersion
-    compile group: 'org.apache.spark', name: "spark-catalyst_" + scalaVersion, version: sparkVersion
-    compile group: 'com.esotericsoftware', name: "kryo",                       version: '4.0.2'
-    compile group: 'com.google.guava', name: "guava",                          version: '25.0-jre'
-    compile group: 'me.lemire.integercompression', name: "JavaFastPFOR",       version: '0.1.+'
+    // Setting Spark libs to be compileOnly since otherwise the shadow JAR
+    // might end up being very fat (5K -> 188M vs. 5K -> 2.7M).
+    compileOnly group: 'org.apache.spark', name: "spark-core_"     + scalaVersion, version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: "spark-sql_"      + scalaVersion, version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: "spark-mllib_"    + scalaVersion, version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: "spark-graphx_"   + scalaVersion, version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: "spark-streaming_"+ scalaVersion, version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: "spark-hive_"     + scalaVersion, version: sparkVersion
+    compileOnly group: 'org.apache.spark', name: "spark-catalyst_" + scalaVersion, version: sparkVersion
 
     testCompile group: 'org.scalatest', name: "scalatest_" + scalaVersion, version: '3.+'
     testCompile group: 'org.scalacheck', name: "scalacheck_" + scalaVersion, version: '1.+'
@@ -46,12 +45,15 @@ subprojects {
     testCompile group: 'com.holdenkarau', name: 'spark-testing-base_' + scalaVersion, version: sparkVersion + "_0.+"
   }
 
+  // Give test dependencies access to compileOnly dependencies to emulate providedCompile.
+  // Otherwise, tests won't compile.
+  // https://discuss.gradle.org/t/compileonly-dependencies-are-not-available-in-tests/15366/7
+  configurations {
+    testImplementation.extendsFrom compileOnly
+  }
+
   shadowJar {
     // See https://github.com/johnrengelman/shadow/issues/107
-    // This can produce is really fat JAR (5k -> 188M), so might
-    // want to prune some libs here, maybe Spark ones.
-    // Alternatively, the Spark libs may be set to 'compileOnly'
-    // instead of 'compile'.
     zip64 true
   }
 
