@@ -50,7 +50,8 @@ class SparkTunerTest(unittest.TestCase):
                      "SPARK_HOME environment variable not set.")
     def test_no_config_args(self):
         """
-        build/deployable/bin/sparktuner --name blah --path test/sort-0.1-all.jar
+        build/deployable/bin/sparktuner --name blah
+        --path test/sort-0.1-all.jar
         --deploy_mode client --master "local[*]" --class Main
         """
         arg_list = SparkTunerTest.make_args(self.temp_file)
