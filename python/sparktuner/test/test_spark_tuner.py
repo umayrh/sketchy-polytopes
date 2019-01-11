@@ -66,7 +66,8 @@ class SparkTunerTest(unittest.TestCase):
     def test_with_driver_memory(self):
         arg_list = SparkTunerTest.make_args(self.temp_file)
         arg_list.extend(['--driver_memory', '0.75G,1G'])
-        arg_list.extend(['--fixed_param', '--conf spark.sql.autoBroadcastJoinThreshold=-1'])
+        arg_list.extend(['--fixed_param',
+                         '--conf spark.sql.autoBroadcastJoinThreshold=-1'])
         args = SparkConfigTuner.make_parser().parse_args(arg_list)
         SparkConfigTuner.main(args)
 
