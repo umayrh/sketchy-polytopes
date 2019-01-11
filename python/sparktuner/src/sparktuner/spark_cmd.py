@@ -133,11 +133,15 @@ class SparkSubmitCmd:
             SparkSubmitCmd.SPARK_SUBMIT_PATH,
             SparkSubmitCmd.make_subcmd(direct_params, True),
             SparkSubmitCmd.make_subcmd(conf_params, False),
+            self.fixed_param,
             jar_path,
             program_conf
         ])
 
-    def __init__(self, direct_param_default=dict(), conf_defaults=dict()):
+    def __init__(self,
+                 direct_param_default=dict(),
+                 conf_defaults=dict(),
+                 fixed_param=""):
         """
         Note that these input dict are NOT keyed by program flags but
         by native Spark parameter names
@@ -145,7 +149,12 @@ class SparkSubmitCmd:
         to a SparkParamType object
         :param conf_defaults: maps conf Spark param name
         to a SparkParamType object
+        :param fixed_param: set of direct and/or conf flags, in the
+        format expected by spark-submit, that's fixed across runs,
+        and hence appended without modification to a spark-submit
+        command
         """
         self.direct_param_default = direct_param_default
         self.conf_defaults = conf_defaults
+        self.fixed_param = fixed_param
         return

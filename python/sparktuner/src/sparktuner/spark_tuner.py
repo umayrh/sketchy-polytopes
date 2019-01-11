@@ -71,6 +71,7 @@ class SparkConfigTuner(MeasurementInterface):
         arg_dict = vars(self.args)
         jar_path = arg_dict.get(ArgumentParser.JAR_PATH_ARG_NAME)
         program_conf = arg_dict.get(ArgumentParser.PROGRAM_CONF_ARG_NAME, "")
+        fixed_args = arg_dict.get(ArgumentParser.FIXED_SPARK_PARAM, "")
         # This config dict is keyed by the program flag. See
         # manipulator().
         cfg_data = desired_result.configuration.data
@@ -83,7 +84,7 @@ class SparkConfigTuner(MeasurementInterface):
             cfg_data[flag]) for flag in cfg_data}
 
         # TODO figure out appropriate defaults
-        spark_submit = SparkSubmitCmd({}, {})
+        spark_submit = SparkSubmitCmd({}, {}, fixed_args)
         # make_cmd() expects only dicts of flags to SparkParamType as input
         run_cmd = spark_submit.make_cmd(
             jar_path, program_conf, param_dict, tuner_cfg)
