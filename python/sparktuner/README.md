@@ -63,13 +63,19 @@ is desired.
     * `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --executor_memory "50mb,1gb" --program_conf "10000 /tmp/sparktuner_sort"`
     * `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --driver_memory "1GB,6GB" --program_conf "1000000 /tmp/sparktuner_sort"`
   * Rethink how FIXED_SPARK_PARAM interact with the configurable param, esp whether
-  or not they are merged. Don't want issues due to duplicates.
+  or not they are merged. Don't want issues due to duplicates. Maybe this should
+  come from SparkSubmitCmd defaults. Some notion of defaults and overrides.
+  * Fix `sort` to write to local filesystem by default.
+  * Finish the new objective function that, over _similar_ values of run-time, minimizes
+    resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
+    same runtime in all cases, the optimal configuration value should be 1.
+  * SparkMemoryType values should be translated to MB
+  * IntegerParameter results in an overly large parameter space
+  * The underlying optimization also doesn't seem to terminate if the objective
+    value doesn't change over successive iterations
 
 * Next steps
   * Allow JAR parameters to also be configurable.  
-  * Implement a new objective function that, over _similar_ values of run-time, minimizes
-    resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
-    same runtime in all cases, the optimal configuration value should be 1.
   * `SparkParamType.get_param_map` is called twice, so is `manipulator()`. Redundant.
   * Figure out some DoWhy basics. 
     * In particular, figure out a sensible causal graph for Spark parameters.

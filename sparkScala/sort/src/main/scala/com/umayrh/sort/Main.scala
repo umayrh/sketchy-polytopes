@@ -60,6 +60,7 @@ object Main extends SparkBase {
 
     // Delete outputDir if it already exists.
     // Makes it easier to rerun this program on the same inputs.
+    // TODO: use Hadoop utilities to manipulate files
     val outputDirFile = new File(outputDirPath)
     if (outputDirFile.exists()) {
       val directory = new Directory(outputDirFile)
