@@ -14,7 +14,7 @@ class Util:
     non-essential requirements.
     """
     @staticmethod
-    def format_size(bytes):
+    def format_size(num_bytes, units=""):
         """
         This function formats sizes in bytes, kibibytes (k), mebibytes (m),
         gibibytes (g), tebibytes (t), or pebibytes(p). The format itself:
@@ -24,6 +24,12 @@ class Util:
             c. converts to a byte string format that Spark finds
               readable. See Apache Spark's
               src/main/java/org/apache/spark/network/util/JavaUtils.java#L276
+        Note that, in case of float values, the function doesn't round to avoid
+        going out of some arbitrary min-max bounds.
+        The choice of units in ('b', 'k', 'm', 'g', 't', 'p') instead of
+        ('b', 'kb', 'mb', 'gb', 'tb', 'pb') was constrained by by JVM's format
+        for heap size arguments (Xms and Xmx).
+
         Some examples:
 
         > format_size(0)
@@ -39,21 +45,24 @@ class Util:
         > format_size(int(1024 ** 3 * 4.12))
         '4218mb'
 
-        :param bytes: a :class:`int` representing the number of bytes
+        :param num_bytes: a :class:`int` representing the number of bytes
+        :param units: units to express the number bytes in. Must be a value
+        in the set ('b', 'k', 'm', 'g', 't', 'p'), and defaults
+        to an empty string allowing the function to choose an appropriate
+        representation. The given unit may be ignored if it results in
+        'significant' rounding error.
         :return: a human-readable, :class:`str` representation of the
         input number of bytes
         """
-        if not isinstance(bytes, int):
+        if not isinstance(num_bytes, int):
             raise InvalidSize("Input bytes must be integral")
 
-        num = bytes
-        for x in ['b', 'kb', 'mb', 'gb', 'tb']:
-            if num < 1024:
-                return "%d%s" % (num, x)
-            if num != int(num) and num <= 9999:
+        num = num_bytes
+        for x in ['b', 'k', 'm', 'g', 't']:
+            if x == units or num < 1024 or (num != int(num) and num <= 9999):
                 return "%d%s" % (num, x)
             num /= 1024.0
-        return "%d%s" % (num, 'pb')
+        return "%d%s" % (num, 'p')
 
     @staticmethod
     def parse_size():

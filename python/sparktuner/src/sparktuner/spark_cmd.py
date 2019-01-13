@@ -1,6 +1,7 @@
 from os import environ
 from chainmap import ChainMap
-from spark_param import SparkParamType
+from util import Util
+from spark_param import SparkParamType, SparkMemoryType
 from spark_default_param import FLAG_TO_DIRECT_PARAM, FLAG_TO_CONF_PARAM
 
 
@@ -94,10 +95,20 @@ class SparkSubmitCmd:
         # type(param) is SparkParamType and type(param.value) is not tuple
         input_dict = dict(ChainMap({}, tuner_cfg_dict, arg_dict))
         for flag, param in input_dict.items():
+            param_val = param.value
+            # To ensure that we explicitly specify memory units - lest
+            # Spark/YARN misinterprets the input - we use
+            # `Util.format_size` here to 'round' all values to
+            # kibibytes. For general units, there a small risk that the
+            # rounding here - done outside of Opentuner configuration - may
+            # throw off any underlying optimization algorithm.
+            if isinstance(param, SparkMemoryType):
+                param_val = Util.format_size(param_val, 'k')
+
             if flag in FLAG_TO_DIRECT_PARAM:
-                input_direct_params[param.spark_name] = param.value
+                input_direct_params[param.spark_name] = param_val
             elif flag in FLAG_TO_CONF_PARAM:
-                input_conf_params[param.spark_name] = param.value
+                input_conf_params[param.spark_name] = param_val
 
         # merge input dicts with defaults
         direct_param_default = SparkParamType.get_value_map(
