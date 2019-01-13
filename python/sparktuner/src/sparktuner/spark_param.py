@@ -214,7 +214,7 @@ class SparkMemoryType(SparkNumericType):
             return self.cast_range_1(range_list)
         elif range_len == 2:
             (range_start, range_end) = self.cast_range_2(range_list)
-            range_scale = range_start
+            range_scale = 1
             return range_start, range_end, range_scale
         elif range_len == 3:
             return self.cast_range_3(range_list)

@@ -12,7 +12,7 @@ from opentuner.search.manipulator import (ConfigurationManipulator,
 from spark_param import SparkParamType, \
     SparkIntType, SparkMemoryType, SparkBooleanType
 from spark_cmd import SparkSubmitCmd
-from tuner_cfg import MinimizeTimeAndResource
+from tuner_cfg import MinimizeTimeAndResource, ScaledIntegerParameter
 
 log = logging.getLogger(__name__)
 
@@ -48,10 +48,11 @@ class SparkConfigTuner(MeasurementInterface):
                     param.get_range_start(),
                     param.get_range_end())
             elif isinstance(param, SparkMemoryType):
-                tuner_param = IntegerParameter(
+                tuner_param = ScaledIntegerParameter(
                     flag,
                     param.get_range_start(),
-                    param.get_range_end())
+                    param.get_range_end(),
+                    param.get_scale())
             elif isinstance(param, SparkBooleanType):
                 tuner_param = BooleanParameter(flag)
             else:

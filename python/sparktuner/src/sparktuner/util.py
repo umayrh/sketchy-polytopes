@@ -1,5 +1,3 @@
-
-
 class InvalidSize(Exception):
     ERROR_STR = "Size must be specified as bytes (b), " \
                 "kibibytes (k), mebibytes (m), gibibytes (g), " \
@@ -10,7 +8,7 @@ class InvalidSize(Exception):
 class Util:
     """
     Utilities here may be available in other packages (such as 'humanfriendly'
-    and 'humanize' but these are tailored for this package, and also avoid the
+    and 'humanize') but these are tailored for this package, and also avoid the
     non-essential requirements.
     """
     @staticmethod

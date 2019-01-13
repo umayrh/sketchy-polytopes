@@ -69,7 +69,6 @@ is desired.
   * Finish the new objective function that, over _similar_ values of run-time, minimizes
     resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
     same runtime in all cases, the optimal configuration value should be 1.
-  * SparkMemoryType values should be translated to MB
   * IntegerParameter results in an overly large parameter space
   * The underlying optimization also doesn't seem to terminate if the objective
     value doesn't change over successive iterations

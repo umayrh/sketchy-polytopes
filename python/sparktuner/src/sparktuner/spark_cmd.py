@@ -102,6 +102,7 @@ class SparkSubmitCmd:
             # kibibytes. For general units, there a small risk that the
             # rounding here - done outside of Opentuner configuration - may
             # throw off any underlying optimization algorithm.
+            # TODO figure out when rounding here might cause issues
             if isinstance(param, SparkMemoryType):
                 param_val = Util.format_size(param_val, 'k')
 
