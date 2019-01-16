@@ -1,10 +1,5 @@
 # Optimization
 
-## People and Groups
-
-* [Arkadi Nemirovski]()
-* []
-
 ## Notes
 
 #### Optimization techniques
@@ -50,3 +45,21 @@
 * AM-GM inequality
 * Geodesic convexity
 * Transforming convex functions to other convex functions
+
+## People and Groups
+
+* [Aharon Ben Tal](https://web.iem.technion.ac.il/en/people/abental.html)
+* [Arkadi Nemirovski](https://www2.isye.gatech.edu/~nemirovs/)
+* [David Gale](https://en.wikipedia.org/wiki/David_Gale)
+* [Dimitri Bertsekas](http://www.mit.edu/~dimitrib/home.html)
+* [Nicolò Cesa-Bianchi](http://cesa-bianchi.di.unimi.it)
+* [Richard Karp](https://www2.eecs.berkeley.edu/Faculty/Homepages/karp.html)
+* [Sebastien Bubeck](http://sbubeck.com)
+* [Stephan Boyd](web.stanford.edu/~boyd/)
+* [Yinyu Ye](https://web.stanford.edu/~yyye/)
+* [Yurii Netstorov](https://www.hse.ru/en/org/persons/150293981)
+
+
+* [INFORMS](https://www.informs.org)
+* [European Network for Game Theory](https://gametheorynetwork.com)
+* [Mathematical Optimization Society](www.mathopt.org)

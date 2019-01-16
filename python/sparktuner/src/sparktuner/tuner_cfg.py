@@ -1,6 +1,7 @@
 """Contains extensions to some Opentuner classes"""
 
 import time
+import psutil
 import logging
 import subprocess
 
@@ -28,6 +29,28 @@ class MeasurementInterfaceExt(MeasurementInterface):
         super(MeasurementInterfaceExt, self).__init__(*pargs, **kwargs)
         self.the_io_thread_pool = None
 
+    @staticmethod
+    def get_psutil_info(pr):
+        """
+        :param pr: a psutil Process object
+        :return: a tuple of RSS and CPU percent
+        """
+        with pr.oneshot():
+            try:
+                mem = pr.memory_info().rss
+                cpu = pr.cpu_percent(interval=1)
+                return mem, cpu
+            except psutil.Error:
+                # horrid it may seem but the process may be dead
+                pass
+        return 0, 0
+
+    def the_io_thread_pool_init(self, parallelism=1):
+        if self.the_io_thread_pool is None:
+            self.the_io_thread_pool = ThreadPool(2 * parallelism)
+            # make sure the threads are started up
+            self.the_io_thread_pool.map(int, range(2 * parallelism))
+
     def call_program(self, cmd, limit=None, memory_limit=None, **kwargs):
         """
         The function is meant to "call cmd and kill it if it
@@ -51,6 +74,12 @@ class MeasurementInterfaceExt(MeasurementInterface):
            'timeout': False, 'time': 1.89}
         """
         self.the_io_thread_pool_init(self.args.parallelism)
+
+        # performance counters
+        cpu_num = psutil.cpu_count(logical=True)
+        vcore_secs = 0.0
+        mbyte_secs = 0.0
+
         if limit is float('inf'):
             limit = None
         if type(cmd) in (str, unicode):
@@ -63,6 +92,7 @@ class MeasurementInterfaceExt(MeasurementInterface):
             stderr=subprocess.PIPE,
             preexec_fn=preexec_setpgid_setrlimit(memory_limit),
             **kwargs)
+        pup = psutil.Process(p.pid)
         # Add p.pid to list of processes to kill
         # in case of keyboard interrupt
         self.pid_lock.acquire()
@@ -74,12 +104,20 @@ class MeasurementInterfaceExt(MeasurementInterface):
             stderr_result = self.the_io_thread_pool.apply_async(p.stderr.read)
             while p.returncode is None:
                 if limit is None:
-                    goodwait(p)
+                    # no need to sleep since cpu_percent(interval=1)
+                    # is a blocking call
+                    perf_res = self.get_psutil_info(pup)
+                    mbyte_secs += perf_res[0]
+                    vcore_secs += max(perf_res[1], 100) / 100.0 * cpu_num
                 elif limit and time.time() > t0 + limit:
                     killed = True
                     goodkillpg(p.pid)
                     goodwait(p)
                 else:
+                    # TODO: fix repetitive
+                    perf_res = self.get_psutil_info(pup)
+                    mbyte_secs += perf_res[0]
+                    vcore_secs += max(perf_res[1], 100) / 100.0 * cpu_num
                     # still waiting...
                     sleep_for = limit - (time.time() - t0)
                     if not stdout_result.ready():
@@ -88,6 +126,7 @@ class MeasurementInterfaceExt(MeasurementInterface):
                         stderr_result.wait(sleep_for)
                     else:
                         # TODO(jansel): replace this with a portable waitpid
+                        # (UH) maybe use os.waitpid
                         time.sleep(0.001)
                 p.poll()
         except Exception:
@@ -106,17 +145,13 @@ class MeasurementInterfaceExt(MeasurementInterface):
                 'timeout': killed,
                 'returncode': p.returncode,
                 'stdout': stdout_result.get(),
-                'stderr': stderr_result.get()}
-
-    def the_io_thread_pool_init(self, parallelism=1):
-        if self.the_io_thread_pool is None:
-            self.the_io_thread_pool = ThreadPool(2 * parallelism)
-            # make sure the threads are started up
-            self.the_io_thread_pool.map(int, range(2 * parallelism))
+                'stderr': stderr_result.get(),
+                'mbyte_secs': mbyte_secs / (1024 ** 2),
+                'vcore_secs': vcore_secs}
 
 
 class ScaledIntegerParameter(ScaledNumericParameter, IntegerParameter):
-    SCALING = 1000000
+    SCALING = 1000
     """
     An integer parameter that is searched on a
     linear scale after normalization, but stored without scaling.

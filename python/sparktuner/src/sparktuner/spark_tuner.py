@@ -9,8 +9,10 @@ from opentuner import (Result, argparsers)
 from opentuner.search.manipulator import (ConfigurationManipulator,
                                           IntegerParameter,
                                           BooleanParameter)
-from spark_param import SparkParamType, \
-    SparkIntType, SparkMemoryType, SparkBooleanType
+from spark_param import (SparkParamType,
+                         SparkIntType,
+                         SparkMemoryType,
+                         SparkBooleanType)
 from spark_cmd import SparkSubmitCmd
 from tuner_cfg import (MeasurementInterfaceExt,
                        MinimizeTimeAndResource,
@@ -102,6 +104,8 @@ class SparkConfigTuner(MeasurementInterfaceExt):
         # TODO differentiate between config errors and errors due to
         # insufficient resources
         assert run_result['returncode'] == 0, run_result['stderr']
+
+        log.info(str(run_result))
 
         # Unfortunately, size is a vector of tuner_cfg values at this point
         # and so cannot be resolved into a scala value.

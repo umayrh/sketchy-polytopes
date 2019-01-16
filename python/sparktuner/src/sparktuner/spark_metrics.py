@@ -61,19 +61,20 @@ class SparkMetrics(object):
     </app>
     """
     @staticmethod
-    def get_metrics(spark_master, master_addr, app_id):
+    def get_yarn_metrics(master_addr, app_id):
         """
-        Returns a tupe containing metrics about RAM and vcores
+        Returns a tuple containing metrics about RAM and vcores
         consumed (over time), and application runtime.
-        :param spark_master: (str) either 'yarn' or 'localhost'
-        :param master_addr: if master is 'yarn', then the
-        yarn.resourcemanager.webapp.address including the port
-        number. Otherwise, unused.
-        :param app_id: if 'yarn', then the application id. If
-        'localhost', then the process id.
+        :param master_addr: the yarn.resourcemanager.webapp.address
+        including the port number.
+        :param app_id: the application id.
         :return: a triple containing:
         - an int, representing MB-seconds
         - an int, representing vcore seconds,
         - an int, representing runtime in seconds
         """
+        pass
+
+    @staticmethod
+    def get_process_metrics(pid):
         pass
