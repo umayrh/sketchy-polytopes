@@ -5,14 +5,16 @@ configurable parameters, possibly a given range instead of a point value.
 import os
 import logging
 from args import ArgumentParser
-from opentuner import (MeasurementInterface, Result, argparsers)
+from opentuner import (Result, argparsers)
 from opentuner.search.manipulator import (ConfigurationManipulator,
                                           IntegerParameter,
                                           BooleanParameter)
 from spark_param import SparkParamType, \
     SparkIntType, SparkMemoryType, SparkBooleanType
 from spark_cmd import SparkSubmitCmd
-from tuner_cfg import MinimizeTimeAndResource, ScaledIntegerParameter
+from tuner_cfg import (MeasurementInterfaceExt,
+                       MinimizeTimeAndResource,
+                       ScaledIntegerParameter)
 
 log = logging.getLogger(__name__)
 
@@ -24,23 +26,27 @@ class SparkTunerConfigError(Exception):
         self.message = message
 
 
-class SparkConfigTuner(MeasurementInterface):
+class SparkConfigTuner(MeasurementInterfaceExt):
     """
     OpenTuner implementation for Spark configuration.
     Extends MeasurementInterface.
     """
+    def __init__(self, *pargs, **kwargs):
+        super(SparkConfigTuner, self).__init__(*pargs, **kwargs)
+        self.arg_dict = vars(self.args)
+        self.param_dict = SparkParamType.get_param_map(self.arg_dict)
+        # Extract ranged SparkParamType objects from arguments
+        self.ranged_param_dict = SparkParamType.get_param_map(
+            self.param_dict, lambda p: p.is_range_val)
+        log.info(str(self.ranged_param_dict))
 
     def manipulator(self):
         """
         Defines the search space across configuration parameters
         """
         manipulator = ConfigurationManipulator()
-        # Extract ranged SparkParamType objects from arguments
-        param_dict = SparkParamType.get_param_map(
-            vars(self.args), lambda p: p.is_range_val)
-        log.info(str(param_dict))
 
-        for flag, param in param_dict.items():
+        for flag, param in self.ranged_param_dict.items():
             log.info("Adding flag: " + str(flag) + ", " + str(type(param)))
             if isinstance(param, SparkIntType):
                 tuner_param = IntegerParameter(
@@ -69,26 +75,27 @@ class SparkConfigTuner(MeasurementInterface):
         """
         Runs a program for given configuration and returns the result
         """
-        arg_dict = vars(self.args)
-        jar_path = arg_dict.get(ArgumentParser.JAR_PATH_ARG_NAME)
-        program_conf = arg_dict.get(ArgumentParser.PROGRAM_CONF_ARG_NAME, "")
-        fixed_args = arg_dict.get(ArgumentParser.FIXED_SPARK_PARAM, "")
+        jar_path = self.arg_dict.get(
+            ArgumentParser.JAR_PATH_ARG_NAME)
+        program_conf = self.arg_dict.get(
+            ArgumentParser.PROGRAM_CONF_ARG_NAME, "")
+        fixed_args = self.arg_dict.get(
+            ArgumentParser.FIXED_SPARK_PARAM, "")
         # This config dict is keyed by the program flag. See
         # manipulator().
         cfg_data = desired_result.configuration.data
         log.info("Config dict: " + str(cfg_data))
         # Extract all SparkParamType objects from map
-        param_dict = SparkParamType.get_param_map(arg_dict)
         # Seems strange making a SparkParamType out of a value but it helps
         # maintain a consistent interface to SparkSubmitCmd
-        tuner_cfg = {flag: param_dict[flag].make_param(
+        tuner_cfg = {flag: self.param_dict[flag].make_param(
             cfg_data[flag]) for flag in cfg_data}
 
         # TODO figure out appropriate defaults
         spark_submit = SparkSubmitCmd({}, {}, fixed_args)
         # make_cmd() expects only dicts of flags to SparkParamType as input
         run_cmd = spark_submit.make_cmd(
-            jar_path, program_conf, param_dict, tuner_cfg)
+            jar_path, program_conf, self.param_dict, tuner_cfg)
         log.info(run_cmd)
 
         run_result = self.call_program(run_cmd)
@@ -96,6 +103,8 @@ class SparkConfigTuner(MeasurementInterface):
         # insufficient resources
         assert run_result['returncode'] == 0, run_result['stderr']
 
+        # Unfortunately, size is a vector of tuner_cfg values at this point
+        # and so cannot be resolved into a scala value.
         return Result(time=run_result['time'], size=0)
 
     def save_final_config(self, configuration):
@@ -109,7 +118,8 @@ class SparkConfigTuner(MeasurementInterface):
 
     def objective(self):
         # TODO: add a flag to allow using a different objective function
-        return MinimizeTimeAndResource()
+        return MinimizeTimeAndResource(
+            rel_tol=0.06, ranged_param_dict=self.ranged_param_dict)
 
     @staticmethod
     def make_parser():

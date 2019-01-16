@@ -30,7 +30,7 @@ Some commonly used Spark (2.0.2+) parameters:
 |spark.memory.fraction|No|0.6|
 |spark.memory.storageFraction|No|0.5|
 
-For commonly used configurations, see 
+For a larger set, see 
 [this](https://spark.apache.org/docs/2.4.0/configuration.html).
 
 ## Creating an OpenTuner configuration
@@ -65,7 +65,8 @@ is desired.
   * Rethink how FIXED_SPARK_PARAM interact with the configurable param, esp whether
   or not they are merged. Don't want issues due to duplicates. Maybe this should
   come from SparkSubmitCmd defaults. Some notion of defaults and overrides.
-  * Fix `sort` to write to local filesystem by default.
+  * Fix `sort` to write to local filesystem by default. See 
+  [this](https://stackoverflow.com/questions/27299923/how-to-load-local-file-in-sc-textfile-instead-of-hdfs)
   * Finish the new objective function that, over _similar_ values of run-time, minimizes
     resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
     same runtime in all cases, the optimal configuration value should be 1.
@@ -75,7 +76,6 @@ is desired.
 
 * Next steps
   * Allow JAR parameters to also be configurable.  
-  * `SparkParamType.get_param_map` is called twice, so is `manipulator()`. Redundant.
   * Figure out some DoWhy basics. 
     * In particular, figure out a sensible causal graph for Spark parameters.
 

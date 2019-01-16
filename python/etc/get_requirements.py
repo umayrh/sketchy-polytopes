@@ -24,6 +24,7 @@ from pkg_resources import parse_version
 
 
 def get_latest_version(name):
+    print("workin on " + name)
     url = "https://pypi.python.org/pypi/{}/json".format(name)
     return sorted(requests.get(url).json()["releases"], key=parse_version)[-1]
 

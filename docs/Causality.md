@@ -1,5 +1,11 @@
 # Causality
 
+> Die vier grossen Irrthümer  
+> - Irrthum der Verwechslung von Ursache und Folge.  
+> - Irrthum einer falschen Ursächlichkeit.
+> - Irrthum der imaginären Ursachen.
+> - Irrthum vom freien Willen (_Götzen-Dämmerung_)
+
 ## Resources
 
 ### Overviews
@@ -46,8 +52,15 @@
 
 ### Research
 
+#### Systems engineering
+
 * Harvesting Randomness to Optimize Distributed Systems 
   [link](https://www.microsoft.com/en-us/research/publication/harvesting-randomness-optimize-distributed-systems/)
+
+#### System theory
+
+* Coarse-graining as a downward causation mechanism [link](https://royalsocietypublishing.org/doi/pdf/10.1098/rsta.2016.0338)
+* When the Map Is Better Than the Territory [link](https://www.mdpi.com/1099-4300/19/5/188)
 
 ### People and Groups
 

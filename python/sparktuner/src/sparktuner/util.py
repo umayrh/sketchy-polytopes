@@ -12,6 +12,10 @@ class Util:
     non-essential requirements.
     """
     @staticmethod
+    def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+        return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+    @staticmethod
     def format_size(num_bytes, units=""):
         """
         This function formats sizes in bytes, kibibytes (k), mebibytes (m),
