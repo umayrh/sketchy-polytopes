@@ -5,6 +5,14 @@ from sparktuner.util import Util, InvalidSize
 
 
 class UtilsTest(unittest.TestCase):
+    @unittest.skip
+    def test_isclose(self):
+        pass
+
+    @unittest.skip
+    def test_ratio(self):
+        pass
+
     def test_format_size(self):
         self.assertEqual("0b", Util.format_size(0))
         self.assertEqual("5b", Util.format_size(5))

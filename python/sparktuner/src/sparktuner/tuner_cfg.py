@@ -7,6 +7,8 @@ import subprocess
 
 from util import Util
 from multiprocessing.pool import ThreadPool
+
+from spark_metrics import SparkMetrics
 from opentuner import MeasurementInterface
 from opentuner.resultsdb.models import Result
 from opentuner.search.manipulator import (NumericParameter,
@@ -25,25 +27,18 @@ class MeasurementInterfaceExt(MeasurementInterface):
     Extends Opentuner's `MeasurementInterface` to override and add some
     new functionality.
     """
+    # Keys in the dict returned by call_program()
+    TIME = 'time'
+    TIMEOUT = 'timeout'
+    RETURN_CODE = 'returncode'
+    STDOUT = 'stdout'
+    STDERR = 'stderr'
+    MB_SEC = 'mbyte_secs'
+    VC_SEC = 'vcore_secs'
+
     def __init__(self, *pargs, **kwargs):
         super(MeasurementInterfaceExt, self).__init__(*pargs, **kwargs)
         self.the_io_thread_pool = None
-
-    @staticmethod
-    def get_psutil_info(pr):
-        """
-        :param pr: a psutil Process object
-        :return: a tuple of RSS and CPU percent
-        """
-        with pr.oneshot():
-            try:
-                mem = pr.memory_info().rss
-                cpu = pr.cpu_percent(interval=1)
-                return mem, cpu
-            except psutil.Error:
-                # horrid it may seem but the process may be dead
-                pass
-        return 0, 0
 
     def the_io_thread_pool_init(self, parallelism=1):
         if self.the_io_thread_pool is None:
@@ -73,6 +68,7 @@ class MeasurementInterfaceExt(MeasurementInterface):
            'stdout': '', 'stderr': '',
            'timeout': False, 'time': 1.89}
         """
+        inf = float('inf')
         self.the_io_thread_pool_init(self.args.parallelism)
 
         # performance counters
@@ -80,7 +76,7 @@ class MeasurementInterfaceExt(MeasurementInterface):
         vcore_secs = 0.0
         mbyte_secs = 0.0
 
-        if limit is float('inf'):
+        if limit is inf:
             limit = None
         if type(cmd) in (str, unicode):
             kwargs['shell'] = True
@@ -103,31 +99,35 @@ class MeasurementInterfaceExt(MeasurementInterface):
             stdout_result = self.the_io_thread_pool.apply_async(p.stdout.read)
             stderr_result = self.the_io_thread_pool.apply_async(p.stderr.read)
             while p.returncode is None:
+                # No need to sleep since cpu_percent(interval=1)
+                # is a blocking call.
+                mem_secs, cpu_secs = SparkMetrics.get_process_metrics(pup)
+                mbyte_secs += mem_secs
+                vcore_secs += (max(cpu_secs, 100) * cpu_num) / 100.0
+                # Leaving some of the code commented here so it
+                # can be easily differentiated from the parent
+                # interface's implementation.
                 if limit is None:
-                    # no need to sleep since cpu_percent(interval=1)
-                    # is a blocking call
-                    perf_res = self.get_psutil_info(pup)
-                    mbyte_secs += perf_res[0]
-                    vcore_secs += max(perf_res[1], 100) / 100.0 * cpu_num
+                    # No need to goodwait(p) since
+                    # we're sampling process metrics above in a
+                    # blocking call.
+                    pass
                 elif limit and time.time() > t0 + limit:
                     killed = True
                     goodkillpg(p.pid)
                     goodwait(p)
                 else:
-                    # TODO: fix repetitive
-                    perf_res = self.get_psutil_info(pup)
-                    mbyte_secs += perf_res[0]
-                    vcore_secs += max(perf_res[1], 100) / 100.0 * cpu_num
-                    # still waiting...
-                    sleep_for = limit - (time.time() - t0)
-                    if not stdout_result.ready():
-                        stdout_result.wait(sleep_for)
-                    elif not stderr_result.ready():
-                        stderr_result.wait(sleep_for)
-                    else:
-                        # TODO(jansel): replace this with a portable waitpid
-                        # (UH) maybe use os.waitpid
-                        time.sleep(0.001)
+                    # No need for the following wait block since
+                    # we're already sampling process metrics above in a
+                    # blocking call:
+                    # sleep_for = limit - (time.time() - t0)
+                    # if not stdout_result.ready():
+                    #     stdout_result.wait(sleep_for)
+                    # elif not stderr_result.ready():
+                    #     stderr_result.wait(sleep_for)
+                    # else:
+                    #    time.sleep(0.001)
+                    pass
                 p.poll()
         except Exception:
             if p.returncode is None:
@@ -141,13 +141,14 @@ class MeasurementInterfaceExt(MeasurementInterface):
             self.pid_lock.release()
 
         t1 = time.time()
-        return {'time': float('inf') if killed else (t1 - t0),
-                'timeout': killed,
-                'returncode': p.returncode,
-                'stdout': stdout_result.get(),
-                'stderr': stderr_result.get(),
-                'mbyte_secs': mbyte_secs / (1024 ** 2),
-                'vcore_secs': vcore_secs}
+        return {
+            MeasurementInterfaceExt.TIME: inf if killed else (t1 - t0),
+            MeasurementInterfaceExt.TIMEOUT: killed,
+            MeasurementInterfaceExt.RETURN_CODE: p.returncode,
+            MeasurementInterfaceExt.STDOUT: stdout_result.get(),
+            MeasurementInterfaceExt.STDERR: stderr_result.get(),
+            MeasurementInterfaceExt.MB_SEC: mbyte_secs / (1024 ** 2),
+            MeasurementInterfaceExt.VC_SEC: vcore_secs}
 
 
 class ScaledIntegerParameter(ScaledNumericParameter, IntegerParameter):
@@ -205,6 +206,7 @@ class MinimizeTimeAndResource(SearchObjective):
     Note: given how Result model is structured around a fixed set of
     objective function values, it seems that there's no clean way
     to support minimizing multiple kinds of resource usage.
+    TODO: different tols for time and size
     """
     def __init__(self, rel_tol=1e-09, abs_tol=0.0, ranged_param_dict={}):
         """
@@ -237,9 +239,7 @@ class MinimizeTimeAndResource(SearchObjective):
 
     @staticmethod
     def _ratio(a, b):
-        if b == 0:
-            return float('inf') * a
-        return a / b
+        return Util.ratio(a, b)
 
     def result_relative(self, result1, result2):
         """return None, or a relative goodness of resultsdb.models.Result"""

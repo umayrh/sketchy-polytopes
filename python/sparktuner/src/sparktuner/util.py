@@ -5,14 +5,34 @@ class InvalidSize(Exception):
                 "E.g. 50b, 100kb, or 250mb."
 
 
-class Util:
+class Util(object):
     """
     Utilities here may be available in other packages (such as 'humanfriendly'
     and 'humanize') but these are tailored for this package, and also avoid the
     non-essential requirements.
     """
     @staticmethod
+    def ratio(a, b):
+        """
+        :param a: a number
+        :param b: a number
+        :return: the ratio of two numbers. If denominator is
+        equal to 0, then return INFINITY * numerator.
+        """
+        if b == 0:
+            return float('inf') * a
+        return a / b
+
+    @staticmethod
     def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+        """
+        :param a: a number
+        :param b: a number
+        :param rel_tol: relative tolerance (default: 1e-09)
+        :param abs_tol: absolute tolerance (default: 0.0)
+        :return: true iff the absolute difference between the given
+        two numbers is within prescribed tolerance. False otherwise.
+        """
         return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
     @staticmethod
@@ -67,5 +87,13 @@ class Util:
         return "%d%s" % (num, 'p')
 
     @staticmethod
-    def parse_size():
+    def parse_size(mem_str):
+        """
+        TODO
+        :param mem_str: a `str` expressing a memory size.
+        Size must be specified as bytes (b), kibibytes (k),
+        mebibytes (m), gibibytes (g), tebibytes (t), or pebibytes(p).
+        E.g. 50b, 100kb, or 250mb.
+        :return: the number of bytes represented as an int
+        """
         pass

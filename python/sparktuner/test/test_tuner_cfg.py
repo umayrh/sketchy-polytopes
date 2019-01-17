@@ -2,8 +2,16 @@ import unittest
 import random
 from math import isnan
 from opentuner import Result
-from sparktuner.tuner_cfg import (ScaledIntegerParameter,
+from sparktuner.tuner_cfg import (MeasurementInterfaceExt,
+                                  ScaledIntegerParameter,
                                   MinimizeTimeAndResource)
+
+
+class MeasurementInterfaceExtTest(unittest.TestCase):
+    @unittest.skip
+    def test_call_program(self):
+        MeasurementInterfaceExt()
+        pass
 
 
 class ScaledIntegerParameterTest(unittest.TestCase):

@@ -9,6 +9,7 @@ from opentuner import (Result, argparsers)
 from opentuner.search.manipulator import (ConfigurationManipulator,
                                           IntegerParameter,
                                           BooleanParameter)
+from util import Util
 from spark_param import (SparkParamType,
                          SparkIntType,
                          SparkMemoryType,
@@ -103,13 +104,22 @@ class SparkConfigTuner(MeasurementInterfaceExt):
         run_result = self.call_program(run_cmd)
         # TODO differentiate between config errors and errors due to
         # insufficient resources
-        assert run_result['returncode'] == 0, run_result['stderr']
+        assert run_result[MeasurementInterfaceExt.RETURN_CODE] == 0, \
+            run_result[MeasurementInterfaceExt.STDERR]
 
-        log.info(str(run_result))
+        # Log process performance metrics.
+        metric_time = run_result[MeasurementInterfaceExt.TIME]
+        metric_mem_mb = Util.ratio(run_result[MeasurementInterfaceExt.MB_SEC],
+                                   metric_time)
+        metric_vcores = Util.ratio(run_result[MeasurementInterfaceExt.VC_SEC],
+                                   metric_time)
+        log.info("Process metrics: time=%0.3fs, mem=%0.3fmb, vcores=%0.3f"
+                 % (metric_time, metric_mem_mb, metric_vcores))
 
         # Unfortunately, size is a vector of tuner_cfg values at this point
         # and so cannot be resolved into a scala value.
-        return Result(time=run_result['time'], size=0)
+        return Result(time=run_result[MeasurementInterfaceExt.TIME],
+                      size=0)
 
     def save_final_config(self, configuration):
         """Saves optimal configuration, after tuning, to a file"""

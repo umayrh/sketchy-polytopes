@@ -77,3 +77,4 @@ The secondary namenode http/https server address and port.
   * [yarn-default.xml](http://hadoop.apache.org/docs/r3.1.0/hadoop-yarn/hadoop-yarn-common/yarn-default.xml)
   * Default Ports Used by Hadoop Services (HDFS, MapReduce, YARN)
     [link](http://kontext.tech/docs/DataAndBusinessIntelligence/p/default-ports-used-by-hadoop-services-hdfs-mapreduce-yarn)
+  * [HDP Service Ports](https://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.6.5/bk_reference/content/yarn-ports.html)
