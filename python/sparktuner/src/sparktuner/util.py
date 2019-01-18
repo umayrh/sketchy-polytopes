@@ -1,3 +1,116 @@
+"""Contains various data processing, parsing, or conversion utilities"""
+
+import logging
+import requests
+
+from requests.compat import urljoin
+from xml.dom import minidom
+from xml.parsers.expat import ExpatError
+
+log = logging.getLogger(__name__)
+
+
+class WebRequestError(ValueError):
+    pass
+
+
+class WebRequest(object):
+    """Utilities for making HTTP requests"""
+    @staticmethod
+    def request_get(webapp, route, data_dict=None, scheme=None):
+        """
+        :param webapp: web app address. If the address contains
+        schema information, then the schema argument None.
+        :param route: web application route
+        :param data_dict: dict of url parameters if any
+        :param scheme: web address scheme. If the address contains
+        schema information, then this argument must be None.
+        :return: the response contents
+        :raises WebRequestError if HTTP status is not 200
+        """
+        webapp_proto = scheme + "://" + webapp if scheme else webapp
+        url = urljoin(webapp_proto, route)
+        req = requests.get(url, params=data_dict)
+        log.debug("HTTP get " + str(req.url))
+        if req.status_code != 200:
+            raise WebRequestError("Status code: " + str(req.status_code) +
+                                  ", msg: " + req.text)
+        return req.content
+
+    def __init__(self, webapp):
+        self.webapp = webapp
+
+    def get(self, route, data_dict=None, scheme=None):
+        """
+        :param route: web application route
+        :param data_dict: dict of url parameters if any
+        :param scheme: web address scheme. If the address contains
+        schema information, then this argument must be None.
+        :return: the response contents
+        :raises WebRequestError if HTTP status is not 200
+        """
+        return WebRequest.request_get(self.webapp, route, data_dict, scheme)
+
+
+class XmlParserError(Exception):
+    pass
+
+
+class XmlParser(object):
+    """
+    Utilities for parsing XML data
+    """
+    @staticmethod
+    def parse_file(file_path):
+        """
+        :param file_path: absolute path to an XML file
+        :return: a parsed XML object
+        :raises XmlParserError if file not found or
+        if XML cannot be parsed.
+        """
+        try:
+            return minidom.parse(file_path)
+        except IOError as e:
+            raise XmlParserError(e)
+        except ExpatError as e:
+            raise XmlParserError(e)
+
+    @staticmethod
+    def parse_string(data):
+        """
+        :param data: XML data as str
+        :return: a parsed XML object
+        :raises XmlParserError if XML cannot be parsed.
+        """
+        try:
+            return minidom.parseString(data)
+        except TypeError as e:
+            raise XmlParserError(e)
+        except ExpatError as e:
+            raise XmlParserError(e)
+
+    @staticmethod
+    def map_element_data(xml_parsed, tag_name):
+        """
+        :param xml_parsed: a parsed XML object
+        :param tag_name: (str) an XML tag name
+        :return: the data in the first child for all
+        elements matching a given tag name
+        """
+        return map(lambda e: e.childNodes[0].data,
+                   xml_parsed.getElementsByTagName(tag_name))
+
+    @staticmethod
+    def get_element_data(xml_parsed, tag_name):
+        """
+        :param xml_parsed: a parsed XML object
+        :param tag_name: (str) an XML tag name
+        :return: the data in the first child for the first
+        element matching a given tag name
+        """
+        return xml_parsed.getElementsByTagName(tag_name)[0].firstChild.data
+
+
 class InvalidSize(Exception):
     ERROR_STR = "Size must be specified as bytes (b), " \
                 "kibibytes (k), mebibytes (m), gibibytes (g), " \

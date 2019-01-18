@@ -80,6 +80,7 @@ is desired.
     * In particular, figure out a sensible causal graph for Spark parameters.
 
 * Nice to have
+  * Use dependency injection where possible for resuability
   * Generate Spinx docs, and update comments to link to external docs. 
   * Tuner as a service. Opentuner issue [25](https://github.com/jansel/opentuner/issues/25).
   * New objective that optimizes the construction of a causal graph.

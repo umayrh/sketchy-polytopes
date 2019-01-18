@@ -25,51 +25,8 @@ class SparkMetrics(object):
         Returns a tuple containing metrics about RAM and vcores
         consumed (over time), and application runtime.
 
-        Here's a sample request and response:
+        Here's a sample request:
         $ GET https://rm_address:8090/ws/v1/cluster/apps/app_id
-
-        <app>
-            <id>app_id</id>
-            <user>user_name</user>
-            <name>spark_job_name</name>
-            <queue>queue_name</queue>
-            <state>FINISHED</state>
-            <finalStatus>SUCCEEDED</finalStatus>
-            <progress>100.0</progress>
-            <trackingUI>History</trackingUI>
-            <trackingUrl>
-                http://spark_master_dns_name:20888/proxy/app_id/
-            </trackingUrl>
-            <diagnostics/>
-            <clusterId>1546536712852</clusterId>
-            <applicationType>SPARK</applicationType>
-            <applicationTags/>
-            <priority>0</priority>
-            <startedTime>1547501766223</startedTime>
-            <finishedTime>1547503062445</finishedTime>
-            <elapsedTime>1296222</elapsedTime>
-            <amContainerLogs>
-                http://spark_master_dns_name:8042/node/containerlogs/app_id/user_name
-            </amContainerLogs>
-            <amHostHttpAddress>am_host:8042</amHostHttpAddress>
-            <amRPCAddress>am_ip_address:0</amRPCAddress>
-            <allocatedMB>-1</allocatedMB>
-            <allocatedVCores>-1</allocatedVCores>
-            <runningContainers>-1</runningContainers>
-            <memorySeconds>443600497</memorySeconds>
-            <vcoreSeconds>64720</vcoreSeconds>
-            <queueUsagePercentage>0.0</queueUsagePercentage>
-            <clusterUsagePercentage>0.0</clusterUsagePercentage>
-            <preemptedResourceMB>0</preemptedResourceMB>
-            <preemptedResourceVCores>0</preemptedResourceVCores>
-            <numNonAMContainerPreempted>0</numNonAMContainerPreempted>
-            <numAMContainerPreempted>0</numAMContainerPreempted>
-            <preemptedMemorySeconds>0</preemptedMemorySeconds>
-            <preemptedVcoreSeconds>0</preemptedVcoreSeconds>
-            <logAggregationStatus>SUCCEEDED</logAggregationStatus>
-            <unmanagedApplication>false</unmanagedApplication>
-            <amNodeLabelExpression/>
-        </app>
 
         :param master_addr: the yarn.resourcemanager.webapp.address
         including the port number.
