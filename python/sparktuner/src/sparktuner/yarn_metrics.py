@@ -39,6 +39,7 @@ class YarnMetrics(object):
     YARN_CONF_DIR = "YARN_CONF_DIR"
     HADOOP_CONF_DIR = "HADOOP_CONF_DIR"
     YARN_SITE = "yarn-site.xml"
+    YARN_API_REQUEST_HEADER = {}
 
     @staticmethod
     def get_yarn_site_path():
@@ -98,18 +99,7 @@ class YarnMetrics(object):
         raise NotImplementedError
 
     @staticmethod
-    def get_rm_webapp_addr(yarn_webapp_proto, yarn_property_map):
-        """
-        :param yarn_webapp_proto: YARN HTTP policy
-        :param yarn_property_map: dict of YARN properties
-        :return: the web address of a live Resource Manager
-        if server address can be found in yarn-site.xml and
-        if the server is currently online.
-        """
-        has_ha = yarn_property_map.get(YarnProperty.RM_HAS_HA, "false")
-        if has_ha.lower() == "true":
-            return YarnMetrics._get_rm_ha_webapp_addr(
-                yarn_webapp_proto, yarn_property_map)
+    def _get_rm_webapp_addr(yarn_webapp_proto, yarn_property_map):
         rm_addr = yarn_property_map.get(
             YarnProperty.RM_WEBAPP_ADDR,
             yarn_property_map.get(
@@ -119,6 +109,7 @@ class YarnMetrics(object):
             raise YarnMetricsError("No RM address in yarn-site.xml")
         # return rm_addr if server is online
         try:
+            # Check to see if the server is available
             resp = WebRequest.request_get(
                 webapp=rm_addr,
                 route=YarnResourceManager.ROUTE_INFO,
@@ -129,11 +120,64 @@ class YarnMetrics(object):
         except WebRequestError:
             raise YarnMetricsError("Cannot reach RM server")
 
+    @staticmethod
+    def get_rm_webapp_addr(yarn_webapp_proto, yarn_property_map):
+        """
+        :param yarn_webapp_proto: YARN HTTP policy
+        :param yarn_property_map: dict of YARN properties
+        :return: the web address of a live Resource Manager
+        if server address can be found in yarn-site.xml and
+        if the server is currently online.
+        TODO: may we should append scheme and port too
+        """
+        has_ha = yarn_property_map.get(YarnProperty.RM_HAS_HA, "false")
+        if has_ha.lower() == "true":
+            return YarnMetrics._get_rm_ha_webapp_addr(
+                yarn_webapp_proto, yarn_property_map)
+        return YarnMetrics._get_rm_webapp_addr(
+            yarn_webapp_proto, yarn_property_map)
+
+    @staticmethod
+    def call_yarn_api(yarn_webapp_proto,
+                      yarn_rm_addr,
+                      yarn_rm_route,
+                      request_data_dict=None):
+        try:
+            # Check to see if the server is available
+            resp = WebRequest.request_get(
+                webapp=yarn_rm_addr,
+                route=yarn_rm_route,
+                data_dict=None,
+                scheme=yarn_webapp_proto)
+            log.debug("YARN RM info: " + str(resp))
+            return yarn_rm_addr
+        except WebRequestError:
+            raise YarnMetricsError("Cannot reach RM server")
+
+    @staticmethod
+    def get_yarn_app_info(rm_addr, app_id, items=None):
+        """
+        This function get info form YARN Resource Manager's
+        Cluster Application API. "An application resource contains
+        information about a particular application that was
+        submitted to a cluster."
+        :param rm_addr: YARN Resource Manager Webapp address
+        :param app_id: YARN application id
+        :param items: resource names to collect data for. If
+        None, all information is collected.
+        :return: a dict of resource name to resource values.
+        """
+        raise NotImplementedError
+
     def __init__(self):
+        # Some of these may raise, which shouldn't happen in ctor
         yarn_site_path = YarnMetrics.get_yarn_site_path()
-        self.yarn_property_map = YarnMetrics.get_yarn_property_map(
-            yarn_site_path)
-        self.yarn_webapp_proto = YarnMetrics.get_webapp_protocol(
-            self.yarn_property_map)
+        yarn_property_map = YarnMetrics.get_yarn_property_map(yarn_site_path)
+        yarn_webapp_proto = YarnMetrics.get_webapp_protocol(
+            yarn_property_map)
         self.yarn_rm_webapp_addr = YarnMetrics.get_rm_webapp_addr(
-            self.yarn_webapp_proto, self.yarn_property_map)
+            yarn_webapp_proto, yarn_property_map)
+
+    def get_app_info(self, app_id, items=None):
+        return YarnMetrics.get_yarn_app_info(
+            self.yarn_rm_webapp_addr, app_id, items)

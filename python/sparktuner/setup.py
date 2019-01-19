@@ -155,7 +155,8 @@ setup(
         "opentuner==0.8.0",
         "humanfriendly==4.17",
         "chainmap==1.0.2",
-        "psutil==5.4.8"
+        "psutil==5.4.8",
+        "requests==2.21.0"
     ],
     entry_points={
         'console_scripts': [

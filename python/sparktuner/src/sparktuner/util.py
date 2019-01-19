@@ -3,9 +3,10 @@
 import logging
 import requests
 
-from requests.compat import urljoin
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
+from requests.compat import urljoin
+from requests.utils import prepend_scheme_if_needed
 
 log = logging.getLogger(__name__)
 
@@ -17,20 +18,26 @@ class WebRequestError(ValueError):
 class WebRequest(object):
     """Utilities for making HTTP requests"""
     @staticmethod
-    def request_get(webapp, route, data_dict=None, scheme=None):
+    def request_get(webapp,
+                    route,
+                    data_dict=None,
+                    scheme='',
+                    header_dict={}):
         """
         :param webapp: web app address. If the address contains
         schema information, then the schema argument None.
         :param route: web application route
         :param data_dict: dict of url parameters if any
         :param scheme: web address scheme. If the address contains
-        schema information, then this argument must be None.
+        schema information, then this argument is ignored.
+        :param header_dict: dict of header for request. Default: None.
         :return: the response contents
         :raises WebRequestError if HTTP status is not 200
         """
-        webapp_proto = scheme + "://" + webapp if scheme else webapp
-        url = urljoin(webapp_proto, route)
-        req = requests.get(url, params=data_dict)
+        webapp_url = prepend_scheme_if_needed(webapp, scheme)
+        # append port?
+        url = urljoin(webapp_url, route)
+        req = requests.get(url, params=data_dict, headers=header_dict)
         log.debug("HTTP get " + str(req.url))
         if req.status_code != 200:
             raise WebRequestError("Status code: " + str(req.status_code) +
@@ -139,6 +146,7 @@ class Util(object):
     @staticmethod
     def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
         """
+        TODO: use Python 3's implementation once we've moved over
         :param a: a number
         :param b: a number
         :param rel_tol: relative tolerance (default: 1e-09)

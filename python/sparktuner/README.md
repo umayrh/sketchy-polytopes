@@ -1,14 +1,44 @@
 # Spark Tuner
 
-## Setup and build
+## Setup, build, and usage
 
-[Spark]
+This package assumes that Apache Spark is installed.  
 
-`gradle build` should install all dependencies (including projects-specific ones in requirements.txt), and run tests.
+`gradle build` should install all dependencies (including projects-specific ones 
+in requirements.txt), and run tests.
 
-## Spark parameters
+Sample commands:
+* `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --spark_parallelism "1,10" --program_conf "10000 /tmp/sparktuner_sort"`
 
-Some commonly used Spark (2.0.2+) parameters:
+* `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --executor_memory "50mb,1gb" --program_conf "10000 /tmp/sparktuner_sort"`
+
+* `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --driver_memory "1GB,6GB" --program_conf "1000000 /tmp/sparktuner_sort"`
+
+## References
+
+### Auto-tuning
+
+####  OpenTuner 
+
+For more information, see[OpenTuner](http://opentuner.org).
+
+##### Creating an OpenTuner configuration
+
+Implement [MeasurementInterface](https://github.com/jansel/opentuner/blob/c9db469889b9b504d1f7affe2374b2750adafe88/opentuner/measurement/interface.py),
+three methods in particular:
+* `manipulator`: defines the search space across configuration parameters
+* `run`: runs a program for given configuration and returns the result
+* `save_final_config`: saves optimal configuration, after tuning, to a file
+
+A fourth, `objective`, should be implemented if an objective function other than the default
+[MinimizeTime](https://github.com/jansel/opentuner/blob/c9db469889b9b504d1f7affe2374b2750adafe88/opentuner/search/objective.py)
+is desired.
+
+### Spark 
+
+See [here](../../sparkScala/SPARK.md).
+
+Note that some commonly used Spark (2.0.2+) parameters:
 
 |Parameter Name|Direct?|Sample Value|
 |--------------|-------|------------|
@@ -33,35 +63,9 @@ Some commonly used Spark (2.0.2+) parameters:
 For a larger set, see 
 [this](https://spark.apache.org/docs/2.4.0/configuration.html).
 
-## Creating an OpenTuner configuration
-
-Implement [MeasurementInterface](https://github.com/jansel/opentuner/blob/c9db469889b9b504d1f7affe2374b2750adafe88/opentuner/measurement/interface.py),
-three methods in particular:
-* `manipulator`: defines the search space across configuration parameters
-* `run`: runs a program for given configuration and returns the result
-* `save_final_config`: saves optimal configuration, after tuning, to a file
-
-A fourth, `objective`, should be implemented if an objective function other than the default
-[MinimizeTime](https://github.com/jansel/opentuner/blob/c9db469889b9b504d1f7affe2374b2750adafe88/opentuner/search/objective.py)
-is desired.
-
-## References
-
-### Auto-tuning
-
-* [OpenTuner](http://opentuner.org)
-
-### Spark 
-
-* See [here](../../sparkScala/SPARK.md).
-
 ## TODO
 
 * Urgent
-  * Experiment with `sort` using different config
-    * `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --spark_parallelism "1,10" --program_conf "10000 /tmp/sparktuner_sort"`
-    * `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --executor_memory "50mb,1gb" --program_conf "10000 /tmp/sparktuner_sort"`
-    * `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --driver_memory "1GB,6GB" --program_conf "1000000 /tmp/sparktuner_sort"`
   * Rethink how FIXED_SPARK_PARAM interact with the configurable param, esp whether
   or not they are merged. Don't want issues due to duplicates. Maybe this should
   come from SparkSubmitCmd defaults. Some notion of defaults and overrides.
@@ -70,7 +74,10 @@ is desired.
   * Finish the new objective function that, over _similar_ values of run-time, minimizes
     resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
     same runtime in all cases, the optimal configuration value should be 1.
-  * IntegerParameter results in an overly large parameter space
+    * Finish YarnMetrics and integrate with SparkMetrics; add tests
+    * Extract YARN app id from call_program's stderr
+    * If master=yarn and RM server online, use size = YARN mb-second/runtime
+    * Finally, allow different types of objective functions 
   * The underlying optimization also doesn't seem to terminate if the objective
     value doesn't change over successive iterations
 
