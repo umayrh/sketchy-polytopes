@@ -31,7 +31,7 @@ class WebRequest(object):
         :param scheme: web address scheme. If the address contains
         schema information, then this argument is ignored.
         :param header_dict: dict of header for request. Default: None.
-        :return: the response contents
+        :return: the HTTP response object
         :raises WebRequestError if HTTP status is not 200
         """
         webapp_url = prepend_scheme_if_needed(webapp, scheme)
@@ -42,7 +42,7 @@ class WebRequest(object):
         if req.status_code != 200:
             raise WebRequestError("Status code: " + str(req.status_code) +
                                   ", msg: " + req.text)
-        return req.content
+        return req
 
     def __init__(self, webapp):
         self.webapp = webapp
@@ -210,11 +210,12 @@ class Util(object):
     @staticmethod
     def parse_size(mem_str):
         """
-        TODO
+        TODO implementing this would help remove dependency on
+        the 'humanfriendly' package.
         :param mem_str: a `str` expressing a memory size.
         Size must be specified as bytes (b), kibibytes (k),
         mebibytes (m), gibibytes (g), tebibytes (t), or pebibytes(p).
         E.g. 50b, 100kb, or 250mb.
         :return: the number of bytes represented as an int
         """
-        pass
+        raise NotImplementedError

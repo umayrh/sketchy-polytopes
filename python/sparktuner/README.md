@@ -2,7 +2,8 @@
 
 ## Setup, build, and usage
 
-This package assumes that Apache Spark is installed.  
+This package assumes that Apache Spark is installed, and the following environment
+variables have already been set: `SPARK_HOME`, and, optionally, `HADOOP_CONF_DIR`.  
 
 `gradle build` should install all dependencies (including projects-specific ones 
 in requirements.txt), and run tests.
@@ -20,7 +21,7 @@ Sample commands:
 
 ####  OpenTuner 
 
-For more information, see[OpenTuner](http://opentuner.org).
+For more information, see [OpenTuner](http://opentuner.org).
 
 ##### Creating an OpenTuner configuration
 
@@ -34,9 +35,14 @@ A fourth, `objective`, should be implemented if an objective function other than
 [MinimizeTime](https://github.com/jansel/opentuner/blob/c9db469889b9b504d1f7affe2374b2750adafe88/opentuner/search/objective.py)
 is desired.
 
-### Spark 
+### Spark, Hadoop, YARN 
 
-See [here](../../sparkScala/SPARK.md).
+#### Spark 
+
+See [here](../../sparkScala/INSTALL.md) for short installation guide, and 
+[here](../../sparkScala/SPARK.md) for general Spark notes.
+
+##### Spark configuration parameters 
 
 Note that some commonly used Spark (2.0.2+) parameters:
 
@@ -62,6 +68,15 @@ Note that some commonly used Spark (2.0.2+) parameters:
 
 For a larger set, see 
 [this](https://spark.apache.org/docs/2.4.0/configuration.html).
+
+#### YARN
+
+Resources:
+* [Overview](https://hortonworks.com/apache/yarn/), 
+  [architecture](http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/YARN.html), and
+  [documentation](http://hadoop.apache.org/docs/current/)
+* [YARN REST API](http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/WebServicesIntro.html)
+* Running Spark on YARN [link](https://spark.apache.org/docs/latest/running-on-yarn.html) 
 
 ## TODO
 

@@ -17,6 +17,9 @@ class YarnProperty(object):
 
 
 class YarnResourceManager(object):
+    DEFAULT_HEADER = {"accept": "application/json"}
+    DEFAULT_PORTS = {"http": "8088", "https": "8090"}
+
     ROUTE_INFO = "/ws/v1/cluster/info"
     ROUTE_APP_ID = "/ws/v1/cluster/apps/app_id"
 
@@ -140,24 +143,51 @@ class YarnMetrics(object):
     @staticmethod
     def call_yarn_api(yarn_webapp_proto,
                       yarn_rm_addr,
+                      yarn_rm_port,
                       yarn_rm_route,
-                      request_data_dict=None):
+                      req_data_dict=None):
+        """
+        From YARN REST API docs (as of 2019-01-19):
+          "Currently the only fields used in the header is Accept and
+          Accept-Encoding. Accept currently supports XML and JSON for
+          the response type you accept. Accept-Encoding currently supports
+          only gzip format and will return gzip compressed output if
+          this is specified, otherwise output is uncompressed. All
+          other header fields are ignored."
+        :param yarn_webapp_proto: YARN HTTP policy
+        :param yarn_rm_addr: Resource Manager webapp domain
+        :param yarn_rm_port: Resource Manager webapp port. Added
+        to yarn_rm_addr iff yarn_rm_port is non-None.
+        :param yarn_rm_route: Resource Manager webapp route
+        :param req_data_dict: HTTP request data dict
+        :param req_header_dict: HTTP request header. Default:
+        {"accept": "application/json"}
+        :return:
+        """
         try:
-            # Check to see if the server is available
+            if yarn_rm_port:
+                yarn_rm_addr = yarn_rm_addr + ":" + str(yarn_rm_port)
             resp = WebRequest.request_get(
                 webapp=yarn_rm_addr,
                 route=yarn_rm_route,
-                data_dict=None,
-                scheme=yarn_webapp_proto)
-            log.debug("YARN RM info: " + str(resp))
-            return yarn_rm_addr
+                data_dict=req_data_dict,
+                scheme=yarn_webapp_proto,
+                header_dict=YarnResourceManager.DEFAULT_HEADER)
+            log.debug("YARN RM call: " + str(resp))
+            # Expecting only only json responses to avoid parsing
+            # woeful XML.
+            if resp.headers.get("content-type") != \
+                    YarnResourceManager.DEFAULT_HEADER.get("accept"):
+                raise YarnMetricsError("Cannot parse content-type " +
+                                       resp.headers.get("content-type"))
+            return resp.json()
         except WebRequestError:
             raise YarnMetricsError("Cannot reach RM server")
 
     @staticmethod
     def get_yarn_app_info(rm_addr, app_id, items=None):
         """
-        This function get info form YARN Resource Manager's
+        This function uses YARN Resource Manager's
         Cluster Application API. "An application resource contains
         information about a particular application that was
         submitted to a cluster."
