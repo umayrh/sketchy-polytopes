@@ -22,7 +22,7 @@ class YarnResourceManager(object):
     DEFAULT_PORTS = {"http": "8088", "https": "8090"}
 
     ROUTE_INFO = "/ws/v1/cluster/info"
-    ROUTE_APP_ID = "/ws/v1/cluster/apps/app_id"
+    ROUTE_APP_ID = "/ws/v1/cluster/apps/"
 
 
 class YarnMetricsError(Exception):
@@ -149,7 +149,6 @@ class YarnMetrics(object):
         :return: the web address of a live Resource Manager
         if server address can be found in yarn-site.xml and
         if the server is currently online.
-        TODO: may we should append scheme and port too
         """
         has_ha = yarn_property_map.get(YarnProperty.RM_HAS_HA, "false")
         if has_ha.lower() == "true":
@@ -239,7 +238,8 @@ class YarnMetrics(object):
         None, all information is collected.
         :return: a dict of resource name to resource values.
         """
-        app_route = urljoin(YarnResourceManager.ROUTE_APP_ID,  yarn_app_id)
+        app_route = urljoin(YarnResourceManager.ROUTE_APP_ID, yarn_app_id)
+        print("my app_route: ") + app_route
         info = YarnMetrics.call_yarn_api(yarn_webapp_proto,
                                          yarn_rm_addr,
                                          yarn_rm_port,

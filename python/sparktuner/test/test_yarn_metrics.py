@@ -1,9 +1,14 @@
 import os
+import json
 import os.path
-import contextlib
 import unittest
+import contextlib
+import requests_mock
 
-from sparktuner.yarn_metrics import YarnMetrics
+from requests.compat import urljoin
+from sparktuner.yarn_metrics import (YarnMetrics,
+                                     YarnProperty,
+                                     YarnResourceManager)
 
 
 class YarnMetricsTestUtil(object):
@@ -15,7 +20,9 @@ class YarnMetricsTestUtil(object):
 
         The ``os.environ`` dictionary is updated in-place so that
         the modification is sure to work in all situations.
-        From: https://github.com/laurent-laporte-pro/stackoverflow-q2059482
+
+        This function is cribbed from:
+          https://github.com/laurent-laporte-pro/stackoverflow-q2059482
 
         :param remove: Environment variables to remove.
         :param update: Dictionary of environment variables and values
@@ -41,7 +48,7 @@ class YarnMetricsTestUtil(object):
             [env.pop(k) for k in remove_after]
 
 
-class YarnMetricsTest(unittest.TestCase):
+class YarnMetricsConfigTest(unittest.TestCase):
     def setUp(self):
         self.yarn_dir = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -76,22 +83,101 @@ class YarnMetricsTest(unittest.TestCase):
         yarn_properties = YarnMetrics.get_yarn_property_map(yarn_site_path)
 
         self.assertIsNotNone(yarn_properties)
-        self.assertEqual("localhost",
-                         yarn_properties["yarn.resourcemanager.hostname"])
-
+        self.assertEqual(
+            "localhost",
+            yarn_properties["yarn.resourcemanager.hostname"])
         # TODO: is this right, or should the value be substituted?
         self.assertEqual(
             "${yarn.resourcemanager.hostname}:8090",
             yarn_properties["yarn.resourcemanager.webapp.https.address.rm1"])
 
-    @unittest.skip
+
+class YarnMetricsServiceTest(unittest.TestCase):
+    def setUp(self):
+        self.yarn_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "resources")
+        self.yarn_properties = YarnMetrics.get_yarn_property_map(
+            os.path.join(self.yarn_dir, YarnMetrics.YARN_SITE))
+
     def test_get_webapp_protocol(self):
-        pass
+        proto = YarnMetrics.get_webapp_protocol(self.yarn_properties)
+        self.assertEqual("http", proto)
 
-    @unittest.skip
-    def test_get_yarn_app_info(self):
-        pass
+        proto = YarnMetrics.get_webapp_protocol(
+            {YarnProperty.HTTP_POLICY: "https_only"})
+        self.assertEqual("https", proto)
 
-    @unittest.skip
-    def test_get_rm_webapp_addr(self):
-        pass
+    def test_get_webapp_port(self):
+        port = YarnMetrics.get_webapp_port(self.yarn_properties)
+        self.assertEqual("8088", port)
+
+        port = YarnMetrics.get_webapp_port(
+            {YarnProperty.HTTP_POLICY: "https_only"})
+        self.assertEqual("8090", port)
+
+    def test_get_rm_ha_webapp_addr(self):
+        with self.assertRaises(NotImplementedError):
+            YarnMetrics._get_rm_ha_webapp_addr("", "")
+
+    def rm_webapp_addr_helper(self, mocker, yarn_properties, addr_property):
+        proto = YarnMetrics.get_webapp_protocol(yarn_properties)
+        port = YarnMetrics.get_webapp_port(yarn_properties)
+        addr = yarn_properties[addr_property]
+        headers = {"content-type": "application/json"}
+
+        mocker.get(urljoin(proto + "://" + addr + ":" + port,
+                           YarnResourceManager.ROUTE_INFO),
+                   json="[]", headers=headers)
+        self.assertEqual(
+            addr,
+            YarnMetrics._get_rm_webapp_addr(proto, port, yarn_properties)
+        )
+
+    @requests_mock.Mocker()
+    def test_get_rm_webapp_addr(self, mocker):
+        yarn_properties = {YarnProperty.RM_WEBAPP_ADDR: "spark.data"}
+        self.rm_webapp_addr_helper(
+            mocker, yarn_properties, YarnProperty.RM_WEBAPP_ADDR)
+
+        yarn_properties = {YarnProperty.RM_ADDR: "10.1.5.2",
+                           YarnProperty.HTTP_POLICY: "https_only"}
+        self.rm_webapp_addr_helper(
+            mocker, yarn_properties, YarnProperty.RM_ADDR)
+
+    def yarn_api_helper(self, mocker, json_file, proto, addr, port, route):
+        headers = {"content-type": "application/json"}
+        info_resp_path = os.path.join(
+            self.yarn_dir, json_file)
+        with open(info_resp_path) as json_file:
+            json_data = json.load(json_file)
+            base_url = proto + "://" + addr + ":" + port
+            req_url = urljoin(base_url, route)
+            mocker.get(req_url, json=json_data, headers=headers)
+        return json_data
+
+    @requests_mock.Mocker()
+    def test_get_yarn_info(self, mocker):
+        proto, addr, port = ("http", "spark.data", "8088")
+        expected_json_data = self.yarn_api_helper(
+            mocker,
+            "yarn-resp-cluster-info.json",
+            proto, addr, port,
+            YarnResourceManager.ROUTE_INFO)
+        self.assertDictEqual(
+            expected_json_data,
+            YarnMetrics.get_yarn_info(proto, addr, port)
+        )
+
+    @requests_mock.Mocker()
+    def test_get_yarn_app_info(self, mocker):
+        proto, addr, port, app_id = ("http", "spark.data", "8088", "appid")
+        expected_json_data = self.yarn_api_helper(
+            mocker,
+            "yarn-resp-app-info.json",
+            proto, addr, port,
+            urljoin(YarnResourceManager.ROUTE_APP_ID, app_id))
+        self.assertDictEqual(
+            expected_json_data["app"],
+            YarnMetrics.get_yarn_app_info(proto, addr, port, app_id)
+        )
