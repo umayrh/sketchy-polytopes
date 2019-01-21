@@ -81,9 +81,6 @@ Resources:
 ## TODO
 
 * Urgent
-  * Rethink how FIXED_SPARK_PARAM interact with the configurable param, esp whether
-  or not they are merged. Don't want issues due to duplicates. Maybe this should
-  come from SparkSubmitCmd defaults. Some notion of defaults and overrides.
   * Fix `sort` to write to local filesystem by default. See 
   [this](https://stackoverflow.com/questions/27299923/how-to-load-local-file-in-sc-textfile-instead-of-hdfs)
   * Finish the new objective function that, over _similar_ values of run-time, minimizes
@@ -97,10 +94,15 @@ Resources:
     * Finally, allow different types of objective functions
     * Record metrics somewhere. Ideally, we'd also periodically record objects returned
     by Cluster Metrics API and Cluster Scheduler API to track externalities.
-  * The underlying optimization also doesn't seem to terminate if the objective
-    value doesn't change over successive iterations
 
 * Next steps
+  * Put tests_require=test_requires, in setup.py. requirements.txt shouldn't contain
+  test packages.
+  * Rethink how FIXED_SPARK_PARAM interact with the configurable param, esp whether
+  or not they are merged. Don't want issues due to duplicates. Maybe this should
+  come from SparkSubmitCmd defaults. Some notion of defaults and overrides.
+  * The underlying optimization also doesn't seem to terminate if the objective
+    value doesn't change over successive iterations
   * Allow JAR parameters to also be configurable.  
   * Figure out some DoWhy basics. 
     * In particular, figure out a sensible causal graph for Spark parameters.
