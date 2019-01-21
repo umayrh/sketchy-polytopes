@@ -90,9 +90,13 @@ Resources:
     resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
     same runtime in all cases, the optimal configuration value should be 1.
     * Finish YarnMetrics and integrate with SparkMetrics; add tests
+        * Need a SparkMetrics interface that YarnMetric implements. Also, the
+        metrics object needs to be injected to avoid recreation.
     * Extract YARN app id from call_program's stderr
     * If master=yarn and RM server online, use size = YARN mb-second/runtime
-    * Finally, allow different types of objective functions 
+    * Finally, allow different types of objective functions
+    * Record metrics somewhere. Ideally, we'd also periodically record objects returned
+    by Cluster Metrics API and Cluster Scheduler API to track externalities.
   * The underlying optimization also doesn't seem to terminate if the objective
     value doesn't change over successive iterations
 
