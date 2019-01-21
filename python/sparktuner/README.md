@@ -19,9 +19,34 @@ Sample commands:
 
 ### Auto-tuning
 
-####  OpenTuner 
+Research:
+* OpenTuner: An Extensible Framework for Program Autotuning 
+[paper](groups.csail.mit.edu/commit/papers/2014/ansel-pact14-opentuner.pdf),
+[code](https://github.com/jansel/opentuner)
+* BOAT: Building Auto-Tuners with Structured Bayesian Optimization 
+[paper](https://www.cl.cam.ac.uk/~mks40/pubs/www_2017.pdf), 
+[code](https://github.com/VDalibard/BOAT)
+* Learning Runtime Parameters in Computer Systems with Delayed Experience Injection 
+[paper](https://www.cl.cam.ac.uk/~mks40/pubs/nips_drl_2016.pdf)
+* Datasize-Aware High Dimensional Configurations Auto-Tuning of In-Memory Cluster Computing
+[paper](alchem.usc.edu/portal/static/download/dac.pdf)
+* BestConfig: Tapping the Performance Potential of Systems via Automatic Configuration Tuning
+[paper](https://arxiv.org/abs/1710.03439),
+[code](https://github.com/zhuyuqing/bestconf)
+* AutoConfig: Automatic Configuration Tuning for Distributed Message Systems
+[paper](web.cs.ucdavis.edu/~liu/paper/ASE18Bao.pdf),
+[code](https://github.com/sselab/autoconfig)
+* Autotuning research at LBL CRD 
+[link](http://crd.lbl.gov/departments/computer-science/PAR/research/autotuning/)
+* Design continuums 
+[blog](https://blog.acolyer.org/2019/01/21/design-continuums-and-the-path-toward-self-designing-key-value-stores-that-know-and-learn/),
+[paper](https://stratos.seas.harvard.edu/publications/design-continuums-and-path-toward-self-designing-key-value-stores-know-and)
+* Spark Autotuning 
+[talk](https://databricks.com/session/spark-autotuning)
 
-For more information, see [OpenTuner](http://opentuner.org).
+TODO: Comparison between different approaches
+
+####  OpenTuner 
 
 ##### Creating an OpenTuner configuration
 
@@ -78,6 +103,14 @@ Resources:
 * [YARN REST API](http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-site/WebServicesIntro.html)
 * Running Spark on YARN [link](https://spark.apache.org/docs/latest/running-on-yarn.html) 
 
+### Performance measurement
+
+#### Process statistics
+
+* [psutil](https://psutil.readthedocs.io)
+* [psrecord](https://github.com/astrofrog/psrecord)
+* [Total memory used](https://stackoverflow.com/questions/938733/total-memory-used-by-python-process)
+
 ## TODO
 
 * Urgent
@@ -86,7 +119,7 @@ Resources:
   * Finish the new objective function that, over _similar_ values of run-time, minimizes
     resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
     same runtime in all cases, the optimal configuration value should be 1.
-    * Finish YarnMetrics and integrate with SparkMetrics; add tests
+    * Integrate with SparkMetrics; add tests
         * Need a SparkMetrics interface that YarnMetric implements. Also, the
         metrics object needs to be injected to avoid recreation.
     * Extract YARN app id from call_program's stderr
