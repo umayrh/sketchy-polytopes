@@ -73,7 +73,7 @@ class YarnMetrics(object):
         if not yarn_site_path:
             return {}
         xml_parsed = XmlParser.parse_file(yarn_site_path)
-        # there must be a one-pass way to do this
+        # FIXME there must be a one-pass way to do this
         property_names = XmlParser.map_element_data(xml_parsed, 'name')
         property_values = XmlParser.map_element_data(xml_parsed, 'value')
         return dict(zip(property_names, property_values))
@@ -103,7 +103,7 @@ class YarnMetrics(object):
     def _get_rm_ha_webapp_addr(yarn_webapp_proto, yarn_property_map):
         """
         TODO(unimplemented)
-        :param yarn_webapp_proto: YARN HTTP policy
+        :param yarn_webapp_proto: YARN HTTP protocol (http/https)
         :param yarn_property_map: dict of YARN properties
         :return: the web address of a live HA Resource Manager
         if server address can be found in yarn-site.xml and if
@@ -116,7 +116,7 @@ class YarnMetrics(object):
                             yarn_webapp_port,
                             yarn_property_map):
         """
-        :param yarn_webapp_proto: YARN HTTP policy
+        :param yarn_webapp_proto: YARN HTTP protocol (http/https)
         :param yarn_webapp_port: Resource Manager webapp port.
         :param yarn_property_map: dict of YARN properties
         :return:
@@ -143,7 +143,7 @@ class YarnMetrics(object):
                            yarn_webapp_port,
                            yarn_property_map):
         """
-        :param yarn_webapp_proto: YARN HTTP policy
+        :param yarn_webapp_proto: YARN HTTP protocol (http/https)
         :param yarn_webapp_port: Resource Manager webapp port.
         :param yarn_property_map: dict of YARN properties
         :return: the web address of a live Resource Manager
@@ -172,7 +172,7 @@ class YarnMetrics(object):
           this is specified, otherwise output is uncompressed. All
           other header fields are ignored."
         For now, this function supports only JSOn responses.
-        :param yarn_webapp_proto: YARN HTTP policy
+        :param yarn_webapp_proto: YARN HTTP protocol (http/https)
         :param yarn_rm_addr: Resource Manager webapp domain
         :param yarn_rm_port: Resource Manager webapp port. Added
         to yarn_rm_addr iff yarn_rm_port is not None.
@@ -205,10 +205,12 @@ class YarnMetrics(object):
                       yarn_rm_addr,
                       yarn_rm_port):
         """
-        :param yarn_webapp_proto: YARN HTTP policy
+        This function uses YARN Resource Manager's
+        Cluster Information API. "The cluster information resource
+        provides overall information about the cluster."
+        :param yarn_webapp_proto: YARN HTTP protocol (http/https)
         :param yarn_rm_addr: Resource Manager webapp domain
-        :param yarn_rm_port: Resource Manager webapp port. Added
-        to yarn_rm_addr iff yarn_rm_port is not None.
+        :param yarn_rm_port: Resource Manager webapp port.
         :param items: resource names to collect data for. If
         None, all information is collected.
         :return: a dict of resource name to resource values.
@@ -229,17 +231,16 @@ class YarnMetrics(object):
         Cluster Application API. "An application resource contains
         information about a particular application that was
         submitted to a cluster."
-        :param yarn_webapp_proto: YARN HTTP policy
+        :param yarn_webapp_proto: YARN HTTP protocol (http/https)
         :param yarn_rm_addr: Resource Manager webapp domain
-        :param yarn_rm_port: Resource Manager webapp port. Added
-        to yarn_rm_addr iff yarn_rm_port is not None.
+        :param yarn_rm_port: Resource Manager webapp port.
         :param yarn_app_id: YARN application id
         :param items: resource names to collect data for. If
         None, all information is collected.
         :return: a dict of resource name to resource values.
         """
         app_route = urljoin(YarnResourceManager.ROUTE_APP_ID, yarn_app_id)
-        print("my app_route: ") + app_route
+
         info = YarnMetrics.call_yarn_api(yarn_webapp_proto,
                                          yarn_rm_addr,
                                          yarn_rm_port,
