@@ -129,6 +129,7 @@ Resources:
     by Cluster Metrics API and Cluster Scheduler API to track externalities.
 
 * Next steps
+  * List options in README
   * Put tests_require=test_requires, in setup.py. requirements.txt shouldn't contain
   test packages.
   * Rethink how FIXED_SPARK_PARAM interact with the configurable param, esp whether

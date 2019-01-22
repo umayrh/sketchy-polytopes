@@ -16,14 +16,23 @@ class SparkMetrics:
     SECS = "elapsedTime"
 
     @abc.abstractmethod
+    def start(self, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    def update(self, **kwargs):
+        pass
+
+    @abc.abstractmethod
     def get_perf_metrics(self, **kwargs):
         """
         :param kwargs: key-worded arguments. They are:
         For YARN:
             yarn_app_id: YARN application id
         For local process:
+            pid: the process id
         :return: a dictionary containing values for the
-        following metrics:
+        following metrics (metric names are keys):
             * memorySeconds
                 * (long) The amount of memory the application has allocated
                 (megabyte-seconds)
@@ -44,7 +53,25 @@ class YarnMetrics(SparkMetrics):
         super(YarnMetrics, self).__init__()
         self.collector = YarnMetricsCollector()
 
+    def start(self, **kwargs):
+        """
+        Not applicable for YARN
+        """
+        pass
+
+    def update(self, **kwargs):
+        """
+        Not applicable for YARN
+        """
+        pass
+
     def get_perf_metrics(self, **kwargs):
+        """
+        :param kwargs: keyworded args that must contain
+        'yarn_app_id'
+        :return: dict of performance metrics for
+        given YARN application
+        """
         yarn_app_id = kwargs["yarn_app_id"]
         items = [SparkMetrics.MEM_SECS,
                  SparkMetrics.VCORE_SECS,
@@ -63,7 +90,7 @@ class ProcessMetrics(SparkMetrics):
         Note that cpu_percent(interval=...) is a blocking call,
         so this function will effectively sleep for cpu_interval
         seconds.
-        TODO: Unique set size (USS) rather than resident set size
+        Unique set size (USS) rather than resident set size
         (RSS) is probably a better metric but:
         1. USS may not be available on all platforms, and
         2. accessing USS may require higher privileges.
@@ -89,28 +116,53 @@ class ProcessMetrics(SparkMetrics):
         super(ProcessMetrics, self).__init__()
         self.cpu_num = psutil.cpu_count(logical=True)
         self.process_dict = {}
-        self.mbyte_secs = 0
-        self.vcore_secs = 0
-        self.time_counter = 0
+        self.process_info_dict = {}
 
-    def start(self, pid):
+    def start(self, **kwargs):
+        """
+        :param kwargs: keyworded args that must contain
+        'pid'
+        :return: the psutil.Process object corresponding
+        to given pid
+        """
+        pid = kwargs['pid']
         if pid not in self.process_dict:
             self.process_dict[pid] = psutil.Process(pid)
+            # Warm up cache
+            self.process_dict[pid].memory_info()
+            # Tuple contents: memory, cpu, time
+            self.process_info_dict[pid] = (0, 0, 0)
         return self.process_dict[pid]
 
-    def update(self, pid, cpu_interval=1):
+    def update(self, **kwargs):
+        """
+        :param kwargs: keyworded args that must contain
+        'pid' and 'cpu_interval'
+        """
+        pid = kwargs['pid']
+        cpu_interval = kwargs['cpu_interval']
         process = self.start(pid)
         mem_secs, cpu_secs = ProcessMetrics.get_process_metrics(
             process, cpu_interval)
         # mbyte_secs is scaled just before being returned as a result
-        self.mbyte_secs += mem_secs
-        self.vcore_secs += (max(cpu_secs, 100) * self.cpu_num) / 100.0
-        self.time_counter += cpu_interval
+        mbyte_secs, vcore_secs, time_counter = self.process_info_dict[pid]
+        mbyte_secs += mem_secs
+        vcore_secs += (max(cpu_secs, 100) * self.cpu_num) / 100.0
+        time_counter += cpu_interval
+        self.process_info_dict[pid] = (mbyte_secs, vcore_secs, time_counter)
 
     def get_perf_metrics(self, **kwargs):
-        return {SparkMetrics.MEM_SECS: self.mbyte_secs / (1024 ** 2),
-                SparkMetrics.VCORE_SECS: self.vcore_secs,
-                SparkMetrics.SECS: self.time_counter}
+        """
+        :param kwargs: keyworded args that must contain
+        'pid'
+        :return: dict of performance metrics for given process
+        """
+        pid = kwargs['pid']
+        mbyte_secs, vcore_secs, time_counter = self.process_info_dict[pid]
+        # Potentially, remove process information here from internal dicts
+        return {SparkMetrics.MEM_SECS: mbyte_secs / (1024 ** 2),
+                SparkMetrics.VCORE_SECS: vcore_secs,
+                SparkMetrics.SECS: time_counter}
 
 
 class SparkMetricsCollector(object):
@@ -145,4 +197,8 @@ class SparkMetricsCollector(object):
         self.collector = SparkMetricsCollector.make_collector(master)
 
     def get_collector(self):
+        """
+        :return: the performance data collector object. Currently,
+        either ProcessMetrics or YarnMetrics.
+        """
         return self.collector
