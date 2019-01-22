@@ -19,6 +19,7 @@ from spark_cmd import SparkSubmitCmd
 from tuner_cfg import (MeasurementInterfaceExt,
                        MinimizeTimeAndResource,
                        ScaledIntegerParameter)
+from spark_metrics import SparkMetrics
 
 log = logging.getLogger(__name__)
 
@@ -105,20 +106,21 @@ class SparkConfigTuner(MeasurementInterfaceExt):
         run_result = self.call_program(run_cmd)
         # TODO differentiate between config errors and errors due to
         # insufficient resources
+        log.debug(str(run_result))
         assert run_result[MeasurementInterfaceExt.RETURN_CODE] == 0, \
             run_result[MeasurementInterfaceExt.STDERR]
 
         # Log process performance metrics.
-        metric_time = run_result[MeasurementInterfaceExt.TIME]
-        metric_mem_mb = Util.ratio(run_result[MeasurementInterfaceExt.MB_SEC],
+        metric_time = run_result[SparkMetrics.SECS]
+        metric_mem_mb = Util.ratio(run_result[SparkMetrics.MEM_SECS],
                                    metric_time)
-        metric_vcores = Util.ratio(run_result[MeasurementInterfaceExt.VC_SEC],
+        metric_vcores = Util.ratio(run_result[SparkMetrics.VCORE_SECS],
                                    metric_time)
-        log.info("Process metrics: time=%0.3fs, mem=%0.3fmb, vcores=%0.3f"
+        log.info("Application metrics: time=%0.3fs, mem=%0.3fmb, vcores=%0.3f"
                  % (metric_time, metric_mem_mb, metric_vcores))
 
         # Unfortunately, size is a vector of tuner_cfg values at this point
-        # and so cannot be resolved into a scala value.
+        # and so cannot be resolved into a scalar value.
         return Result(time=run_result[MeasurementInterfaceExt.TIME],
                       size=0)
 

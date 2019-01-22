@@ -1,4 +1,5 @@
 import abc
+import time
 import psutil
 
 from yarn_metrics import YarnMetricsCollector
@@ -130,8 +131,8 @@ class ProcessMetrics(SparkMetrics):
             self.process_dict[pid] = psutil.Process(pid)
             # Warm up cache
             self.process_dict[pid].memory_info()
-            # Tuple contents: memory, cpu, time
-            self.process_info_dict[pid] = (0, 0, 0)
+            # Tuple contents: memory, cpu, time, samples
+            self.process_info_dict[pid] = (0, 0, time.time(), 0)
         return self.process_dict[pid]
 
     def update(self, **kwargs):
@@ -141,15 +142,16 @@ class ProcessMetrics(SparkMetrics):
         """
         pid = kwargs['pid']
         cpu_interval = kwargs['cpu_interval']
-        process = self.start(pid)
+        process = self.start(pid=pid)
         mem_secs, cpu_secs = ProcessMetrics.get_process_metrics(
             process, cpu_interval)
         # mbyte_secs is scaled just before being returned as a result
-        mbyte_secs, vcore_secs, time_counter = self.process_info_dict[pid]
+        mbyte_secs, vcore_secs, st_time, samples = self.process_info_dict[pid]
         mbyte_secs += mem_secs
         vcore_secs += (max(cpu_secs, 100) * self.cpu_num) / 100.0
-        time_counter += cpu_interval
-        self.process_info_dict[pid] = (mbyte_secs, vcore_secs, time_counter)
+        samples += 1
+        self.process_info_dict[pid] = \
+            (mbyte_secs, vcore_secs, st_time, samples)
 
     def get_perf_metrics(self, **kwargs):
         """
@@ -158,11 +160,12 @@ class ProcessMetrics(SparkMetrics):
         :return: dict of performance metrics for given process
         """
         pid = kwargs['pid']
-        mbyte_secs, vcore_secs, time_counter = self.process_info_dict[pid]
+        end_time = time.time()
+        mbyte_secs, vcore_secs, start_time, _ = self.process_info_dict[pid]
         # Potentially, remove process information here from internal dicts
         return {SparkMetrics.MEM_SECS: mbyte_secs / (1024 ** 2),
                 SparkMetrics.VCORE_SECS: vcore_secs,
-                SparkMetrics.SECS: time_counter}
+                SparkMetrics.SECS: (end_time-start_time)}
 
 
 class SparkMetricsCollector(object):
@@ -188,8 +191,10 @@ class SparkMetricsCollector(object):
         :param spark_master: Spark master (local/yarn)
         :param deploy_mode: Spark deploy mode (cluster)
         """
-        master = spark_master.split("[")
-        assert master in SparkMetricsCollector.SPARK_MASTERS
+        # "local[*]" -> local
+        master = spark_master.split("[")[0].replace('"', '')
+        assert master in SparkMetricsCollector.SPARK_MASTERS, \
+            "Invalid master: " + spark_master
         # assert master != "yarn" or \
         # deploy_mode in SparkMetricsCollector.DEPLOY_MODES
         self.spark_master = master

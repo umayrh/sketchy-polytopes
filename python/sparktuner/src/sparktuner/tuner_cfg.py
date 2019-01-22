@@ -1,14 +1,13 @@
 """Contains extensions to some Opentuner classes"""
 
 import time
-import psutil
 import logging
 import subprocess
 
 from util import Util
 from multiprocessing.pool import ThreadPool
 
-from spark_metrics import ProcessMetrics
+from spark_metrics import SparkMetricsCollector
 from opentuner import MeasurementInterface
 from opentuner.resultsdb.models import Result
 from opentuner.search.manipulator import (NumericParameter,
@@ -33,12 +32,12 @@ class MeasurementInterfaceExt(MeasurementInterface):
     RETURN_CODE = 'returncode'
     STDOUT = 'stdout'
     STDERR = 'stderr'
-    MB_SEC = 'mbyte_secs'
-    VC_SEC = 'vcore_secs'
 
     def __init__(self, *pargs, **kwargs):
         super(MeasurementInterfaceExt, self).__init__(*pargs, **kwargs)
         self.the_io_thread_pool = None
+        self.metrics = SparkMetricsCollector(
+            self.args.master.value, self.args.deploy_mode.value)
 
     def the_io_thread_pool_init(self, parallelism=1):
         if self.the_io_thread_pool is None:
@@ -71,11 +70,6 @@ class MeasurementInterfaceExt(MeasurementInterface):
         inf = float('inf')
         self.the_io_thread_pool_init(self.args.parallelism)
 
-        # performance counters
-        cpu_num = psutil.cpu_count(logical=True)
-        vcore_secs = 0.0
-        mbyte_secs = 0.0
-
         if limit is inf:
             limit = None
         if type(cmd) in (str, unicode):
@@ -88,7 +82,8 @@ class MeasurementInterfaceExt(MeasurementInterface):
             stderr=subprocess.PIPE,
             preexec_fn=preexec_setpgid_setrlimit(memory_limit),
             **kwargs)
-        pup = psutil.Process(p.pid)
+        process_id = p.pid
+        self.metrics.collector.start(pid=process_id)
         # Add p.pid to list of processes to kill
         # in case of keyboard interrupt
         self.pid_lock.acquire()
@@ -101,9 +96,7 @@ class MeasurementInterfaceExt(MeasurementInterface):
             while p.returncode is None:
                 # No need to sleep since cpu_percent(interval=1)
                 # is a blocking call.
-                mem_secs, cpu_secs = ProcessMetrics.get_process_metrics(pup)
-                mbyte_secs += mem_secs
-                vcore_secs += (max(cpu_secs, 100) * cpu_num) / 100.0
+                self.metrics.collector.update(pid=process_id, cpu_interval=1)
                 # Leaving some of the code commented here so it
                 # can be easily differentiated from the parent
                 # interface's implementation.
@@ -141,14 +134,15 @@ class MeasurementInterfaceExt(MeasurementInterface):
             self.pid_lock.release()
 
         t1 = time.time()
-        return {
+        metrics = self.metrics.collector.get_perf_metrics(pid=process_id)
+        result = {
             MeasurementInterfaceExt.TIME: inf if killed else (t1 - t0),
             MeasurementInterfaceExt.TIMEOUT: killed,
             MeasurementInterfaceExt.RETURN_CODE: p.returncode,
             MeasurementInterfaceExt.STDOUT: stdout_result.get(),
-            MeasurementInterfaceExt.STDERR: stderr_result.get(),
-            MeasurementInterfaceExt.MB_SEC: mbyte_secs / (1024 ** 2),
-            MeasurementInterfaceExt.VC_SEC: vcore_secs}
+            MeasurementInterfaceExt.STDERR: stderr_result.get()}
+        result.update(metrics)
+        return result
 
 
 class ScaledIntegerParameter(ScaledNumericParameter, IntegerParameter):

@@ -2,11 +2,27 @@
 
 ## Setup, build, and usage
 
+#### Setup
+
 This package assumes that Apache Spark is installed, and the following environment
 variables have already been set: `SPARK_HOME`, and, optionally, `HADOOP_CONF_DIR`.  
 
-`gradle build` should install all dependencies (including projects-specific ones 
-in requirements.txt), and run tests.
+All Python dependencies are listed in:
+* `requirements.txt`
+* `build.gradle`
+* `setup.py`
+
+#### Build
+
+* `gradle clean build` to download and install all dependencies from scratch, and run tests.
+* `gradle flake8` to lint for style issues.
+* `gradle pytest` to run tests.
+* `gradle build -x getRequirements` to install all dependencies (assumes they've already
+been downloaded).
+
+#### Usage
+
+To see usage information, `./build/deployable/bin/sparktuner --help`
 
 Sample commands:
 * `build/deployable/bin/sparktuner --no-dups --name sartre_spark_sortre --path ../../sparkScala/sort/build/libs/sort-0.1-all.jar --deploy_mode client --master "local[*]" --class com.umayrh.sort.Main --spark_parallelism "1,10" --program_conf "10000 /tmp/sparktuner_sort"`
@@ -119,9 +135,7 @@ Resources:
   * Finish the new objective function that, over _similar_ values of run-time, minimizes
     resource usage. E.g. if `spark.default.parallelism` ranging from 1 to 10 yields the 
     same runtime in all cases, the optimal configuration value should be 1.
-    * Integrate with SparkMetrics; add tests
-        * Need a SparkMetrics interface that YarnMetric implements. Also, the
-        metrics object needs to be injected to avoid recreation.
+    * Add tests for spark_metrics
     * Extract YARN app id from call_program's stderr
     * If master=yarn and RM server online, use size = YARN mb-second/runtime
     * Finally, allow different types of objective functions
