@@ -6,7 +6,7 @@ import contextlib
 import requests_mock
 
 from requests.compat import urljoin
-from sparktuner.yarn_metrics import (YarnMetrics,
+from sparktuner.yarn_metrics import (YarnMetricsCollector,
                                      YarnProperty,
                                      YarnResourceManager)
 
@@ -57,30 +57,33 @@ class YarnMetricsConfigTest(unittest.TestCase):
     def test_get_yarn_site_path(self):
         with YarnMetricsTestUtil.modified_environ(
                 'YARN_CONF_DIR', HADOOP_CONF_DIR=self.yarn_dir):
-            yarn_site_path = YarnMetrics.get_yarn_site_path()
+            yarn_site_path = YarnMetricsCollector.get_yarn_site_path()
             self.assertIsNotNone(yarn_site_path)
             self.assertEqual(
-                YarnMetrics.YARN_SITE, os.path.basename(yarn_site_path))
+                YarnMetricsCollector.YARN_SITE,
+                os.path.basename(yarn_site_path))
             self.assertEqual(
                 self.yarn_dir, os.path.dirname(yarn_site_path))
 
         with YarnMetricsTestUtil.modified_environ(
                 'HADOOP_CONF_DIR', YARN_CONF_DIR=self.yarn_dir):
-            yarn_site_path = YarnMetrics.get_yarn_site_path()
+            yarn_site_path = YarnMetricsCollector.get_yarn_site_path()
             self.assertIsNotNone(yarn_site_path)
             self.assertEqual(
-                YarnMetrics.YARN_SITE, os.path.basename(yarn_site_path))
+                YarnMetricsCollector.YARN_SITE,
+                os.path.basename(yarn_site_path))
             self.assertEqual(
                 self.yarn_dir, os.path.dirname(yarn_site_path))
 
         with YarnMetricsTestUtil.modified_environ(
                 'YARN_CONF_DIR', 'HADOOP_CONF_DIR'):
-            self.assertIsNone(YarnMetrics.get_yarn_site_path())
+            self.assertIsNone(YarnMetricsCollector.get_yarn_site_path())
 
     def test_get_yarn_property_map(self):
         yarn_site_path = os.path.join(
-            self.yarn_dir, YarnMetrics.YARN_SITE)
-        yarn_properties = YarnMetrics.get_yarn_property_map(yarn_site_path)
+            self.yarn_dir, YarnMetricsCollector.YARN_SITE)
+        yarn_properties = YarnMetricsCollector.get_yarn_property_map(
+            yarn_site_path)
 
         self.assertIsNotNone(yarn_properties)
         self.assertEqual(
@@ -97,32 +100,33 @@ class YarnMetricsServiceTest(unittest.TestCase):
         self.yarn_dir = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             "resources")
-        self.yarn_properties = YarnMetrics.get_yarn_property_map(
-            os.path.join(self.yarn_dir, YarnMetrics.YARN_SITE))
+        self.yarn_properties = YarnMetricsCollector.get_yarn_property_map(
+            os.path.join(self.yarn_dir, YarnMetricsCollector.YARN_SITE))
 
     def test_get_webapp_protocol(self):
-        proto = YarnMetrics.get_webapp_protocol(self.yarn_properties)
+        proto = YarnMetricsCollector.get_webapp_protocol(
+            self.yarn_properties)
         self.assertEqual("http", proto)
 
-        proto = YarnMetrics.get_webapp_protocol(
+        proto = YarnMetricsCollector.get_webapp_protocol(
             {YarnProperty.HTTP_POLICY: "https_only"})
         self.assertEqual("https", proto)
 
     def test_get_webapp_port(self):
-        port = YarnMetrics.get_webapp_port(self.yarn_properties)
+        port = YarnMetricsCollector.get_webapp_port(self.yarn_properties)
         self.assertEqual("8088", port)
 
-        port = YarnMetrics.get_webapp_port(
+        port = YarnMetricsCollector.get_webapp_port(
             {YarnProperty.HTTP_POLICY: "https_only"})
         self.assertEqual("8090", port)
 
     def test_get_rm_ha_webapp_addr(self):
         with self.assertRaises(NotImplementedError):
-            YarnMetrics._get_rm_ha_webapp_addr("", "")
+            YarnMetricsCollector._get_rm_ha_webapp_addr("", "")
 
     def rm_webapp_addr_helper(self, mocker, yarn_properties, addr_property):
-        proto = YarnMetrics.get_webapp_protocol(yarn_properties)
-        port = YarnMetrics.get_webapp_port(yarn_properties)
+        proto = YarnMetricsCollector.get_webapp_protocol(yarn_properties)
+        port = YarnMetricsCollector.get_webapp_port(yarn_properties)
         addr = yarn_properties[addr_property]
         headers = {"content-type": "application/json"}
 
@@ -131,7 +135,8 @@ class YarnMetricsServiceTest(unittest.TestCase):
                    json="[]", headers=headers)
         self.assertEqual(
             addr,
-            YarnMetrics._get_rm_webapp_addr(proto, port, yarn_properties)
+            YarnMetricsCollector._get_rm_webapp_addr(
+                proto, port, yarn_properties)
         )
 
     @requests_mock.Mocker()
@@ -166,7 +171,7 @@ class YarnMetricsServiceTest(unittest.TestCase):
             YarnResourceManager.ROUTE_INFO)
         self.assertDictEqual(
             expected_json_data,
-            YarnMetrics.get_yarn_info(proto, addr, port)
+            YarnMetricsCollector.get_yarn_info(proto, addr, port)
         )
 
     @requests_mock.Mocker()
@@ -179,5 +184,5 @@ class YarnMetricsServiceTest(unittest.TestCase):
             urljoin(YarnResourceManager.ROUTE_APP_ID, app_id))
         self.assertDictEqual(
             expected_json_data["app"],
-            YarnMetrics.get_yarn_app_info(proto, addr, port, app_id)
+            YarnMetricsCollector.get_yarn_app_info(proto, addr, port, app_id)
         )

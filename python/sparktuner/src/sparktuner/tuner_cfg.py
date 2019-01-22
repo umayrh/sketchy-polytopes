@@ -8,7 +8,7 @@ import subprocess
 from util import Util
 from multiprocessing.pool import ThreadPool
 
-from spark_metrics import SparkMetrics
+from spark_metrics import ProcessMetrics
 from opentuner import MeasurementInterface
 from opentuner.resultsdb.models import Result
 from opentuner.search.manipulator import (NumericParameter,
@@ -101,7 +101,7 @@ class MeasurementInterfaceExt(MeasurementInterface):
             while p.returncode is None:
                 # No need to sleep since cpu_percent(interval=1)
                 # is a blocking call.
-                mem_secs, cpu_secs = SparkMetrics.get_process_metrics(pup)
+                mem_secs, cpu_secs = ProcessMetrics.get_process_metrics(pup)
                 mbyte_secs += mem_secs
                 vcore_secs += (max(cpu_secs, 100) * cpu_num) / 100.0
                 # Leaving some of the code commented here so it

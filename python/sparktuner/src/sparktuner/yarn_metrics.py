@@ -29,7 +29,7 @@ class YarnMetricsError(Exception):
     pass
 
 
-class YarnMetrics(object):
+class YarnMetricsCollector(object):
     """
     Utilities for accessing YARN configuration parameters,
     and for querying YARN Resource Manager.
@@ -52,12 +52,12 @@ class YarnMetrics(object):
         or HADOOP_CONF_DIR environment variables.
         :return: the path, as a str, if the file exist. None otherwise
         """
-        conf_dir = os.getenv(YarnMetrics.YARN_CONF_DIR,
-                             os.getenv(YarnMetrics.HADOOP_CONF_DIR))
+        conf_dir = os.getenv(YarnMetricsCollector.YARN_CONF_DIR,
+                             os.getenv(YarnMetricsCollector.HADOOP_CONF_DIR))
         if not conf_dir:
             return None
 
-        yarn_site = os.path.join(conf_dir, YarnMetrics.YARN_SITE)
+        yarn_site = os.path.join(conf_dir, YarnMetricsCollector.YARN_SITE)
         if os.path.exists(yarn_site):
             return yarn_site
         return None
@@ -97,7 +97,7 @@ class YarnMetrics(object):
         :return: Default webapp port corresonding to YARN HTTP policy
         """
         return YarnResourceManager.DEFAULT_PORTS.get(
-            YarnMetrics.get_webapp_protocol(yarn_property_map))
+            YarnMetricsCollector.get_webapp_protocol(yarn_property_map))
 
     @staticmethod
     def _get_rm_ha_webapp_addr(yarn_webapp_proto, yarn_property_map):
@@ -131,9 +131,9 @@ class YarnMetrics(object):
         # return rm_addr if server is online
         try:
             # Check to see if the server is available
-            YarnMetrics.get_yarn_info(yarn_webapp_proto,
-                                      yarn_rm_webapp_addr,
-                                      yarn_webapp_port)
+            YarnMetricsCollector.get_yarn_info(yarn_webapp_proto,
+                                               yarn_rm_webapp_addr,
+                                               yarn_webapp_port)
             return yarn_rm_webapp_addr
         except WebRequestError:
             raise YarnMetricsError("Cannot reach RM server")
@@ -152,9 +152,9 @@ class YarnMetrics(object):
         """
         has_ha = yarn_property_map.get(YarnProperty.RM_HAS_HA, "false")
         if has_ha.lower() == "true":
-            return YarnMetrics._get_rm_ha_webapp_addr(
+            return YarnMetricsCollector._get_rm_ha_webapp_addr(
                 yarn_webapp_proto, yarn_property_map)
-        return YarnMetrics._get_rm_webapp_addr(
+        return YarnMetricsCollector._get_rm_webapp_addr(
             yarn_webapp_proto, yarn_webapp_port, yarn_property_map)
 
     @staticmethod
@@ -215,10 +215,11 @@ class YarnMetrics(object):
         None, all information is collected.
         :return: a dict of resource name to resource values.
         """
-        return YarnMetrics.call_yarn_api(yarn_webapp_proto,
-                                         yarn_rm_addr,
-                                         yarn_rm_port,
-                                         YarnResourceManager.ROUTE_INFO)
+        return YarnMetricsCollector.call_yarn_api(
+            yarn_webapp_proto,
+            yarn_rm_addr,
+            yarn_rm_port,
+            YarnResourceManager.ROUTE_INFO)
 
     @staticmethod
     def get_yarn_app_info(yarn_webapp_proto,
@@ -241,33 +242,34 @@ class YarnMetrics(object):
         """
         app_route = urljoin(YarnResourceManager.ROUTE_APP_ID, yarn_app_id)
 
-        info = YarnMetrics.call_yarn_api(yarn_webapp_proto,
-                                         yarn_rm_addr,
-                                         yarn_rm_port,
-                                         app_route)["app"]
+        info = YarnMetricsCollector.call_yarn_api(yarn_webapp_proto,
+                                                  yarn_rm_addr,
+                                                  yarn_rm_port,
+                                                  app_route)["app"]
         if items:
             {k: v for k, v in info.iteritems() if k in items}
         return info
 
     def __init__(self):
         # Some of these may raise, which shouldn't happen in ctor
-        yarn_site_path = YarnMetrics.get_yarn_site_path()
-        yarn_property_map = YarnMetrics.get_yarn_property_map(yarn_site_path)
-        self.yarn_webapp_proto = YarnMetrics.get_webapp_protocol(
+        yarn_site_path = YarnMetricsCollector.get_yarn_site_path()
+        yarn_property_map = YarnMetricsCollector.get_yarn_property_map(
+            yarn_site_path)
+        self.yarn_webapp_proto = YarnMetricsCollector.get_webapp_protocol(
             yarn_property_map)
-        self.yarn_webapp_port = YarnMetrics.get_webapp_port(
+        self.yarn_webapp_port = YarnMetricsCollector.get_webapp_port(
             yarn_property_map)
-        self.yarn_rm_webapp_addr = YarnMetrics.get_rm_webapp_addr(
+        self.yarn_rm_webapp_addr = YarnMetricsCollector.get_rm_webapp_addr(
             self.yarn_webapp_proto, yarn_property_map)
 
     def get_info(self):
-        return YarnMetrics.get_yarn_info(self.yarn_webapp_proto,
-                                         self.yarn_rm_webapp_addr,
-                                         self.yarn_webapp_port)
+        return YarnMetricsCollector.get_yarn_info(self.yarn_webapp_proto,
+                                                  self.yarn_rm_webapp_addr,
+                                                  self.yarn_webapp_port)
 
     def get_app_info(self, yarn_app_id, resp_items=None):
-        return YarnMetrics.get_yarn_app_info(self.yarn_webapp_proto,
-                                             self.yarn_rm_webapp_addr,
-                                             self.yarn_webapp_port,
-                                             yarn_app_id,
-                                             resp_items)
+        return YarnMetricsCollector.get_yarn_app_info(self.yarn_webapp_proto,
+                                                      self.yarn_rm_webapp_addr,
+                                                      self.yarn_webapp_port,
+                                                      yarn_app_id,
+                                                      resp_items)
