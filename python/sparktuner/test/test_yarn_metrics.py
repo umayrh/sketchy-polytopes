@@ -87,12 +87,11 @@ class YarnMetricsConfigTest(unittest.TestCase):
 
         self.assertIsNotNone(yarn_properties)
         self.assertEqual(
-            "localhost",
+            "master",
             yarn_properties["yarn.resourcemanager.hostname"])
-        # TODO: is this right, or should the value be substituted?
         self.assertEqual(
-            "${yarn.resourcemanager.hostname}:8090",
-            yarn_properties["yarn.resourcemanager.webapp.https.address.rm1"])
+            "master:8032",
+            yarn_properties["yarn.resourcemanager.address"])
 
 
 class YarnMetricsServiceTest(unittest.TestCase):
@@ -185,4 +184,49 @@ class YarnMetricsServiceTest(unittest.TestCase):
         self.assertDictEqual(
             expected_json_data["app"],
             YarnMetricsCollector.get_yarn_app_info(proto, addr, port, app_id)
+        )
+
+    @requests_mock.Mocker()
+    def test_get_info(self, mocker):
+        # Need to set this up before yarn-site.xml
+        # parsing since that involves calling the
+        # api being tested here. _smh_
+        expected_json_data = self.yarn_api_helper(
+            mocker,
+            "yarn-resp-cluster-info.json",
+            "http", "master", "8088",
+            YarnResourceManager.ROUTE_INFO)
+        with YarnMetricsTestUtil.modified_environ(
+                'YARN_CONF_DIR', HADOOP_CONF_DIR=self.yarn_dir):
+            collector = YarnMetricsCollector()
+            proto = collector.yarn_webapp_proto
+            port = collector.yarn_webapp_port
+            addr = collector.yarn_rm_webapp_addr
+        self.assertDictEqual(
+            expected_json_data,
+            YarnMetricsCollector.get_yarn_info(proto, addr, port)
+        )
+
+    @requests_mock.Mocker()
+    def test_get_app_info(self, mocker):
+        self.yarn_api_helper(
+            mocker,
+            "yarn-resp-cluster-info.json",
+            "http", "master", "8088",
+            YarnResourceManager.ROUTE_INFO)
+        with YarnMetricsTestUtil.modified_environ(
+                'YARN_CONF_DIR', HADOOP_CONF_DIR=self.yarn_dir):
+            collector = YarnMetricsCollector()
+            proto = collector.yarn_webapp_proto
+            port = collector.yarn_webapp_port
+            addr = collector.yarn_rm_webapp_addr
+        expected_json_data = self.yarn_api_helper(
+            mocker,
+            "yarn-resp-app-info.json",
+            proto, addr, port,
+            urljoin(YarnResourceManager.ROUTE_APP_ID, "app_id"))
+        self.assertDictEqual(
+            expected_json_data["app"],
+            YarnMetricsCollector.get_yarn_app_info(
+                proto, addr, port, "app_id")
         )

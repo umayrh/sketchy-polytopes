@@ -83,6 +83,8 @@ class MeasurementInterfaceExt(MeasurementInterface):
             preexec_fn=preexec_setpgid_setrlimit(memory_limit),
             **kwargs)
         process_id = p.pid
+        # TODO: extract this from spark-submit logs
+        yarn_app_id = None
         self.metrics.collector.start(pid=process_id)
         # Add p.pid to list of processes to kill
         # in case of keyboard interrupt
@@ -91,6 +93,12 @@ class MeasurementInterfaceExt(MeasurementInterface):
         self.pid_lock.release()
 
         try:
+            # TODO: to parse STDOUT asynchronously, we need something like
+            # apply_async(
+            #   _process_spark_submit_log,
+            #   args = (iter(self._submit_sp.stdout.readline, ''), )
+            # )
+            # while also collecting the logs themselves
             stdout_result = self.the_io_thread_pool.apply_async(p.stdout.read)
             stderr_result = self.the_io_thread_pool.apply_async(p.stderr.read)
             while p.returncode is None:
@@ -107,7 +115,7 @@ class MeasurementInterfaceExt(MeasurementInterface):
                     pass
                 elif limit and time.time() > t0 + limit:
                     killed = True
-                    goodkillpg(p.pid)
+                    self.kill_app(p.pid, yarn_app_id)
                     goodwait(p)
                 else:
                     # No need for the following wait block since
@@ -124,7 +132,7 @@ class MeasurementInterfaceExt(MeasurementInterface):
                 p.poll()
         except Exception:
             if p.returncode is None:
-                goodkillpg(p.pid)
+                self.kill_app(p.pid, yarn_app_id)
             raise
         finally:
             # No longer need to kill p
@@ -134,7 +142,8 @@ class MeasurementInterfaceExt(MeasurementInterface):
             self.pid_lock.release()
 
         t1 = time.time()
-        metrics = self.metrics.collector.get_perf_metrics(pid=process_id)
+        metrics = self.metrics.collector.get_perf_metrics(
+            pid=process_id, yarn_app_id=yarn_app_id)
         result = {
             MeasurementInterfaceExt.TIME: inf if killed else (t1 - t0),
             MeasurementInterfaceExt.TIMEOUT: killed,
@@ -143,6 +152,23 @@ class MeasurementInterfaceExt(MeasurementInterface):
             MeasurementInterfaceExt.STDERR: stderr_result.get()}
         result.update(metrics)
         return result
+
+    def kill_app(self, pid=None, yarn_app_id=None):
+        """
+        Kills the current process. If YARN, kills the YARN application
+        first.
+        This implementation follows Apache Airflow's spark_submit_hook.py
+        :param pid: process id
+        :param yarn_app_id: YARN application id (only used if Spark master
+        is yarn)
+        """
+        if self.args.master == "yarn":
+            kill_cmd = "yarn application -kill {}".format(yarn_app_id).split()
+            yarn_kill = subprocess.Popen(kill_cmd,
+                                         stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE)
+            log.info("YARN killed with return code: %s", yarn_kill.wait())
+        goodkillpg(pid)
 
 
 class ScaledIntegerParameter(ScaledNumericParameter, IntegerParameter):

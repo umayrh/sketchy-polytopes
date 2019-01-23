@@ -25,7 +25,8 @@ class WebRequest(object):
                     header_dict={}):
         """
         :param webapp: web app address. If the address contains
-        schema information, then the schema argument None.
+        schema information, then the schema argument should be None.
+        Port, if any, is assumed to already be appended to webapp.
         :param route: web application route
         :param data_dict: dict of url parameters if any
         :param scheme: web address scheme. If the address contains
@@ -35,7 +36,6 @@ class WebRequest(object):
         :raises WebRequestError if HTTP status is not 200
         """
         webapp_url = prepend_scheme_if_needed(webapp, scheme)
-        # append port?
         url = urljoin(webapp_url, route)
         req = requests.get(url, params=data_dict, headers=header_dict)
         log.debug("HTTP get " + str(req.url))

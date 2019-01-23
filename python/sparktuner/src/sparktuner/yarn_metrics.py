@@ -119,7 +119,9 @@ class YarnMetricsCollector(object):
         :param yarn_webapp_proto: YARN HTTP protocol (http/https)
         :param yarn_webapp_port: Resource Manager webapp port.
         :param yarn_property_map: dict of YARN properties
-        :return:
+        :return: the web address of a live Resource Manager
+        if server address can be found in yarn-site.xml and
+        if the server is currently online.
         """
         yarn_rm_webapp_addr = yarn_property_map.get(
             YarnProperty.RM_WEBAPP_ADDR,
@@ -128,12 +130,15 @@ class YarnMetricsCollector(object):
                 None))
         if not yarn_rm_webapp_addr:
             raise YarnMetricsError("No RM address in yarn-site.xml")
-        # return rm_addr if server is online
+        # Remove the Hadoop IPC port (8032 e.g.) if it exists
+        yarn_rm_webapp_addr = yarn_rm_webapp_addr.split(":")[0]
+        # Return rm_addr if server is online
         try:
             # Check to see if the server is available
-            YarnMetricsCollector.get_yarn_info(yarn_webapp_proto,
-                                               yarn_rm_webapp_addr,
-                                               yarn_webapp_port)
+            resp = YarnMetricsCollector.get_yarn_info(yarn_webapp_proto,
+                                                      yarn_rm_webapp_addr,
+                                                      yarn_webapp_port)
+            log.info("YARN cluster info: " + str(resp))
             return yarn_rm_webapp_addr
         except WebRequestError:
             raise YarnMetricsError("Cannot reach RM server")
@@ -247,7 +252,7 @@ class YarnMetricsCollector(object):
                                                   yarn_rm_port,
                                                   app_route)["app"]
         if items:
-            {k: v for k, v in info.iteritems() if k in items}
+            return {k: v for k, v in info.iteritems() if k in items}
         return info
 
     def __init__(self):
@@ -260,7 +265,7 @@ class YarnMetricsCollector(object):
         self.yarn_webapp_port = YarnMetricsCollector.get_webapp_port(
             yarn_property_map)
         self.yarn_rm_webapp_addr = YarnMetricsCollector.get_rm_webapp_addr(
-            self.yarn_webapp_proto, yarn_property_map)
+            self.yarn_webapp_proto, self.yarn_webapp_port, yarn_property_map)
 
     def get_info(self):
         return YarnMetricsCollector.get_yarn_info(self.yarn_webapp_proto,
