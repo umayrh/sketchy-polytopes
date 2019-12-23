@@ -23,26 +23,27 @@ subprojects {
 
   apply plugin: 'scala'
   apply plugin: 'scalafmt'
+  apply plugin: 'java-library'
   apply plugin: 'com.github.johnrengelman.shadow'
 
   dependencies {
-    compileOnly group: 'org.scala-lang', name: 'scala-library', version: scalaVersion + ".+"
+    api group: 'org.scala-lang', name: 'scala-library', version: scalaVersion + ".+"
 
     // Setting Spark libs to be compileOnly since otherwise the shadow JAR
     // might end up being very fat (5K -> 188M vs. 5K -> 2.7M).
-    compileOnly group: 'org.apache.spark', name: "spark-core_"     + scalaVersion, version: sparkVersion
-    compileOnly group: 'org.apache.spark', name: "spark-sql_"      + scalaVersion, version: sparkVersion
-    compileOnly group: 'org.apache.spark', name: "spark-mllib_"    + scalaVersion, version: sparkVersion
-    compileOnly group: 'org.apache.spark', name: "spark-graphx_"   + scalaVersion, version: sparkVersion
-    compileOnly group: 'org.apache.spark', name: "spark-streaming_"+ scalaVersion, version: sparkVersion
-    compileOnly group: 'org.apache.spark', name: "spark-hive_"     + scalaVersion, version: sparkVersion
-    compileOnly group: 'org.apache.spark', name: "spark-catalyst_" + scalaVersion, version: sparkVersion
+    api group: 'org.apache.spark', name: "spark-core_"     + scalaVersion, version: sparkVersion
+    api group: 'org.apache.spark', name: "spark-sql_"      + scalaVersion, version: sparkVersion
+    api group: 'org.apache.spark', name: "spark-mllib_"    + scalaVersion, version: sparkVersion
+    api group: 'org.apache.spark', name: "spark-graphx_"   + scalaVersion, version: sparkVersion
+    api group: 'org.apache.spark', name: "spark-streaming_"+ scalaVersion, version: sparkVersion
+    api group: 'org.apache.spark', name: "spark-hive_"     + scalaVersion, version: sparkVersion
+    api group: 'org.apache.spark', name: "spark-catalyst_" + scalaVersion, version: sparkVersion
 
-    testCompile group: 'org.scalatest', name: "scalatest_" + scalaVersion, version: '3.+'
-    testCompile group: 'org.scalacheck', name: "scalacheck_" + scalaVersion, version: '1.+'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-    testCompile group: 'com.holdenkarau', name: 'spark-testing-base_' + scalaVersion, version: sparkVersion + "_0.+"
+    testImplementation group: 'org.scalatest', name: "scalatest_" + scalaVersion, version: '3.+'
+    testImplementation group: 'org.scalacheck', name: "scalacheck_" + scalaVersion, version: '1.+'
+    testCompileOnly group: 'junit', name: 'junit', version: '4.12'
+    testCompileOnly group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    testCompileOnly group: 'com.holdenkarau', name: 'spark-testing-base_' + scalaVersion, version: sparkVersion + "_0.+"
   }
 
   // Give test dependencies access to compileOnly dependencies to emulate providedCompile.

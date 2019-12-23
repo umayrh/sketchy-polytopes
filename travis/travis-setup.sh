@@ -9,7 +9,7 @@ CRAN=${CRAN:-"http://cran.rstudio.com"}
 OS=$(uname -s)
 
 ## Service versions
-NEO4J_VERSION=${NEO4J_VERSION:-"3.4.1"}
+NEO4J_VERSION=${NEO4J_VERSION:-"3.5.14"}
 # TODO: this should really come from sparkScala/gradle.properties
 SPARK_VERSION=${SPARK_VERSION:-"2.4.0"}
 HADOOP_VERSION=${HADOOP_VERSION:-"2.7"}

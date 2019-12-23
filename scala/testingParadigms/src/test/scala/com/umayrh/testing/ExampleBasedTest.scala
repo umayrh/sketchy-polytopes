@@ -18,8 +18,7 @@ class ExampleBasedTest
     with GivenWhenThen
     with TableDrivenPropertyChecks {
 
-  feature(
-    "A summing function for sequences of integers - tested using example data") {
+  feature("A summing function for sequences of integers - tested using example data") {
     scenario("the function is invoked on an empty sequence") {
       Given("an empty sequence")
       val emptySeq = Seq()
@@ -31,8 +30,7 @@ class ExampleBasedTest
       assert(result == 0)
     }
 
-    scenario(
-      "the function is invoked on a sequence without causing overflow/underflow") {
+    scenario("the function is invoked on a sequence without causing overflow/underflow") {
       Given("a sequence of integers less than MAX_VAL and greater than MIN_VAL")
       When("reducer is invoked")
       val testData = Table(

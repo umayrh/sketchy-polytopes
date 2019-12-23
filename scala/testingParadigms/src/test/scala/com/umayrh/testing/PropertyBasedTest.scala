@@ -19,8 +19,7 @@ class PropertyBasedTest
     with GeneratorDrivenPropertyChecks
     with Matchers {
 
-  feature(
-    "A summing function for sequences of integers - tested using function properties") {
+  feature("A summing function for sequences of integers - tested using function properties") {
     scenario("the function is commutative") {
       Given("a sequence of integers of random size and with random elements")
       val inputSeqGen =
@@ -31,9 +30,9 @@ class PropertyBasedTest
         "result is the equal if there no overflow/underflow, ArithmeticException thrown otherwise")
 
       forAll(inputSeqGen) { inputSeq: List[Int] =>
-        var result = 0
-        var resultShuffled = 0
-        var resultThrew = false
+        var result              = 0
+        var resultShuffled      = 0
+        var resultThrew         = false
         var resultShuffledThrew = false
 
         try {
@@ -44,8 +43,7 @@ class PropertyBasedTest
 
         try {
           resultShuffled =
-            ReducerRedux.reduceSeq(scala.util.Random.shuffle(inputSeq),
-                                   ReducerRedux.sumLongs)
+            ReducerRedux.reduceSeq(scala.util.Random.shuffle(inputSeq), ReducerRedux.sumLongs)
         } catch {
           case e: ArithmeticException => resultShuffledThrew = true
         }
@@ -68,12 +66,12 @@ class PropertyBasedTest
       Then(
         "result is the equal if there no overflow/underflow, ArithmeticException thrown otherwise")
       forAll(inputSeqGen) { inputSeq: List[Int] =>
-        var result = 0
-        var resultSplit = 0
-        var resultThrew = false
+        var result           = 0
+        var resultSplit      = 0
+        var resultThrew      = false
         var resultSplitThrew = false
-        val inputSeqLen = inputSeq.length
-        val splitIndex = if (inputSeqLen == 0) 0 else randomNumGen.nextInt()
+        val inputSeqLen      = inputSeq.length
+        val splitIndex       = if (inputSeqLen == 0) 0 else randomNumGen.nextInt()
 
         try {
           result = ReducerRedux.reduceSeq(inputSeq, ReducerRedux.sumLongs)
@@ -87,8 +85,7 @@ class PropertyBasedTest
           val inputSeqSplitResult = inputSeqSplit
             .map(_.asInstanceOf[List[Int]])
             .map(seq => ReducerRedux.reduceSeq(seq, ReducerRedux.sumLongs))
-          resultSplit =
-            ReducerRedux.reduceSeq(inputSeqSplitResult, ReducerRedux.sumLongs)
+          resultSplit = ReducerRedux.reduceSeq(inputSeqSplitResult, ReducerRedux.sumLongs)
         } catch {
           case e: ArithmeticException => resultSplitThrew = true
         }

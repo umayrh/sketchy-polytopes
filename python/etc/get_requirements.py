@@ -22,6 +22,8 @@ import re
 import requests
 from pkg_resources import parse_version
 
+PIVY_IMPORTER_JAR_NAME="pivy-importer-0.12.8-SNAPSHOT-all.jar"
+
 
 def get_latest_version(name):
     print("workin on " + name)
@@ -58,7 +60,7 @@ if __name__ == '__main__':
 
     if pivyRepo is not None:
         dir_path = os.path.dirname(os.path.abspath(__file__))
-        jar_file = os.path.join(dir_path, "pivy-importer-0.9.9-all.jar")
+        jar_file = os.path.join(dir_path, PIVY_IMPORTER_JAR_NAME)
         cmd = ['java', '-jar', jar_file, '--repo', pivyRepo]
         if debug:
             cmd.extend(['--debug'])

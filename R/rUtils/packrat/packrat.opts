@@ -3,13 +3,33 @@ use.cache: FALSE
 print.banner.on.startup: auto
 vcs.ignore.lib: TRUE
 vcs.ignore.src: TRUE
-external.packages: 
+external.packages:
+    devtools
+    roxygen2
+    packrat
+    brew
+    commonmark
+    desc
+    digest
+    methods
+    pkgload
+    purrr
+    R6
+    Rcpp
+    rlang
+    stringi
+    stringr
+    utils
 local.repos: ~/sketchy-polytopes/R
 load.external.packages.on.startup: TRUE
 ignored.packages: 
+ignored.directories:
+    data
+    inst
 quiet.package.installation: TRUE
 snapshot.recommended.packages: FALSE
 snapshot.fields:
     Imports
     Depends
     LinkingTo
+symlink.system.packages: TRUE
