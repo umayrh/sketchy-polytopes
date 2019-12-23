@@ -3,7 +3,7 @@ Title: A package for various R programming utilities
 Version: 0.1.0
 Authors@R: person("Umayr", "Hassan", email = "umayrh@gmail.com", role = c("aut", "cre"))
 Description: A package for various R programming utilities e.g. garbage cleaning, performance monitoring etc
-Depends: R (>= 3.4.2)
+Depends: R (>= 3.4.2), data.table
 Imports: 
     data.table
 Suggests: testthat
