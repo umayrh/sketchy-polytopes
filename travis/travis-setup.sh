@@ -76,11 +76,11 @@ setupNeo4j() {
 ## Installs r-base and make R libs writable
 ## TODO: move to https://docs.travis-ci.com/user/languages/r/
 setupR() {
-    sudo add-apt-repository "deb ${CRAN}/bin/linux/ubuntu $(lsb_release -cs)/"
-    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+    sudo add-apt-repository "deb ${CRAN}/bin/linux/ubuntu $(lsb_release -cs)-cran35/"
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 
-    sudo add-apt-repository -y "ppa:marutter/rrutter"
-    sudo add-apt-repository -y "ppa:marutter/c2d4u"
+    sudo add-apt-repository -y "ppa:marutter/rrutter3.5"
+    sudo add-apt-repository -y "ppa:marutter/c2d4u3.5"
 
     retry sudo apt-get -qq update
     retry sudo apt-get -qq install -y --no-install-recommends r-base-dev r-recommended qpdf
