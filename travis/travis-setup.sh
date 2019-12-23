@@ -10,9 +10,11 @@ OS=$(uname -s)
 
 ## Service versions
 NEO4J_VERSION=${NEO4J_VERSION:-"3.5.14"}
+
 # TODO: this should really come from sparkScala/gradle.properties
-SPARK_VERSION=${SPARK_VERSION:-"2.4.0"}
+SPARK_VERSION=${SPARK_VERSION:-"2.4.4"}
 HADOOP_VERSION=${HADOOP_VERSION:-"2.7"}
+SPARK_MIRROR="http://ftp.wayne.edu/apache/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz"
 
 ## Software versions
 LEMON_VERSION=${LEMON_VERSION:-"1.3.1"}
@@ -45,7 +47,7 @@ setupSpark() {
         cd $HOME/.cache
         SPARK_DIST_NAME=${SPARK_DIR_NAME}-bin-hadoop${HADOOP_VERSION}
         rm -fr ./${SPARK_DIST_NAME}.tgz*
-        axel --quiet http://www-us.apache.org/dist/spark/${SPARK_DIR_NAME}/${SPARK_DIST_NAME}.tgz
+        axel --quiet ${SPARK_MIRROR}
         tar -xf ./${SPARK_DIST_NAME}.tgz
         export SPARK_HOME=`pwd`/${SPARK_DIST_NAME}
         # TODO: need a more systematic method for setting up Spark properties
