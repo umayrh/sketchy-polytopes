@@ -86,13 +86,13 @@ Package: pkgbuild
 Source: CRAN
 Version: 1.0.6
 Hash: f41de345bf0dda984cce64a7ea668ea4
-Requires: R6, crayon, withr, rprojroot, cli, prettyunits, desc, callr
+Requires: R6, callr, cli, crayon, desc, prettyunits, rprojroot, withr
 
 Package: pkgload
 Source: CRAN
 Version: 1.0.2
 Hash: 41eb2db35be61f6f9e8864cf87a1ecb0
-Requires: rlang, rstudioapi, withr, rprojroot, desc, pkgbuild
+Requires: desc, pkgbuild, rlang, rprojroot, rstudioapi, withr
 
 Package: praise
 Source: CRAN
@@ -136,8 +136,8 @@ Package: testthat
 Source: CRAN
 Version: 2.3.1
 Hash: 08a7645752835e2708c9bdf681409532
-Requires: R6, crayon, digest, evaluate, magrittr, praise, rlang, withr,
-    cli, ellipsis, pkgload
+Requires: R6, cli, crayon, digest, ellipsis, evaluate, magrittr,
+    pkgload, praise, rlang, withr
 
 Package: withr
 Source: CRAN

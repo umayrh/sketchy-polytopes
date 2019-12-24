@@ -7,20 +7,7 @@ external.packages:
     devtools
     roxygen2
     packrat
-    brew
-    commonmark
-    desc
-    digest
-    methods
-    pkgload
-    purrr
-    R6
-    Rcpp
-    rlang
-    stringi
-    stringr
-    utils
-local.repos: ~/sketchy-polytopes/R
+local.repos:
 load.external.packages.on.startup: TRUE
 ignored.packages: 
 ignored.directories:

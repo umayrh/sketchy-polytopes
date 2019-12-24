@@ -73,6 +73,12 @@ Unfortunately, Packrat doesn't play with devtools. So e.g. you may need to speci
 your package's DESCRIPTION file. After packratting a project, you may have to download `devtools`
 and `roxygen` (again!) to put them in Packrat's private library.
 
+## Useful commands
+
+* `cat(packrat:::appDependencies(), sep = "\n")`
+* `cat(list.files(packrat:::libDir()), sep = "\n")`
+* ``
+
 ## References
 
 * [Packrat Guide](https://rstudio.github.io/packrat/walkthrough.html)
