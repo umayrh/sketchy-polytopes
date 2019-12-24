@@ -18,4 +18,11 @@ subprojects {
   check {
     dependsOn test
   }
+
+  task debugLibpaths(type:Exec) {
+    commandLine 'R', '--vanilla', '--slave', '-e', 'print(.libPaths())'
+  }
+
+  // TODO: remove after debugging
+  document.dependsOn debugLibpaths
 }
