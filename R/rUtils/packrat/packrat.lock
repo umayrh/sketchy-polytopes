@@ -3,20 +3,10 @@ PackratVersion: 0.5.0
 RVersion: 3.6.2
 Repos: CRAN=https://cran.cnr.berkeley.edu
 
-Package: BH
-Source: CRAN
-Version: 1.72.0-2
-Hash: 9946216e265a7ab0225045bf8f8bd055
-
 Package: R6
 Source: CRAN
-Version: 2.2.2
-Hash: b2366cd9d2f3851a5704b4e192b985c2
-
-Package: Rcpp
-Source: CRAN
-Version: 1.0.3
-Hash: 99f6a1855b2f9434e1399d565d2ed9df
+Version: 2.4.1
+Hash: b488861d8c3dfac497e041ec911df9fb
 
 Package: assertthat
 Source: CRAN
@@ -45,16 +35,21 @@ Source: CRAN
 Version: 1.3.4
 Hash: ff2840dd9b0d563fc80377a5a45510cd
 
+Package: data.table
+Source: CRAN
+Version: 1.12.8
+Hash: 283ad0e503ab521300c6d1d02e58d2ae
+
 Package: desc
 Source: CRAN
-Version: 1.1.1
-Hash: 92cace38b6d6f2e168fdb4af20806baf
+Version: 1.2.0
+Hash: a0a3ca939997679a52816bae4ed6aaae
 Requires: R6, assertthat, crayon, rprojroot
 
 Package: digest
 Source: CRAN
-Version: 0.6.12
-Hash: e53fb8c58673df868183697e39a6a4d6
+Version: 0.6.23
+Hash: 7ec748e53ca45166e0824224421529ad
 
 Package: ellipsis
 Source: CRAN
@@ -91,13 +86,13 @@ Package: pkgbuild
 Source: CRAN
 Version: 1.0.6
 Hash: f41de345bf0dda984cce64a7ea668ea4
-Requires: R6, callr, cli, crayon, desc, prettyunits, rprojroot, withr
+Requires: R6, crayon, withr, rprojroot, cli, prettyunits, desc, callr
 
 Package: pkgload
 Source: CRAN
 Version: 1.0.2
 Hash: 41eb2db35be61f6f9e8864cf87a1ecb0
-Requires: desc, pkgbuild, rlang, rprojroot, rstudioapi, withr
+Requires: rlang, rstudioapi, withr, rprojroot, desc, pkgbuild
 
 Package: praise
 Source: CRAN
@@ -115,12 +110,6 @@ Source: CRAN
 Version: 3.4.1
 Hash: 5c1f432b290b26ccc2aaaa8ff1fd2f62
 Requires: R6, ps
-
-Package: pryr
-Source: CRAN
-Version: 0.1.4
-Hash: 1d5a0652049e360b4251884c3d5c281c
-Requires: Rcpp, stringr
 
 Package: ps
 Source: CRAN
@@ -143,23 +132,12 @@ Source: CRAN
 Version: 0.10
 Hash: 63f43c6ff14d92e1d65ca6c21d45a1eb
 
-Package: stringi
-Source: CRAN
-Version: 1.4.3
-Hash: ed2a82fc7cc668c1345223d938cdfaf2
-
-Package: stringr
-Source: CRAN
-Version: 1.4.0
-Hash: 67da32dbb2a7a16f2ef124336358e54a
-Requires: glue, magrittr, stringi
-
 Package: testthat
 Source: CRAN
 Version: 2.3.1
 Hash: 08a7645752835e2708c9bdf681409532
-Requires: R6, cli, crayon, digest, ellipsis, evaluate, magrittr,
-    pkgload, praise, rlang, withr
+Requires: R6, crayon, digest, evaluate, magrittr, praise, rlang, withr,
+    cli, ellipsis, pkgload
 
 Package: withr
 Source: CRAN
