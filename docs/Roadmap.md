@@ -36,6 +36,72 @@
 * Scalaz
 
 ### Log
+#### 2019-12-24
+* Add repo for Github pages. `https://umayrh.github.io` 
+* Set up Ruby dev, Jekyll and all.
+  * `brew install ruby`
+  * `brew install rbenv`
+  * `rbenv install 2.6.5`
+  * `rbenv global 2.6.5`
+  * `gem install --user-install bundler jekyll`
+  * `bundle update`
+  * `bundle exec jekyll build`
+  * `bundle exec jekyll serve`
+  * Links: [Jekyll](https://jekyllrb.com/docs/), 
+    [Github](https://help.github.com/en/github/working-with-github-pages/setting-up-a-github-pages-site-with-jekyll)
+* 
+
+#### 2019-12-21 - 23
+* Install PostGres and ELasticStalk
+  * Add `/Library/PostgreSQL/12/bin/` to PATH. Can’t run psql otherwise
+* Rebuild repo
+  * Done: installed Xcode, jdk13, jdk8, neo4j, apache-spark
+  * `gradle wrapper --gradle-version 6.0.1`
+  * Install and set up neo4j. Fix pivy-importer and submit a PR (https://github.com/linkedin/pygradle/pull/335)
+  * Renamed `python/_template/build.gradle` to `_build.gradle` cuz it won’t build otherwise
+  * Rcpp 0.12.x wouldn’t built. Upgraded to 1.0.3. Remove all installed packrat lib+src, and manually updated packrat.lock. 
+    Fixed packrat.opts - added `symlink.system.packages = TRUE` and set external packages
+  * `brew install rustup` + `rustup-init` `https://sourabhbajaj.com/mac-setup/Rust/`
+  * Scala package updated. Still Error: Could not find or load main class org.scalatest.tools.Runner. Needed to make scalacheck a testImplementation dependency and Scala-lib api
+  * Same for sparkScala but also testImplementation for scalacheck 
+  * Installed Lemon: `wget http://lemon.cs.elte.hu/pub/sources/lemon-1.3.1.tar.gz` and `brew install cmake glpk doxygen graphviz ghostscript ` for Lemon build.
+  * Also, SOPLEX https://soplex.zib.de/index.php#download though Lemon doesn’t compile with it
+  * Travis errors:
+    * Spark mirror had moved. Updated.
+    * R woes:
+    * Updating rUtils documentation
+    ```
+    8180 Writing NAMESPACE
+    8181 Loading rUtils
+    8182 Error: Dependency package(s) 'pryr' not available.
+    8183 <error/rlang_error>
+    8184 Dependency package(s) 'pryr' not available.
+    8185 Backtrace:
+    8186    █
+    8187  1. └─devtools::document()
+    8188  2.   ├─withr::with_envvar(...)
+    8189  3.   │ └─base::force(code)
+    8190  4.   └─roxygen2::roxygenise(pkg$path, roclets, load_code = load_code)
+    8191  5.     └─roxygen2:::load_code(base_path)
+    8192  6.       └─pkgload::load_all(path, helpers = FALSE, attach_testthat = FALSE)
+    8193  7.         └─pkgload:::load_imports(path)
+    8194  8.           └─pkgload:::abort_for_missing_packages(res, imports$package)
+    8195 In addition: Warning message:
+    8196 In (function (dep_name, dep_ver = "*")  :
+    8197   Dependency package 'pryr' not available.
+    8198
+    ```
+  * `brew cask install basictex` + put `/usr/local/texlive/2019basic/bin/x86_64-darwin/` in PATH + 
+    * `sudo tlmgr install inconsolata`
+    * `sudo tlmgr update --self`
+    * `sudo tlmgr update --all`
+    * `sudo tlmgr install helvetic`
+    * `sudo tlmgr install letltxmacro`
+  * Finally, `R CMD Rd2pdf man` works successfully
+  * `R CMD build . && R CMD check rUtils_0.1.0.tar.gz` 
+  * `cat(packrat:::appDependencies(), sep = " ")`, and reinstalled all dependencies. 
+  * Already updated travis-setup.sh to installed R 3.6.2, updated packrat.opts
+    to remove local.repos, and DESCRIPTION to remove data.table from REQUIRES.
 
 #### 2019-01-01
 * Fixed some sparktuner bugs. Stated doc for [causality](./Causality.md). Would like
