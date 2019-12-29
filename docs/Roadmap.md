@@ -13,6 +13,7 @@
  
 #### Infrastructure
 
+* Move to Py3.7
 * Continuous integration: Travis 
   * Set up matrix builds with [multiple os](https://docs.travis-ci.com/user/multi-os/) 
     and [multiple languages](https://stackoverflow.com/questions/27644586/how-to-set-up-travis-ci-with-multiple-languages)
