@@ -33,6 +33,7 @@ subprojects {
 
   // TODO: remove after debugging
   document.dependsOn debugLibpaths
+  debugLibpaths2.dependsOn installDeps
   packratRestore.dependsOn debugLibpaths2
   packratRestore.dependsOn myPwd
 }
