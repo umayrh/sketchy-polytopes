@@ -16,7 +16,7 @@ before_install: ./travis/travis-setup.sh
 
 install:
 # TODO remove '-x document' after fixing devtools issue on Travis
-  - ./gradlew --console=plain check -x packratClean -x document
+  - ./gradlew --console=plain check -m && ./gradlew --console=plain check -x packratClean
 
 scala:
   - 2.13.1

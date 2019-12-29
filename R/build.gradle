@@ -25,4 +25,5 @@ subprojects {
 
   // TODO: remove after debugging
   document.dependsOn debugLibpaths
+  packratRestore.dependsOn debugLibpaths
 }

@@ -77,7 +77,6 @@ and `roxygen` (again!) to put them in Packrat's private library.
 
 * `cat(packrat:::appDependencies(), sep = "\n")`
 * `cat(list.files(packrat:::libDir()), sep = "\n")`
-* ``
 
 ## References
 
