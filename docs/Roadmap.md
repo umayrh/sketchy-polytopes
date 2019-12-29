@@ -36,7 +36,7 @@
 * Scalaz
 
 ### Log
-#### 2019-12-24
+#### 2019-12-24 - 27
 * Add repo for Github pages. `https://umayrh.github.io` 
 * Set up Ruby dev, Jekyll and all.
   * `brew install ruby`
@@ -49,7 +49,13 @@
   * `bundle exec jekyll serve`
   * Links: [Jekyll](https://jekyllrb.com/docs/), 
     [Github](https://help.github.com/en/github/working-with-github-pages/setting-up-a-github-pages-site-with-jekyll)
-* 
+* Prep site
+  * Update _contacts.yml
+  * Export data form Wordpress
+  * `brew install npm` + lonekorean/wordpress-export-to-markdown.git 
+  * `node index.js --input ~/Downloads/umayrh.wordpress.com-2019-12-25-00_54_53/sketchespolytopes.wordpress.2019-12-25.001.xml --prefixdate`
+  * Build on Netlify, and redirect umayrh.github.io to Netlify. Since barber-jekyll's custom plugins cause build failure on Github. 
+  * Clean up all posts - fix LaTeX and layout.
 
 #### 2019-12-21 - 23
 * Install PostGres and ELasticStalk

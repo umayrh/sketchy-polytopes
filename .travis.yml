@@ -15,7 +15,7 @@ addons:
 before_install: ./travis/travis-setup.sh
 
 install:
-  - ./gradlew check -x packratClean
+  - ./gradlew --console=plain check -x packratClean
 
 scala:
   - 2.13.1
