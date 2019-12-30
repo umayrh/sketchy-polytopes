@@ -3,8 +3,8 @@ package com.umayrh.testing
 import org.scalacheck.Gen._
 import org.scalacheck._
 import org.scalatest._
-import org.scalatest.junit.AssertionsForJUnit
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatestplus.junit.AssertionsForJUnit
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
 /**
   * Test class that combines behavior- and property-driven testing paradigms
@@ -16,7 +16,7 @@ class PropertyBasedTest
     extends FeatureSpec
     with AssertionsForJUnit
     with GivenWhenThen
-    with GeneratorDrivenPropertyChecks
+    with ScalaCheckDrivenPropertyChecks
     with Matchers {
 
   feature("A summing function for sequences of integers - tested using function properties") {

@@ -1,8 +1,6 @@
 package com.umayrh.testing
 
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatestplus.junit.AssertionsForJUnit
 
 import org.scalatest._
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -51,14 +49,14 @@ class ExampleBasedTest
     scenario("the function is invoked on a sequence causing underflow/overflow") {
       Given("a sequence containing MIN_VAL or MAX_VAL")
       val testData = Table(
-        ("input"),
-        (Seq(Int.MaxValue, 1)),
-        (Seq(Int.MinValue, -1))
+        "input",
+        Seq(Int.MaxValue, 1),
+        Seq(Int.MinValue, -1)
       )
 
       When("reducer is invoked")
       Then("result is an ArithmeticException")
-      forAll(testData) { (input: Seq[Int]) =>
+      forAll(testData) { input: Seq[Int] =>
         intercept[ArithmeticException] {
           Reducer.reduceSeq(input, Reducer.sumInts)
         }

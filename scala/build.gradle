@@ -24,10 +24,10 @@ subprojects {
     apply plugin: 'java-library'
 
     dependencies {
-        api 'org.scala-lang:scala-library:2.13+'
+        api 'org.scala-lang:scala-library:2.12+'
   
-        testImplementation 'org.scalatest:scalatest_2.13:3.0+'
-        testCompileOnly 'org.scalacheck:scalacheck_2.13:1.14+'
+        testImplementation 'org.scalatest:scalatest_2.12:3.0+'
+        testCompileOnly 'org.scalacheck:scalacheck_2.12:1.14+'
         testCompileOnly 'junit:junit:4.12'
         testCompileOnly 'org.hamcrest:hamcrest-all:1.3'
     }
