@@ -17,7 +17,6 @@ subprojects {
     repositories {
         mavenCentral()
         jcenter()
-        maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
     }
 
     apply plugin: 'scala'
@@ -34,9 +33,9 @@ subprojects {
     }
 
     task scalaTest(dependsOn: ['testClasses'], type: JavaExec) {
-    main = 'org.scalatest.tools.Runner'
-    args = ['-R', 'build/classes/scala/test', '-o']
-    classpath = sourceSets.test.runtimeClasspath
+        main = 'org.scalatest.tools.Runner'
+        args = ['-R', 'build/classes/scala/test', '-o']
+        classpath = sourceSets.test.runtimeClasspath
     }
 
     compileScala.dependsOn scalafmtAll
