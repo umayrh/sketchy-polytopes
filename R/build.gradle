@@ -18,21 +18,4 @@ subprojects {
   check {
     dependsOn test
   }
-
-  task debugLibpaths(type:Exec) {
-    commandLine 'R', '--vanilla', '--slave', '-e', 'print(.libPaths())'
-  }
-
-  task debugLibpaths2(type:Exec) {
-    commandLine 'R', '--vanilla', '--slave', '-e', 'print(.libPaths())'
-  }
-
-  task myPwd(type:Exec) {
-    commandLine 'pwd'
-  }
-
-  // TODO: remove after debugging
-  debugLibpaths2.dependsOn installDeps
-  packratRestore.dependsOn debugLibpaths2
-  packratRestore.dependsOn myPwd
 }
