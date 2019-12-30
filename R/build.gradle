@@ -8,7 +8,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "gradle.plugin.com.umayrh:plugin:0.2.5"
+    classpath "gradle.plugin.com.umayrh:plugin:0.3.0"
   }
 }
 
@@ -32,7 +32,6 @@ subprojects {
   }
 
   // TODO: remove after debugging
-  document.dependsOn debugLibpaths
   debugLibpaths2.dependsOn installDeps
   packratRestore.dependsOn debugLibpaths2
   packratRestore.dependsOn myPwd
