@@ -16,7 +16,7 @@ buildscript {
 
 subprojects {
     repositories {
-        mavenCentral()
+        jcenter()
     }
 
     apply plugin: 'scala'
