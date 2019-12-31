@@ -1,8 +1,7 @@
 package com.umayrh.testing
 
-import org.scalatestplus.junit.AssertionsForJUnit
-
 import org.scalatest._
+import org.scalatest.featurespec._
 import org.scalatest.prop.TableDrivenPropertyChecks
 
 /**
@@ -10,14 +9,10 @@ import org.scalatest.prop.TableDrivenPropertyChecks
   *
   * Annotate with @RunWith(classOf[JUnitRunner]) to run as JUnit test
   */
-class ExampleBasedTest
-    extends FeatureSpec
-    with AssertionsForJUnit
-    with GivenWhenThen
-    with TableDrivenPropertyChecks {
+class ExampleBasedTest extends AnyFeatureSpec with GivenWhenThen with TableDrivenPropertyChecks {
 
-  feature("A summing function for sequences of integers - tested using example data") {
-    scenario("the function is invoked on an empty sequence") {
+  Feature("A summing function for sequences of integers - tested using example data") {
+    Scenario("the function is invoked on an empty sequence") {
       Given("an empty sequence")
       val emptySeq = Seq()
 
@@ -28,7 +23,7 @@ class ExampleBasedTest
       assert(result == 0)
     }
 
-    scenario("the function is invoked on a sequence without causing overflow/underflow") {
+    Scenario("the function is invoked on a sequence without causing overflow/underflow") {
       Given("a sequence of integers less than MAX_VAL and greater than MIN_VAL")
       When("reducer is invoked")
       val testData = Table(
@@ -46,7 +41,7 @@ class ExampleBasedTest
       }
     }
 
-    scenario("the function is invoked on a sequence causing underflow/overflow") {
+    Scenario("the function is invoked on a sequence causing underflow/overflow") {
       Given("a sequence containing MIN_VAL or MAX_VAL")
       val testData = Table(
         "input",

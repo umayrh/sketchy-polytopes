@@ -37,6 +37,24 @@
 * Scalaz
 
 ### Log
+#### 2019-21-31
+* Finally fixed the Travis build. The build.gradle was definitely buggy but maybe just leaving mavenCentral()
+  also helped (?). Here's the Gradle red herring error:
+  ```
+  Caused by: java.lang.NullPointerException: Username must not be null!
+  	at com.google.common.base.Preconditions.checkNotNull(Preconditions.java:910)
+  	at org.gradle.internal.resource.transport.http.ntlm.NTLMCredentials.<init>(NTLMCredentials.java:36)
+  	at org.gradle.internal.resource.transport.http.HttpClientConfigurer.useCredentials(HttpClientConfigurer.java:197)
+  	at org.gradle.internal.resource.transport.http.HttpClientConfigurer.configureCredentials(HttpClientConfigurer.java:139)
+  	at org.gradle.internal.resource.transport.http.HttpClientConfigurer.configure(HttpClientConfigurer.java:109)
+  	at org.gradle.internal.resource.transport.http.HttpClientHelper.getClient(HttpClientHelper.java:195)
+  ``` 
+* Also updated the Scala tests to be compatible with new versions. Unfortunately, ScalaTest seems to have removed
+support for JUnit testing without warning or documentation. So, can't run scala tests from IntelliJ for now.
+#### 2019-21-30
+* Can now publish on [Sonatype](https://issues.sonatype.org/browse/OSSRH-54178). See also 
+[this](https://medium.com/@nmauti/sign-and-publish-on-maven-central-a-project-with-the-new-maven-publish-gradle-plugin-22a72a4bfd4b).
+
 #### 2019-12-24 - 27
 * Add repo for Github pages. `https://umayrh.github.io` 
 * Set up Ruby dev, Jekyll and all.
@@ -55,6 +73,7 @@
   * Export data form Wordpress
   * `brew install npm` + lonekorean/wordpress-export-to-markdown.git 
   * `node index.js --input ~/Downloads/umayrh.wordpress.com-2019-12-25-00_54_53/sketchespolytopes.wordpress.2019-12-25.001.xml --prefixdate`
+  * ... lots of painful wrangling with getting Github and Jekyll custom plugins to work together, but ...
   * Build on Netlify, and redirect umayrh.github.io to Netlify. Since barber-jekyll's custom plugins cause build failure on Github. 
   * Clean up all posts - fix LaTeX and layout.
 

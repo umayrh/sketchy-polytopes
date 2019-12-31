@@ -1,10 +1,10 @@
 package com.umayrh.testing
 
-import org.scalacheck.Gen._
 import org.scalacheck._
+import org.scalacheck.Prop._
 import org.scalatest._
-import org.scalatestplus.junit.AssertionsForJUnit
-import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
+import org.scalatest.matchers.should._
+import org.scalatest.featurespec._
 
 /**
   * Test class that combines behavior- and property-driven testing paradigms
@@ -12,18 +12,13 @@ import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
   *
   * Annotate with @RunWith(classOf[JUnitRunner]) to run as JUnit test
   */
-class PropertyBasedTest
-    extends FeatureSpec
-    with AssertionsForJUnit
-    with GivenWhenThen
-    with ScalaCheckDrivenPropertyChecks
-    with Matchers {
+class PropertyBasedTest extends AnyFeatureSpec with GivenWhenThen with Matchers {
 
-  feature("A summing function for sequences of integers - tested using function properties") {
-    scenario("the function is commutative") {
+  Feature("A summing function for sequences of integers - tested using function properties") {
+    Scenario("the function is commutative") {
       Given("a sequence of integers of random size and with random elements")
       val inputSeqGen =
-        Gen.listOf(choose(Int.MinValue, Int.MaxValue)).suchThat(_.size >= 0)
+        Gen.listOf(Gen.choose(Int.MinValue, Int.MaxValue)).suchThat(_.size >= 0)
 
       When("reducer is invoked on the sequence and its shuffled version")
       Then(
@@ -53,13 +48,14 @@ class PropertyBasedTest
         if (!resultThrew) {
           result should be(resultShuffled)
         }
+        true
       }
     }
 
-    scenario("the function is associatative") {
+    Scenario("the function is associatative") {
       Given("a sequence of integers of random size and with random elements")
       val inputSeqGen =
-        Gen.listOf(choose(Int.MinValue, Int.MaxValue)).suchThat(_.size >= 0)
+        Gen.listOf(Gen.choose(Int.MinValue, Int.MaxValue)).suchThat(_.size >= 0)
       val randomNumGen = scala.util.Random
 
       When("reducer is invoked on the sequence and its subsets")
@@ -94,6 +90,7 @@ class PropertyBasedTest
         if (!resultThrew) {
           result should be(resultSplit)
         }
+        true
       }
     }
   }

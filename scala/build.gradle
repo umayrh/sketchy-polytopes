@@ -17,8 +17,6 @@ buildscript {
 subprojects {
     repositories {
         mavenCentral()
-        jcenter()
-        maven { url "http://oss.sonatype.org/content/repositories/snapshots/" }
     }
 
     apply plugin: 'scala'
@@ -27,7 +25,8 @@ subprojects {
     apply plugin: 'com.github.johnrengelman.shadow'
 
     dependencies {
-        api group: 'org.scala-lang', name: 'scala-library', version: scalaVersion + ".+"
+        implementation group: 'org.scala-lang', name: 'scala-library', version: scalaVersion + ".+"
+        //implementation 'org.scala-lang:scala-library:2.13.1'
 
         testImplementation group: 'org.scalatest', name: "scalatest_" + scalaVersion, version: '3.+'
         testImplementation group: 'org.scalacheck', name: "scalacheck_" + scalaVersion, version: '1.+'
