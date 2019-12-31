@@ -1,6 +1,7 @@
 package com.umayrh.testing
 
 import org.scalatest._
+import org.scalatest.featurespec._
 import org.scalatest.prop.TableDrivenPropertyChecks
 
 /**
@@ -8,7 +9,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
   *
   * Annotate with @RunWith(classOf[JUnitRunner]) to run as JUnit test
   */
-class ExampleBasedTest extends FeatureSpec with GivenWhenThen with TableDrivenPropertyChecks {
+class ExampleBasedTest extends AnyFeatureSpec with GivenWhenThen with TableDrivenPropertyChecks {
 
   Feature("A summing function for sequences of integers - tested using example data") {
     Scenario("the function is invoked on an empty sequence") {
