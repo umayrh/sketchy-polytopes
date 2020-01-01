@@ -3,6 +3,8 @@ package com.umayrh.testing
 import org.scalacheck._
 import org.scalacheck.Prop._
 import org.scalatest._
+import org.scalatest.matchers.should._
+import org.scalatest.featurespec._
 
 /**
   * Test class that combines behavior- and property-driven testing paradigms
@@ -10,7 +12,7 @@ import org.scalatest._
   *
   * Annotate with @RunWith(classOf[JUnitRunner]) to run as JUnit test
   */
-class PropertyBasedTest extends FeatureSpec with GivenWhenThen with Matchers {
+class PropertyBasedTest extends AnyFeatureSpec with GivenWhenThen with Matchers {
 
   Feature("A summing function for sequences of integers - tested using function properties") {
     Scenario("the function is commutative") {

@@ -8,7 +8,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "gradle.plugin.com.umayrh:plugin:0.2.5"
+    classpath "gradle.plugin.com.umayrh:plugin:0.3.3"
   }
 }
 
@@ -18,22 +18,4 @@ subprojects {
   check {
     dependsOn test
   }
-
-  task debugLibpaths(type:Exec) {
-    commandLine 'R', '--vanilla', '--slave', '-e', 'print(.libPaths())'
-  }
-
-  task debugLibpaths2(type:Exec) {
-    commandLine 'R', '--vanilla', '--slave', '-e', 'print(.libPaths())'
-  }
-
-  task myPwd(type:Exec) {
-    commandLine 'pwd'
-  }
-
-  // TODO: remove after debugging
-  document.dependsOn debugLibpaths
-  debugLibpaths2.dependsOn installDeps
-  packratRestore.dependsOn debugLibpaths2
-  packratRestore.dependsOn myPwd
 }

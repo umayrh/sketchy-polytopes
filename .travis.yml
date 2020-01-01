@@ -15,14 +15,13 @@ addons:
 before_install: ./travis/travis-setup.sh
 
 install:
-# TODO remove '-x document' after fixing devtools issue on Travis
-  - ./gradlew --console=plain check -m && ./gradlew --console=plain check -x packratClean
+  - ./gradlew --console=plain --stacktrace check -x packratClean -x renvClean
 
 scala:
-  - 2.13.1
+  - 2.12.10
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 python:
   - "2.7.10"
@@ -34,13 +33,8 @@ cache:
     - $HOME/.m2
     - $HOME/.cache
     - $HOME/.cache/pip
-    - $TRAVIS_BUILD_DIR/packrat/src
-    - $TRAVIS_BUILD_DIR/packrat/lib
     - $TRAVIS_BUILD_DIR/build/venv/lib
 
-branches:
-  only:
-    - master
 notifications:
   email:
     - umayrh@gmail.com
