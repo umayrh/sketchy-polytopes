@@ -15,7 +15,12 @@ buildscript {
 
 subprojects {
     repositories {
-        maven {url 'http://repo.maven.apache.org/maven2'}
+        maven {
+            url 'http://repo.maven.apache.org/maven2'
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
     }
 
     apply plugin: 'scala'
