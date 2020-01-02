@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'cz.alenkacz:gradle-scalafmt:1.6.0'
+        classpath 'cz.alenkacz:gradle-scalafmt:1.10.0'
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3+'
     }
 }
@@ -53,6 +53,8 @@ subprojects {
         classpath = sourceSets.test.runtimeClasspath
     }
 
-    compileScala.dependsOn scalafmtAll
+    // I would prefer compileScala.dependsOn but that results in an
+    // arcane Maven dependency resolution problem.
+    test.dependsOn scalafmtAll
     test.dependsOn scalaTest
 }
