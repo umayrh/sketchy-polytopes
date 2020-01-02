@@ -26,9 +26,6 @@ jdk:
 python:
   - "2.7.10"
 
-before_cache:
-  - mkdir
-
 cache:
   apt: true
   packages: true
