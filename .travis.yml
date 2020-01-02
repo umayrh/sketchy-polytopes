@@ -18,7 +18,7 @@ install:
   - ./gradlew --console=plain --stacktrace check -x packratClean -x renvClean
 
 scala:
-  - 2.12.10
+  - 2.13.1
 
 jdk:
   - openjdk8
