@@ -8,9 +8,13 @@ import org.scalatest.prop.TableDrivenPropertyChecks
   *
   * Annotate with @RunWith(classOf[JUnitRunner]) to run as JUnit test
   */
-class ExampleBasedTest extends FeatureSpec with GivenWhenThen with TableDrivenPropertyChecks {
+class ExampleBasedTest
+    extends FeatureSpec
+    with GivenWhenThen
+    with TableDrivenPropertyChecks {
 
-  Feature("A summing function for sequences of integers - tested using example data") {
+  Feature(
+    "A summing function for sequences of integers - tested using example data") {
     Scenario("the function is invoked on an empty sequence") {
       Given("an empty sequence")
       val emptySeq = Seq()
@@ -22,7 +26,8 @@ class ExampleBasedTest extends FeatureSpec with GivenWhenThen with TableDrivenPr
       assert(result == 0)
     }
 
-    Scenario("the function is invoked on a sequence without causing overflow/underflow") {
+    Scenario(
+      "the function is invoked on a sequence without causing overflow/underflow") {
       Given("a sequence of integers less than MAX_VAL and greater than MIN_VAL")
       When("reducer is invoked")
       val testData = Table(
