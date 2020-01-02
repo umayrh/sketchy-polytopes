@@ -40,6 +40,7 @@
 #### 2020-01-01
 * Premature celebration of the fix. The build works locally because of caching. Can reproduce when 
 `gradle --refresh-dependencies -p scala clean build` ([thanks](http://blog.defun.work/post-75169d14-c64b-4ff4-be46-47747911d348.html)).
+* It's cz.alenkacz:gradle-scalafmt 1.6.0->1.10.0 that's causing issues..
 
 #### 2019-21-31
 * Finally fixed the Travis build. The build.gradle was definitely buggy but maybe just leaving mavenCentral()

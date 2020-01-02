@@ -1,6 +1,7 @@
 package com.umayrh.testing
 
 import org.scalatest._
+import org.scalatest.featurespec._
 import org.scalatest.prop.TableDrivenPropertyChecks
 
 /**
@@ -9,7 +10,7 @@ import org.scalatest.prop.TableDrivenPropertyChecks
   * Annotate with @RunWith(classOf[JUnitRunner]) to run as JUnit test
   */
 class ExampleBasedTest
-    extends FeatureSpec
+    extends AnyFeatureSpec
     with GivenWhenThen
     with TableDrivenPropertyChecks {
 
