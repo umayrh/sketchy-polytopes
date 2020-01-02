@@ -9,7 +9,7 @@ buildscript {
   }
 
   dependencies {
-    classpath 'cz.alenkacz:gradle-scalafmt:1.10.0'
+    classpath 'cz.alenkacz:gradle-scalafmt:1.6.0'
     classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3+'
   }
 }
