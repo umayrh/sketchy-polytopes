@@ -5,8 +5,7 @@ sudo: required
 dist: trusty
 
 env:
-- PYENV_REHASH_TIMEOUT=120
-- RENV_PATHS_CACHE=$R_HOME/site-library
+- PYENV_REHASH_TIMEOUT=120 RENV_PATHS_CACHE=$HOME/.cache/R/site-library
 
 addons:
   apt:
@@ -27,6 +26,9 @@ jdk:
 python:
   - "2.7.10"
 
+before_cache:
+  - mkdir
+
 cache:
   apt: true
   packages: true
@@ -35,8 +37,7 @@ cache:
     - $HOME/.cache
     - $HOME/.cache/pip
     - $TRAVIS_BUILD_DIR/build/venv/lib
-    - $R_HOME/site-library
-    - /usr/local/lib/R/site-library
+    - $HOME/.cache/R/site-library
 
 notifications:
   email:
