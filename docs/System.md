@@ -4,6 +4,24 @@
 
 ### Architecture
 
+#### Category Theory and Applications
+
+* [Applied Category Theory](http://www.appliedcategorytheory.org)
+* [Categorical Query Language](https://www.categoricaldata.net)
+  * [Categorical Databases](https://www.categoricaldata.net/cql/Kensho-CategoricalDatabases_20190227.pdf)
+
+#### Learning to build distributed systems
+
+* [Marc Brooker](https://brooker.co.za/blog/2019/04/03/learning.html):
+  * Learn through the work of others
+  * Get hands-on
+  * Go broad
+  * Become an owner
+  * It takes time
+* [Postmortems, Dan Luu](https://danluu.com/postmortem-lessons/)
+* [Theory, Henry Robinson](https://www.the-paper-trail.org/post/2014-08-09-distributed-systems-theory-for-the-distributed-systems-engineer/)
+* [Notes, Jeff Hodges](https://www.somethingsimilar.com/2013/01/14/notes-on-distributed-systems-for-young-bloods/)
+
 #### Evolutionary architectures
 
 "Our definition of evolutionary architecture implies incremental change, meaning 
