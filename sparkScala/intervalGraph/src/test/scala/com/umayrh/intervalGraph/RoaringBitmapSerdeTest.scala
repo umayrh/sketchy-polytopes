@@ -17,23 +17,20 @@ class RoaringBitmapSerdeTest
     with GeneratorDrivenPropertyChecks
     with Matchers {
   Feature("Functions for serializing and deserializing RoaringBitmap objects") {
-    Scenario(
-      "RoaringBitmaps before serialization and after deserialization are equal") {
+    Scenario("RoaringBitmaps before serialization and after deserialization are equal") {
       Given("a sequence of integer pairs between 0 and Int.Max")
       val pairGen = TestUtils.getRandRanges()
 
       When("a given bitmap is serialized and then deserialized")
-      Then(
-        "the cardinality of the bitmap is 0 after flipping bits in the given range")
+      Then("the cardinality of the bitmap is 0 after flipping bits in the given range")
 
       pairGen.map({
         case (start: Long, len: Long) =>
-          val end = start + len - 1
+          val end    = start + len - 1
           val bitmap = TestUtils.makeBitmap(start, end)
 
-          val streams: Seq[(Boolean,
-                            (ByteBuffer) => DataOutputStream,
-                            (ByteBuffer) => DataInputStream)] =
+          val streams
+            : Seq[(Boolean, (ByteBuffer) => DataOutputStream, (ByteBuffer) => DataInputStream)] =
             Seq((false, makeOutputStream, makeInputStream),
                 (true, makeUnsafeOutputStream, makeUnsafeInputStream))
 

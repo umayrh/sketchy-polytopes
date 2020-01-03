@@ -46,13 +46,12 @@ object Main extends SparkBase {
 
   def main(args: Array[String]) {
     if (args.length < 2) {
-      System.err.println(
-        "Expect two positional arguments: data size, and output file path")
+      System.err.println("Expect two positional arguments: data size, and output file path")
       System.exit(1)
     }
 
     // TODO: argument checks. Use scopt.
-    val dataSize = args(0).toLong
+    val dataSize      = args(0).toLong
     val outputDirPath = args(1)
     val partitions =
       spark.sparkContext.getConf.get("spark.default.parallelism", "1").toInt

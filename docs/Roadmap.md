@@ -37,6 +37,12 @@
 * Scalaz
 
 ### Log
+#### 2020-01-03
+* Updated Scala build since https://github.com/alenkacz/gradle-scalafmt/issues/32 was resolved
+
+#### 2020-01-02
+* Created https://github.com/alenkacz/gradle-scalafmt/issues/32
+
 #### 2020-01-01
 * Premature celebration of the fix. The build works locally because of caching. Can reproduce when 
 `gradle --refresh-dependencies -p scala clean build` ([thanks](http://blog.defun.work/post-75169d14-c64b-4ff4-be46-47747911d348.html)).

@@ -27,17 +27,15 @@ object DateOverlap {
     * @return 'df' with a new column that represents the group id of bitmaps.
     *         Bitmaps have the same group id iff they overlap
     */
-  def groupByOverlap(df: DataFrame,
-                     inputCols: (String, String),
-                     outputCol: String): DataFrame = {
+  def groupByOverlap(df: DataFrame, inputCols: (String, String), outputCol: String): DataFrame = {
     Preconditions.checkArgument(df.columns.contains(inputCols._1))
     Preconditions.checkArgument(df.columns.contains(inputCols._2))
 
     val epochStartCol = "TMP_start"
-    val epochEndCol = "TMP_end"
-    val intDf = mapDateToInt(df, inputCols, (epochStartCol, epochEndCol))
+    val epochEndCol   = "TMP_end"
+    val intDf         = mapDateToInt(df, inputCols, (epochStartCol, epochEndCol))
 
-    val aggCol = "TMP_agg_bitmap"
+    val aggCol     = "TMP_agg_bitmap"
     val bitmapUdaf = new RoaringBitmapUDAF(epochStartCol, epochEndCol)
     val aggDf =
       intDf.agg(bitmapUdaf(intDf(epochStartCol), intDf(epochEndCol)).as(aggCol))

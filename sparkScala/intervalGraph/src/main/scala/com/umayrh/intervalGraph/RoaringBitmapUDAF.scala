@@ -1,10 +1,7 @@
 package com.umayrh.intervalGraph
 
 import org.apache.spark.sql.Row
-import org.apache.spark.sql.expressions.{
-  MutableAggregationBuffer,
-  UserDefinedAggregateFunction
-}
+import org.apache.spark.sql.expressions.{MutableAggregationBuffer, UserDefinedAggregateFunction}
 import org.apache.spark.sql.types._
 import org.roaringbitmap.RoaringBitmap
 
@@ -16,8 +13,7 @@ import org.roaringbitmap.RoaringBitmap
   *
   * To use in Spark SQL: sqlContext.udf.register("rb", new RoaringBitmapUDAF)
   */
-class RoaringBitmapUDAF(startCol: String, endCol: String)
-    extends UserDefinedAggregateFunction {
+class RoaringBitmapUDAF(startCol: String, endCol: String) extends UserDefinedAggregateFunction {
   import RoaringBitmapUDAF.{toEndIndex, toStartIndex}
 
   def inputSchema: StructType =
@@ -37,7 +33,7 @@ class RoaringBitmapUDAF(startCol: String, endCol: String)
 
   def update(buffer: MutableAggregationBuffer, input: Row): Unit = {
     val start = input.getLong(0)
-    val end = input.getLong(1)
+    val end   = input.getLong(1)
     if (start < 0 || start > end) {
       // do nothing
     } else {
@@ -46,9 +42,7 @@ class RoaringBitmapUDAF(startCol: String, endCol: String)
   }
 
   def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {
-    buffer1.update(
-      0,
-      or(buffer1.getAs[Array[Byte]](0), buffer2.getAs[Array[Byte]](0)))
+    buffer1.update(0, or(buffer1.getAs[Array[Byte]](0), buffer2.getAs[Array[Byte]](0)))
   }
 
   /*
@@ -68,7 +62,7 @@ class RoaringBitmapUDAF(startCol: String, endCol: String)
     val bufferBitmap =
       RoaringBitmapSerde.deserialize(buffer)
     val startIndex = toStartIndex(start)
-    val endIndex = toEndIndex(start, end)
+    val endIndex   = toEndIndex(start, end)
     // Possible optimization: avoid setting bits already set
     // Adding 1 since range is inclusive-exclusive
     bufferBitmap.add(startIndex, endIndex + 1)

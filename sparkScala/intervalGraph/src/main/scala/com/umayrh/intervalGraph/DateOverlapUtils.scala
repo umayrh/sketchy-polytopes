@@ -33,20 +33,18 @@ object DateOverlapUtils {
   def mapDateToInt(df: DataFrame,
                    inputCols: (String, String),
                    outputCols: (String, String)): DataFrame = {
-    val minDateCol = "minDate"
+    val minDateCol       = "minDate"
     var outDf: DataFrame = df;
 
-    val input = Seq(inputCols._1, inputCols._2)
+    val input  = Seq(inputCols._1, inputCols._2)
     val output = Seq(outputCols._1, outputCols._2)
 
     // Find minimum date to, later, normalize the input's range
     // e.g. subtract the min value from all
-    val minDatesDf = df.agg(min(inputCols._1).as(inputCols._1),
-                            min(inputCols._2).as(inputCols._2))
+    val minDatesDf = df.agg(min(inputCols._1).as(inputCols._1), min(inputCols._2).as(inputCols._2))
     val minDateDf = minDatesDf
       .withColumn(minDateCol,
-                  when(col(inputCols._1).gt(col(inputCols._2)),
-                       col(inputCols._2))
+                  when(col(inputCols._1).gt(col(inputCols._2)), col(inputCols._2))
                     .otherwise(col(inputCols._1)))
       .drop(inputCols._1)
       .drop(inputCols._2)
@@ -55,12 +53,10 @@ object DateOverlapUtils {
 
     // normalize the input date, and round to a day
     (0 until input.size).foreach({ idx =>
-      outDf =
-        outDf.withColumn(
-          output(idx),
-          ((unix_timestamp(outDf(input(idx))) - unix_timestamp(
-            outDf(minDateCol))) / DateTimeConstants.SECONDS_PER_DAY)
-            .cast(LongType))
+      outDf = outDf.withColumn(output(idx),
+                               ((unix_timestamp(outDf(input(idx))) - unix_timestamp(
+                                 outDf(minDateCol))) / DateTimeConstants.SECONDS_PER_DAY)
+                                 .cast(LongType))
     })
     outDf.drop(minDateCol)
   }
@@ -85,9 +81,9 @@ object DateOverlapUtils {
     Preconditions.checkArgument(!dfCol.equals(aggCol))
 
     // map aggDf to a bitmap of indices.
-    val indexCol = "TMP_index"
-    val indexDf = makeIndexDf(aggDf, aggCol, df, indexCol)
-    val joinedDf = df.crossJoin(broadcast(indexDf))
+    val indexCol     = "TMP_index"
+    val indexDf      = makeIndexDf(aggDf, aggCol, df, indexCol)
+    val joinedDf     = df.crossJoin(broadcast(indexDf))
     val intersectUdf = getIntersectUdf()
 
     joinedDf
@@ -124,10 +120,7 @@ object DateOverlapUtils {
     * While the compression ratio may be high since the index array has incrementing
     * integers, decompression may be slow. Maybe delta encoding?
     */
-  def makeIndexDf(aggDf: DataFrame,
-                  col: String,
-                  df: DataFrame,
-                  indexCol: String): DataFrame = {
+  def makeIndexDf(aggDf: DataFrame, col: String, df: DataFrame, indexCol: String): DataFrame = {
     // taking pain to avoid Dataframe.count()
     val sizeCol = "TMP_size"
     val joinedDf = aggDf.crossJoin(
@@ -153,10 +146,10 @@ object DateOverlapUtils {
     */
   private def getIndexUdf(): UserDefinedFunction = {
     val indexFn = (bits: Array[Byte], size: Int) => {
-      val bitmap = RoaringBitmapSerde.deserialize(bits)
+      val bitmap   = RoaringBitmapSerde.deserialize(bits)
       val indexMap = new Array[Int](bitmap.last() + 1)
       var groupCnt = 1
-      var prevIdx = -1
+      var prevIdx  = -1
       // TODO: convert to single abstract method
       val consumerFn: IntConsumer = new IntConsumer() {
         override def accept(idx: Int): Unit = {

@@ -29,10 +29,9 @@ class DateOverlapIntegrationTest
       Then("the result is an exception")
     }
 
-    Scenario(
-      "An emtpy dataset results in an empty dataset with given output column") {
+    Scenario("An emtpy dataset results in an empty dataset with given output column") {
       Given("An empty dataset")
-      val dataset = makeDataset(List(("2018-01-01", "2018-01-02")))
+      val dataset      = makeDataset(List(("2018-01-01", "2018-01-02")))
       val emptyDataset = dataset.filter(col("s") > Date.valueOf("2019-01-02"))
       When("groupByOverlap is invoked")
       val result = DateOverlap.groupByOverlap(emptyDataset, ("s", "t"), "id")
@@ -52,13 +51,11 @@ class DateOverlapIntegrationTest
              ("2018-05-01", "2018-05-02")))
       When("groupByOverlap is invoked on")
       val result = DateOverlap.groupByOverlap(dataset, ("s", "t"), "id")
-      Then(
-        "result is the original dataset with an id column of the same cardinality")
+      Then("result is the original dataset with an id column of the same cardinality")
       result.select("id").distinct().count() should be(result.count())
     }
 
-    Scenario(
-      "A dataset of overlapping date ranges returns an id column with cardinality 1") {
+    Scenario("A dataset of overlapping date ranges returns an id column with cardinality 1") {
       Given("A dataset with overlapping dates")
       val dataset = makeDataset(
         List(("2018-01-01", "2018-02-02"),
@@ -68,8 +65,7 @@ class DateOverlapIntegrationTest
              ("2018-04-02", "2018-05-02")))
       When("groupByOverlap is invoked on")
       val result = DateOverlap.groupByOverlap(dataset, ("s", "t"), "id")
-      Then(
-        "result is the original dataset with an id column of the same cardinality")
+      Then("result is the original dataset with an id column of the same cardinality")
       result.select("id").distinct().count() should be(1)
     }
   }
