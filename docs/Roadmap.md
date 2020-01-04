@@ -35,10 +35,23 @@
 
 * Haskell
 * Scalaz
+  * [Semiring, Shortest Path](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.367.5897&rep=rep1&type=pdf)?
+  * Algebraic framework for graph algo ([Mohri](https://cs.nyu.edu/~mohri/distance.html))
+  * [Semirings](http://stedolan.net/research/semirings.pdf)
+  * [GraphBLAS](https://github.com/szarnyasg/graphblas-pointers)
 
 ### Log
 #### 2020-01-03
 * Updated Scala build since https://github.com/alenkacz/gradle-scalafmt/issues/32 was resolved
+
+#### 2020-01-03
+* Updated Scala build since [this](https://github.com/alenkacz/gradle-scalafmt/issues/32) issue was resolved
+* Desultory investigation in to:
+  * PlusCal and TLA+. Reviewed the N-Queen module in TLA Toolbox.
+  * Scanned the scalaz and semiring graph algo lit I was acquainted with.
+* Started another [page](./Books.md) as a way to record books I might fetishize without feeling the urge to buy.
+* TODO: fix R caching in Travis. Need to figure out how to install R packages (pre-Renv installation) 
+  under R_HOME 
 
 #### 2020-01-02
 * Created https://github.com/alenkacz/gradle-scalafmt/issues/32

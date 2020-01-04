@@ -2,13 +2,30 @@
 
 ## Themes
 
-### Architecture
+### Concepts
+
+* [Linearizability](https://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf)
+  * [Consistency models](https://aphyr.com/posts/313-strong-consistency-models)
+* Reading:
+  * [1](http://muratbuffalo.blogspot.com/2016/11/my-distributed-systems-seminars-reading.html)
+
+### Formal methods
 
 #### Category Theory and Applications
 
 * [Applied Category Theory](http://www.appliedcategorytheory.org)
 * [Categorical Query Language](https://www.categoricaldata.net)
   * [Categorical Databases](https://www.categoricaldata.net/cql/Kensho-CategoricalDatabases_20190227.pdf)
+
+#### TLA+, PlusCal
+
+* [Lamport](http://lamport.azurewebsites.net/tla/high-level-view.html)
+  * `brew cask install tla-plus-toolbox`
+* [HLC in TLA](http://muratbuffalo.blogspot.com/2015/01/my-experience-with-using-tla-in.html)
+* [CAS-Paxos](http://tbg.github.io/single-decree-paxos-tla-compare-and-swap)
+* [Overview](https://github.com/osoco/pluscal-overview)
+
+### Architecture
 
 #### Learning to build distributed systems
 
