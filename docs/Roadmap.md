@@ -9,7 +9,7 @@
 * Aim: help connect documents across projects? At least, Markdown docs.
   * Connect Github with [Gitbook](https://umayrh.gitbook.io/docs/)
   * Markdown, and static site gen. [Jekyll](https://github.com/jekyll/jekyll)?
-  * [bookdown](https://bookdown.org/yihui/bookdown/)?
+  * [Bookdown](https://bookdown.org/yihui/bookdown/)?
  
 #### Infrastructure
 
@@ -17,6 +17,7 @@
 * Continuous integration: Travis 
   * Set up matrix builds with [multiple os](https://docs.travis-ci.com/user/multi-os/) 
     and [multiple languages](https://stackoverflow.com/questions/27644586/how-to-set-up-travis-ci-with-multiple-languages)
+  * Add Mac OS in travis-setup.sh, and all the brew installs needed.
 * Deployment: Docker, Terraform, Kubernetes
   * [No-VM Kubernetes](https://blog.travis-ci.com/2017-10-26-running-kubernetes-on-travis-ci-with-minikube)
 
@@ -41,7 +42,13 @@
   * [GraphBLAS](https://github.com/szarnyasg/graphblas-pointers)
 
 ### Log
-=======
+#### 2020-01-05
+* Created [renv-313](https://github.com/rstudio/renv/issues/313) because RENV_PATHS_CACHE doesn't
+work as I'd expected so Renv still install project in a way that's not easy to cache on Travis.
+
+#### 2020-01-04
+* Updated Scala build since https://github.com/alenkacz/gradle-scalafmt/issues/32 was resolved
+
 #### 2020-01-03
 * Updated Scala build since [this](https://github.com/alenkacz/gradle-scalafmt/issues/32) issue was resolved
 * Desultory investigation in to:

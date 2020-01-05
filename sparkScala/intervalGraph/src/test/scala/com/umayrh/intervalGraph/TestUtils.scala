@@ -35,8 +35,7 @@ object TestUtils extends Matchers {
     * @return a [[RoaringBitmap]] with bits in the inclusive range (start, end) set to 1
     */
   def makeBitmap(start: Long, end: Long): RoaringBitmap = {
-    Preconditions.checkArgument(
-      start >= 0 && start <= end && end < Long.MaxValue)
+    Preconditions.checkArgument(start >= 0 && start <= end && end < Long.MaxValue)
     val bitmap = new RoaringBitmap()
     bitmap.add(start, end + 1)
     bitmap
@@ -48,9 +47,8 @@ object TestUtils extends Matchers {
     * @param colName name of column containing bitmaps
     * @return a dataframe of serialized [[RoaringBitmap]]s out of the given list
     */
-  def bitmapsToDf(sc: SparkContext, sqlContext: SQLContext)(
-      bitmaps: List[RoaringBitmap],
-      colName: String): DataFrame = {
+  def bitmapsToDf(sc: SparkContext, sqlContext: SQLContext)(bitmaps: List[RoaringBitmap],
+                                                            colName: String): DataFrame = {
     val serializedBitmaps = bitmaps.map(RoaringBitmapSerde.serialize)
     // implicits, yuck...
     import sqlContext.implicits._
@@ -64,10 +62,9 @@ object TestUtils extends Matchers {
     * @param endCol name of end date column (default: "t")
     * @return a dataframe with two date columns
     */
-  def datesToDf(sc: SparkContext, sqlContext: SQLContext)(
-      dates: List[(Date, Date)],
-      startCol: String = "s",
-      endCol: String = "t"): DataFrame = {
+  def datesToDf(sc: SparkContext, sqlContext: SQLContext)(dates: List[(Date, Date)],
+                                                          startCol: String = "s",
+                                                          endCol: String = "t"): DataFrame = {
     // implicits, yuck...
     import sqlContext.implicits._
     sc.parallelize(dates).toDF(startCol, endCol)
@@ -79,8 +76,7 @@ object TestUtils extends Matchers {
     * @param expectedDf expected table
     * @param actualDf actual table
     */
-  def assertDataFrameEquals(expectedDf: DataFrame,
-                            actualDf: DataFrame): Unit = {
+  def assertDataFrameEquals(expectedDf: DataFrame, actualDf: DataFrame): Unit = {
     // Alas, DataFrameSuiteBaseLike's assertDataFrameEquals has issues
     actualDf.count() should be(expectedDf.count())
     val expected = expectedDf
@@ -89,8 +85,7 @@ object TestUtils extends Matchers {
     val actual = actualDf
       .collect()
       .map(r => RoaringBitmapSerde.deserialize(r.getAs[Array[Byte]](0)))
-    val result = Range(0, expected.length).map(idx =>
-      bitmapsEqual(expected(idx), actual(idx)))
+    val result = Range(0, expected.length).map(idx => bitmapsEqual(expected(idx), actual(idx)))
     result.foreach(k => assert(k._1, k._2))
   }
 
@@ -100,8 +95,7 @@ object TestUtils extends Matchers {
     * @return (true, "") if the bitmaps are equals. Otherwise, the second element in the
     *         tuple is an error message describing bitmap ranges.
     */
-  def bitmapsEqual(map1: RoaringBitmap,
-                   map2: RoaringBitmap): (Boolean, String) = {
+  def bitmapsEqual(map1: RoaringBitmap, map2: RoaringBitmap): (Boolean, String) = {
     if (map1.equals(map2)) {
       (true, "")
     } else {

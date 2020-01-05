@@ -33,7 +33,7 @@ class MainTest
 
     Scenario("A thousand random numbers are generated") {
       Given("Program inputs: a thousand, and output file location")
-      val dataSize = math.pow(10, 3).toInt
+      val dataSize       = math.pow(10, 3).toInt
       val outputLocation = outputFile.getAbsolutePath
       outputFile.delete()
 

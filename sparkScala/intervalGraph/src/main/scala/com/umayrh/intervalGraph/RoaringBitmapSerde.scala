@@ -81,7 +81,7 @@ object RoaringBitmapSerde {
   def deserialize(buffer: Array[Byte],
                   useDirectBuffer: Boolean,
                   inputGen: (ByteBuffer) => DataInputStream): RoaringBitmap = {
-    val bitmap = new RoaringBitmap()
+    val bitmap       = new RoaringBitmap()
     val outputBuffer = getBuffer(useDirectBuffer, buffer.length)
     outputBuffer.put(buffer)
     outputBuffer.flip() // reset position to read the buffer just written to

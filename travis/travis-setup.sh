@@ -81,6 +81,7 @@ setupR() {
 
     sudo add-apt-repository -y "ppa:marutter/rrutter3.5"
     sudo add-apt-repository -y "ppa:marutter/c2d4u3.5"
+    sudo add-apt-repository -y "ppa:cran/libgit2"
 
     retry sudo apt-get -qq update
     retry sudo apt-get -qq install -y --no-install-recommends r-base-dev r-recommended qpdf libssh2-1-dev libgit2-dev

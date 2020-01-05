@@ -20,15 +20,12 @@ class DateOverlapUtilsTest
     Scenario("mapDateToInt() maps a date range to an int range") {
       Given("A data frame with date columns")
       When("mapDateToInt() is invoked")
-      Then(
-        "the table has two new columns representing the normalized epoch start and end")
+      Then("the table has two new columns representing the normalized epoch start and end")
       pending
     }
 
-    Scenario(
-      "makeIndexDf() maps an aggregated bitmap to an array of monotonically increasing ids") {
-      Given(
-        "A data frame with int range, it's aggregated bitmap, and an index column name")
+    Scenario("makeIndexDf() maps an aggregated bitmap to an array of monotonically increasing ids") {
+      Given("A data frame with int range, it's aggregated bitmap, and an index column name")
       When("mapDateToInt() is invoked")
       Then(
         "the table has a column with expected name, the same number of rows as the aggregated bitmap, and correct indices")
@@ -37,8 +34,7 @@ class DateOverlapUtilsTest
 
     Scenario(
       "intersectBitmaps() maps an dateframe with ranges to an integer such that overlapping ranges have the same value") {
-      Given(
-        "A data frame with int range, it's aggregated bitmap, and an output column name")
+      Given("A data frame with int range, it's aggregated bitmap, and an output column name")
       When("mapDateToInt() is invoked")
       Then(
         "the table has a column with expected name, the same number of rows as the input bitmap, and correct ids")
