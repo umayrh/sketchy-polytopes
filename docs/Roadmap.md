@@ -41,7 +41,11 @@
   * [GraphBLAS](https://github.com/szarnyasg/graphblas-pointers)
 
 ### Log
-#### 2020-01-03
+#### 2020-01-05
+* Created [renv-313](https://github.com/rstudio/renv/issues/313) because RENV_PATHS_CACHE doesn't
+work as I'd expected so Renv still install project in a way that's not easy to cache on Travis.
+
+#### 2020-01-04
 * Updated Scala build since https://github.com/alenkacz/gradle-scalafmt/issues/32 was resolved
 
 #### 2020-01-03
