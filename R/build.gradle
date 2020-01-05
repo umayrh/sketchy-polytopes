@@ -15,7 +15,10 @@ buildscript {
 subprojects {
   apply plugin: "com.umayrh.rplugin"
 
-  check {
-    dependsOn test
+  task printLibPath(type: Exec) {
+    commandLine "Rscript", "-e", "print(.libPaths())"
   }
+
+  installDeps.dependsOn printLibPath
+  check.dependsOn test
 }
