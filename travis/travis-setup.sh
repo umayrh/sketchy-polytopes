@@ -102,8 +102,8 @@ setupNeo4j() {
   export NEO4J_HOME=$(pwd)/neo4j-community
   neo4j-community/bin/neo4j start
   # give Neo4J some time to start
-  retry curl POST http://neo4j:neo4j@localhost:7474/user/neo4j/password -d"password=neo4j2"
-  curl POST http://neo4j:neo4j2@localhost:7474/user/neo4j/password -d"password=neo4j"
+  retry curl http://neo4j:neo4j@localhost:7474/user/neo4j/password -X POST -d"password=neo4j2"
+  curl http://neo4j:neo4j2@localhost:7474/user/neo4j/password -X POST -d"password=neo4j"
   cd ..
 }
 
