@@ -54,20 +54,19 @@ bootstrapOSX() {
 # Install Pyenv and a specific version of Python.
 # Modified from https://pythonhosted.org/CodeChat/.travis.yml.html
 setupPython() {
+  eval "$(pyenv init -)"
   # virtualenv doesn't work without pyenv knowledge. venv in Python 3.3
   # doesn't provide Pip by default. So, use `pyenv-virtualenv <https://github.com/yyuu/pyenv-virtualenv/blob/master/README.md>`_.
   pyenv install "${PYTHON_VERSION}"
   # I would expect something like ``pyenv init; pyenv local $PYTHON`` or
   # ``pyenv shell $PYTHON`` would work, but ``pyenv init`` doesn't seem to
   # modify the Bash environment. ??? So, I hand-set the variables instead.
-  export PYENV_VERSION="${PYTHON_VERSION}"
-  export PATH="${HOME}/.pyenv/shims:${PATH}"
-  pyenv virtualenv venv
   pyenv global "${PYTHON_VERSION}"
+  export PYENV_VERSION="${PYTHON_VERSION}"
+  pyenv virtualenv venv
+  source "${HOME}"/.pyenv/versions/"${PYTHON_VERSION}"/envs/venv/bin/activate
+  which pip
   pyenv which pip
-  python -m pip install
-  pyenv which pip
-  # source "${HOME}"/.pyenv/versions/"${PYTHON_VERSION}"/envs/venv/bin/activate
 }
 
 ## Installs a specific version of Spark
