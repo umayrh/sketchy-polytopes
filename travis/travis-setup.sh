@@ -103,9 +103,8 @@ installLemon() {
         cd lemon && mkdir build && cd build
         cmake ..
         make
-        cd ../..
     fi
-    cd lemon/build
+    cd "$HOME"/.cache/lemon/build
     # Need to call 'make install' each time since it's a new machine
     sudo make install
     cd $HOME
