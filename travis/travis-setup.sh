@@ -64,7 +64,10 @@ setupPython() {
   export PATH="${HOME}/.pyenv/shims:${PATH}"
   pyenv virtualenv venv
   pyenv global "${PYTHON_VERSION}"
-  source "${HOME}"/.pyenv/versions/"${PYTHON_VERSION}"/envs/venv/bin/activate
+  pyenv which pip
+  python -m pip install
+  pyenv which pip
+  # source "${HOME}"/.pyenv/versions/"${PYTHON_VERSION}"/envs/venv/bin/activate
 }
 
 ## Installs a specific version of Spark

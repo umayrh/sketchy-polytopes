@@ -34,6 +34,9 @@ jobs:
             - pyenv-virtualenv
             - openssl
             - readline
+            - sqlite3
+            - xz
+            - zlib
 
 before_install: ./travis/travis-setup.sh
 
