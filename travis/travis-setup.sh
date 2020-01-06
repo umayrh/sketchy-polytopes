@@ -17,7 +17,7 @@ SPARK_MIRROR="http://ftp.wayne.edu/apache/spark/spark-${SPARK_VERSION}/spark-${S
 
 ## Software versions
 LEMON_VERSION=${LEMON_VERSION:-"1.3.1"}
-PYTHON_VERSION="2.7.10"
+PYTHON_VERSION="2.7.13"
 
 ## Check OS type
 bootstrap() {
@@ -45,8 +45,8 @@ bootstrapLinux() {
 bootstrapOSX() {
   ### YUCK! Save Python from OSX!
   # https://github.com/pyenv/pyenv/issues/950
-  brew uninstall --ignore-dependencies openssl@1.1
-  brew install https://github.com/tebelorg/Tump/releases/download/v1.0.0/openssl.rb
+  #brew uninstall --ignore-dependencies openssl@1.1
+  #brew install https://github.com/tebelorg/Tump/releases/download/v1.0.0/openssl.rb
 
   setupPython
   setupSpark
