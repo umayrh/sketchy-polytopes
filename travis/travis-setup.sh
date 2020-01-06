@@ -47,7 +47,6 @@ bootstrapOSX() {
   # https://github.com/pyenv/pyenv/issues/950
   #brew uninstall --ignore-dependencies openssl@1.1
   #brew install https://github.com/tebelorg/Tump/releases/download/v1.0.0/openssl.rb
-  brew install readline xz
 
   setupPython
   setupSpark
@@ -67,7 +66,7 @@ setupPython() {
   # modify the Bash environment. ??? So, I hand-set the variables instead.
   export PYENV_VERSION="${PYTHON_VERSION}"
   export PATH="${HOME}/.pyenv/shims:${PATH}"
-  pyenv-virtualenv venv
+  pyenv virtualenv venv
   source venv/bin/activate
 }
 
