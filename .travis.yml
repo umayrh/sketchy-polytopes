@@ -1,6 +1,10 @@
 language: generic
 sudo: required
 
+git:
+  depth: 3
+  quiet: true
+
 # Promote to xenial when Travis fixes
 # https://travis-ci.community/t/oracle-jdk-11-and-10-are-pre-installed-not-the-openjdk-builds/785/6
 jobs:
