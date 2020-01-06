@@ -1,6 +1,9 @@
 language: generic
 sudo: required
 
+# Notes:
+#   No Java13 for now till Neo4j issues are resolved. Alternatively, also install JDK8. [05Jan2020]
+
 git:
   depth: 3
   quiet: true
@@ -16,7 +19,7 @@ jobs:
         apt:
           packages:
             - axel
-    # " In practical terms, if your Mac build requires Java 8 and below, use xcode9.3 (or below);
+    # "In practical terms, if your Mac build requires Java 8 and below, use xcode9.3 (or below);
     # if your build requires Java 10 and later, use xcode9.4 (or later)."
     # https://docs.travis-ci.com/user/reference/osx/#jdk-and-macos
     - os: osx
