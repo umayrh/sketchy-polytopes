@@ -5,10 +5,10 @@ git:
   depth: 3
   quiet: true
 
-# Promote to xenial when Travis fixes
-# https://travis-ci.community/t/oracle-jdk-11-and-10-are-pre-installed-not-the-openjdk-builds/785/6
 jobs:
   include:
+    # Promote to xenial when Travis fixes
+    # https://travis-ci.community/t/oracle-jdk-11-and-10-are-pre-installed-not-the-openjdk-builds/785/6
     - os: linux
       dist: trusty
       env: PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R
@@ -16,8 +16,11 @@ jobs:
         apt:
           packages:
             - axel
+    # " In practical terms, if your Mac build requires Java 8 and below, use xcode9.3 (or below);
+    # if your build requires Java 10 and later, use xcode9.4 (or later)."
+    # https://docs.travis-ci.com/user/reference/osx/#jdk-and-macos
     - os: osx
-      osx_image: xcode11.3
+      osx_image: xcode9.3
       env: PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R
       addons:
         homebrew:
