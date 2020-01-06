@@ -105,8 +105,8 @@ installLemon() {
         make
     fi
     cd "$HOME"/.cache/lemon/build
-    ls ..
-    # Need to call 'make install' each time since it's a new machine
+    # Need to call 'make install' each time since Lemon headers and libs under /usr/local/*
+    # would be absent on a new machine.
     sudo make install
     cd "$HOME"
 }
