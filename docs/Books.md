@@ -59,6 +59,7 @@ S. Chatterjee.
 * John Bell, The Continuous and the Infinitesimal in Mathematics and Philosophy
 * Logical Modalities from Aristotle to Carnap: The Story of Necessity
 * Improbable Destinies: Fate, Chance, and the Future of Evolution
+* Coloring Book of Complex Function Representations
 
 ## Read
 ## Science Fiction
