@@ -44,10 +44,6 @@ bootstrapLinux() {
 
 bootstrapOSX() {
   ### YUCK! Save Python from OSX!
-  # https://github.com/pyenv/pyenv/issues/950
-  #brew uninstall --ignore-dependencies openssl@1.1
-  #brew install https://github.com/tebelorg/Tump/releases/download/v1.0.0/openssl.rb
-
   setupPython
   setupSpark
   setupNeo4j
@@ -67,7 +63,7 @@ setupPython() {
   export PYENV_VERSION="${PYTHON_VERSION}"
   export PATH="${HOME}/.pyenv/shims:${PATH}"
   pyenv virtualenv venv
-  source venv/bin/activate
+  source "${HOME}"/.pyenv/versions/"${PYTHON_VERSION}"/envs/venv//bin/activate
 }
 
 ## Installs a specific version of Spark
