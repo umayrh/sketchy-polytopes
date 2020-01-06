@@ -93,7 +93,7 @@ setupR() {
 
 # Build and installs LEMON from source
 installLemon() {
-    if [[ ! -d "$HOME"/.cache/lemon ]]; then
+    if [[ ! -d "$HOME"/.cache/lemon/build ]]; then
         cd "$HOME"/.cache
         rm -fr lemon*.tar.gz*
         axel --quiet http://lemon.cs.elte.hu/pub/sources/lemon-"${LEMON_VERSION}".tar.gz
