@@ -44,7 +44,10 @@ bootstrapLinux() {
 
 bootstrapOSX() {
   ### YUCK! Save Python from OSX!
-  brew install openssl readline
+  # https://github.com/pyenv/pyenv/issues/950
+  brew uninstall --ignore-dependencies openssl@1.1
+  brew install https://github.com/tebelorg/Tump/releases/download/v1.0.0/openssl.rb
+
   setupPython
   setupSpark
   setupNeo4j
