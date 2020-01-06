@@ -30,6 +30,10 @@ jobs:
           update: true
           packages:
             - axel
+            - pyenv
+            - pyenv-virtualenv
+            - openssl
+            - readline
 
 before_install: ./travis/travis-setup.sh
 

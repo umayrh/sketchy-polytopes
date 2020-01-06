@@ -17,6 +17,7 @@ SPARK_MIRROR="http://ftp.wayne.edu/apache/spark/spark-${SPARK_VERSION}/spark-${S
 
 ## Software versions
 LEMON_VERSION=${LEMON_VERSION:-"1.3.1"}
+PYTHON_VERSION="2.7.10"
 
 ## Check OS type
 bootstrap() {
@@ -43,12 +44,26 @@ bootstrapLinux() {
 
 bootstrapOSX() {
   ### YUCK! Save Python from OSX!
-  sudo chmod -R 2777 /Library/Python/2.7/site-packages
-
+  setupPython
   setupSpark
   setupNeo4j
   setupR_OSX
   installLemon
+}
+
+# Install Pyenv and a specific version of Python.
+# Modified from https://pythonhosted.org/CodeChat/.travis.yml.html
+setupPython() {
+  # virtualenv doesn't work without pyenv knowledge. venv in Python 3.3
+  # doesn't provide Pip by default. So, use `pyenv-virtualenv <https://github.com/yyuu/pyenv-virtualenv/blob/master/README.md>`_.
+  pyenv install "${PYTHON_VERSION}"
+  # I would expect something like ``pyenv init; pyenv local $PYTHON`` or
+  # ``pyenv shell $PYTHON`` would work, but ``pyenv init`` doesn't seem to
+  # modify the Bash environment. ??? So, I hand-set the variables instead.
+  export PYENV_VERSION="${PYTHON_VERSION}"
+  export PATH="${HOME}/.pyenv/shims:${PATH}"
+  pyenv-virtualenv venv
+  source venv/bin/activate
 }
 
 ## Installs a specific version of Spark
