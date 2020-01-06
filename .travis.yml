@@ -1,8 +1,12 @@
 language: generic
 sudo: required
+
 # Promote to xenial when Travis fixes
 # https://travis-ci.community/t/oracle-jdk-11-and-10-are-pre-installed-not-the-openjdk-builds/785/6
-dist: trusty
+jobs:
+  include:
+    - os: linux
+      dist: trusty
 
 env:
 - PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R
@@ -32,6 +36,9 @@ cache:
   directories:
     - $HOME/.m2
     - $HOME/.cache
+    - $HOME/.cache/lemon
+    - $HOME/.cache/spark
+    - $HOME/.cache/neo4j
     - $HOME/.cache/pip
     - $TRAVIS_BUILD_DIR/build/venv/lib
     - $HOME/.cache/R

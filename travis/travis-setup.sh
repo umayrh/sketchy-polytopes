@@ -43,13 +43,15 @@ bootstrapLinux() {
 ## Installs a specific version of Spark
 setupSpark() {
     local SPARK_DIR_NAME=spark-${SPARK_VERSION}
-    if [[ ! -d "$HOME/.cache/${SPARK_DIR_NAME}" ]]; then
-        cd $HOME/.cache
+    if [[ ! -d "$HOME/.cache/spark" ]]; then
+        cd "$HOME"/.cache
         SPARK_DIST_NAME=${SPARK_DIR_NAME}-bin-hadoop${HADOOP_VERSION}
-        rm -fr ./${SPARK_DIST_NAME}.tgz*
-        axel --quiet ${SPARK_MIRROR}
-        tar -xf ./${SPARK_DIST_NAME}.tgz
-        export SPARK_HOME=`pwd`/${SPARK_DIST_NAME}
+        rm -fr "${SPARK_DIST_NAME}".tgz*
+        axel --quiet "${SPARK_MIRROR}"
+        tar -xf ./"${SPARK_DIST_NAME}".tgz
+        # version-independent package dir to help with caching
+        mv "${SPARK_DIST_NAME}" spark
+        export SPARK_HOME=$(pwd)/spark
         # TODO: need a more systematic method for setting up Spark properties
         echo "spark.yarn.jars=${SPARK_HOME}/jars/*.jar" > ${SPARK_HOME}/conf/spark-defaults.conf
         cd ..
@@ -59,14 +61,16 @@ setupSpark() {
 ## Installs a specific version of Neo4j
 ## see https://github.com/travis-ci/travis-ci/issues/3243
 setupNeo4j() {
-    cd $HOME/.cache
-    if [[ ! -d "$HOME/.cache/neo4j-community-${NEO4J_VERSION}" ]]; then
-        rm -fr neo4j-community-${NEO4J_VERSION}-unix.tar.gz*
+    cd "$HOME"/.cache
+    if [[ ! -d "$HOME/.cache/neo4j-community" ]]; then
+        rm -fr neo4j-community-*-unix.tar.gz*
         # axel, instead of wget, fails for unknown reason
-        wget dist.neo4j.org/neo4j-community-${NEO4J_VERSION}-unix.tar.gz
-        tar -xzf neo4j-community-${NEO4J_VERSION}-unix.tar.gz
+        wget dist.neo4j.org/neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
+        tar -xzf neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
+        # version-independent package dir to help with caching
+        mv neo4j-community-"${NEO4J_VERSION}"-unix neo4j-community
     fi
-    neo4j-community-${NEO4J_VERSION}/bin/neo4j start
+    neo4j-community/bin/neo4j start
     # give Neo4J some time to start
     retry curl -v POST http://neo4j:neo4j@localhost:7474/user/neo4j/password -d"password=neo4j2"
     curl -v POST http://neo4j:neo4j2@localhost:7474/user/neo4j/password -d"password=neo4j"
@@ -85,23 +89,26 @@ setupR() {
 
     retry sudo apt-get -qq update
     retry sudo apt-get -qq install -y --no-install-recommends r-base-dev r-recommended qpdf libssh2-1-dev libgit2-dev
-
-    sudo chmod 2777 /usr/local/lib/R /usr/local/lib/R/site-library
 }
 
 # Build and installs LEMON from source
 installLemon() {
-    if [[ ! -d "$HOME/.cache/lemon-${LEMON_VERSION}" ]]; then
-        cd $HOME/.cache
-        rm -fr lemon-${LEMON_VERSION}.tar.gz*
-        axel --quiet http://lemon.cs.elte.hu/pub/sources/lemon-${LEMON_VERSION}.tar.gz
-        tar xzvf lemon-${LEMON_VERSION}.tar.gz
-        cd lemon-${LEMON_VERSION} && mkdir build && cd build
+    if [[ ! -d "$HOME"/.cache/lemon ]]; then
+        cd "$HOME"/.cache
+        rm -fr lemon*.tar.gz*
+        axel --quiet http://lemon.cs.elte.hu/pub/sources/lemon-"${LEMON_VERSION}".tar.gz
+        tar xzvf lemon-"${LEMON_VERSION}".tar.gz
+        # version-independent package dir to help with caching
+        mv lemon-"${LEMON_VERSION}" lemon
+        cd lemon && mkdir build && cd build
         cmake ..
         make
-        sudo make install
-        cd $HOME
+        cd ../..
     fi
+    cd lemon/build
+    # Need to call 'make install' each time since it's a new machine
+    sudo make install
+    cd $HOME
 }
 
 # Retry a given command
