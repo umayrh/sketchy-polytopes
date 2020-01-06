@@ -63,7 +63,7 @@ setupSpark() {
 setupNeo4j() {
     cd "$HOME"/.cache
     if [[ ! -d "$HOME/.cache/neo4j-community" ]]; then
-        rm -fr neo4j-community-*-unix.tar.gz*
+        rm -fr neo4j-community*
         # axel, instead of wget, fails for unknown reason
         wget dist.neo4j.org/neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
         tar -xzf neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
@@ -95,9 +95,9 @@ setupR() {
 installLemon() {
     if [[ ! -d "$HOME"/.cache/lemon/build ]]; then
         cd "$HOME"/.cache
-        rm -fr lemon*.tar.gz*
+        rm -fr lemon*
         axel --quiet http://lemon.cs.elte.hu/pub/sources/lemon-"${LEMON_VERSION}".tar.gz
-        tar xzvf lemon-"${LEMON_VERSION}".tar.gz
+        tar xzf lemon-"${LEMON_VERSION}".tar.gz
         # version-independent package dir to help with caching
         mv lemon-"${LEMON_VERSION}" lemon
         cd lemon && mkdir build && cd build
@@ -105,9 +105,10 @@ installLemon() {
         make
     fi
     cd "$HOME"/.cache/lemon/build
+    ls ..
     # Need to call 'make install' each time since it's a new machine
     sudo make install
-    cd $HOME
+    cd "$HOME"
 }
 
 # Retry a given command
