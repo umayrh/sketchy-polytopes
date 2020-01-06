@@ -12,18 +12,18 @@ jobs:
     - os: linux
       dist: trusty
       env: PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R
+      addons:
+        apt:
+          packages:
+            - axel
     - os: osx
       osx_image: xcode11.3
       env: PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R
-
-addons:
-  apt:
-    packages:
-      - axel
-  homebrew:
-    update: true
-    packages:
-      - axel
+      addons:
+        homebrew:
+          update: true
+          packages:
+            - axel
 
 before_install: ./travis/travis-setup.sh
 
