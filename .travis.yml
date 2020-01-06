@@ -11,12 +11,17 @@ jobs:
   include:
     - os: linux
       dist: trusty
-
-env:
-- PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R
+      env: PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R
+    - os: osx
+      osx_image: xcode11.3
+      env: PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R
 
 addons:
   apt:
+    packages:
+      - axel
+  homebrew:
+    update: true
     packages:
       - axel
 
