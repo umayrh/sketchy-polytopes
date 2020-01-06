@@ -68,7 +68,7 @@ setupNeo4j() {
         wget dist.neo4j.org/neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
         tar -xzf neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
         # version-independent package dir to help with caching
-        mv neo4j-community-"${NEO4J_VERSION}"-unix neo4j-community
+        mv neo4j-community-"${NEO4J_VERSION}" neo4j-community
     fi
     neo4j-community/bin/neo4j start
     # give Neo4J some time to start
