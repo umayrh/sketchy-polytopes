@@ -53,7 +53,7 @@ subprojects {
     }
 
     task pipInstallRequests(type: Exec) {
-        commandLine "which", "pip", "&&", "pip", "install", "-q", "requests"
+        commandLine  "bash", "-c", "which", "pip", "&&", "pip", "install", "-q", "requests"
     }
 
     // TODO: Offline test requires  gradle check -x getRequirements since
