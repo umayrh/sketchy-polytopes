@@ -60,6 +60,8 @@ S. Chatterjee.
 * Logical Modalities from Aristotle to Carnap: The Story of Necessity
 * Improbable Destinies: Fate, Chance, and the Future of Evolution
 * Coloring Book of Complex Function Representations
+* Calculus Reordered: A History of the Big Ideas
+* A History of the Calculus of Variations. H. H. Goldstine.
 
 ## Read
 ## Science Fiction
