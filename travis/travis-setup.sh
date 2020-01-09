@@ -44,6 +44,7 @@ bootstrapLinux() {
 
 bootstrapOSX() {
   ### YUCK! Save Python from OSX!
+  brew link openssl --force
   setupPython
   setupSpark
   setupNeo4j
