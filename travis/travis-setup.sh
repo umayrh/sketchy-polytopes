@@ -17,7 +17,7 @@ SPARK_MIRROR="http://ftp.wayne.edu/apache/spark/spark-${SPARK_VERSION}/spark-${S
 
 ## Software versions
 LEMON_VERSION=${LEMON_VERSION:-"1.3.1"}
-PYTHON_VERSION="2.7.13"
+PYTHON_VERSION="2.7.17"
 
 ## Check OS type
 bootstrap() {
