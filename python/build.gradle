@@ -53,14 +53,16 @@ subprojects {
     }
 
     task pipInstallRequests(type: Exec) {
-        commandLine  "pip", "install", "-q", "--user", "requests"
+        commandLine "bash", "-c", "source build/venv/bin/activate && pip install requests"
+        // commandLine  "pip", "install", "-q", "--user", "requests"
     }
 
     // TODO: Offline test requires  gradle check -x getRequirements since
     // we're clobbering the local Ivy repo every time
     task getRequirements(type: Exec) {
         dependsOn pipInstallRequests
-        commandLine "python", "../etc/get_requirements.py", "build/local-ivy-repo"
+        commandLine "bash", "-c", "source build/venv/bin/activate && python ../etc/get_requirements.py build/local-ivy-repo"
+        // commandLine "python", "../etc/get_requirements.py", "build/local-ivy-repo"
         standardOutput = new ByteArrayOutputStream()
         ext.output = {
             return standardOutput.toString()
