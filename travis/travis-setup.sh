@@ -45,7 +45,6 @@ bootstrapLinux() {
 bootstrapOSX() {
   ### YUCK! Save Python from OSX!
   brew link openssl --force
-  brew uninstall python
   brew install python --with-brewed-openssl
 
   setupPython
