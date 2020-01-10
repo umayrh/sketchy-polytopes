@@ -84,4 +84,5 @@ subprojects {
     }
 
     installBuildRequirements.dependsOn getRequirements
+    pipInstallRequests.dependsOn createVirtualEnvironment
 }
