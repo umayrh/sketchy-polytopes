@@ -62,6 +62,8 @@ S. Chatterjee.
 * Coloring Book of Complex Function Representations
 * Calculus Reordered: A History of the Big Ideas
 * A History of the Calculus of Variations. H. H. Goldstine.
+* Deleuze's Philosophical Lineage, I and II
+* 
 
 ## Read
 ## Science Fiction
