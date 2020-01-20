@@ -90,4 +90,5 @@ subprojects {
     }
 
     installBuildRequirements.dependsOn getRequirements
+    createVirtualEnvironment.dependsOn debug
 }
