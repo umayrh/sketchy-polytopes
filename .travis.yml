@@ -24,7 +24,7 @@ jobs:
     # https://docs.travis-ci.com/user/reference/osx/#jdk-and-macos
     - os: osx
       osx_image: xcode9.3
-      env: PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R
+      env: PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R PYTHON_VERSION=2.7.17
       addons:
         homebrew:
           update: true
@@ -40,7 +40,7 @@ jobs:
 before_install: ./travis/travis-setup.sh
 
 install:
-  - ./gradlew --console=plain --stacktrace check -x packratClean -x renvClean
+  - pyenv global "${PYTHON_VERSION}" && ./gradlew --console=plain --stacktrace check -x packratClean -x renvClean
 
 scala:
   - 2.13.1
@@ -49,7 +49,7 @@ jdk:
   - openjdk8
 
 python:
-  - "2.7.17"
+  - 2.7.17
 
 cache:
   apt: true
