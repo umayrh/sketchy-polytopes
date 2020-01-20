@@ -1,16 +1,41 @@
 language: generic
 sudo: required
-# Promote to xenial when Travis fixes
-# https://travis-ci.community/t/oracle-jdk-11-and-10-are-pre-installed-not-the-openjdk-builds/785/6
-dist: trusty
 
-env:
-- PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R
+# Notes:
+#   No Java13 for now till Neo4j issues are resolved. Alternatively, also install JDK8. [05Jan2020]
 
-addons:
-  apt:
-    packages:
-      - axel
+git:
+  depth: 3
+  quiet: true
+
+jobs:
+  include:
+    # Promote to xenial when Travis fixes
+    # https://travis-ci.community/t/oracle-jdk-11-and-10-are-pre-installed-not-the-openjdk-builds/785/6
+    - os: linux
+      dist: trusty
+      env: PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R
+      addons:
+        apt:
+          packages:
+            - axel
+    # "In practical terms, if your Mac build requires Java 8 and below, use xcode9.3 (or below);
+    # if your build requires Java 10 and later, use xcode9.4 (or later)."
+    # https://docs.travis-ci.com/user/reference/osx/#jdk-and-macos
+    - os: osx
+      osx_image: xcode9.3
+      env: PYENV_REHASH_TIMEOUT=120 RENV_PATHS_LIBRARY=$HOME/.cache/R PATH="${HOME}/.pyenv/shims:${PATH}"
+      addons:
+        homebrew:
+          update: true
+          packages:
+            - axel
+            - pyenv
+            - pyenv-virtualenv
+            - readline
+            - sqlite3
+            - xz
+            - zlib
 
 before_install: ./travis/travis-setup.sh
 
@@ -24,7 +49,7 @@ jdk:
   - openjdk8
 
 python:
-  - "2.7.10"
+  - 2.7.17
 
 cache:
   apt: true
@@ -32,6 +57,9 @@ cache:
   directories:
     - $HOME/.m2
     - $HOME/.cache
+    - $HOME/.cache/lemon
+    - $HOME/.cache/spark
+    - $HOME/.cache/neo4j
     - $HOME/.cache/pip
     - $TRAVIS_BUILD_DIR/build/venv/lib
     - $HOME/.cache/R

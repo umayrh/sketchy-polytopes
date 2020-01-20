@@ -59,6 +59,13 @@ S. Chatterjee.
 * John Bell, The Continuous and the Infinitesimal in Mathematics and Philosophy
 * Logical Modalities from Aristotle to Carnap: The Story of Necessity
 * Improbable Destinies: Fate, Chance, and the Future of Evolution
+* Coloring Book of Complex Function Representations
+* Calculus Reordered: A History of the Big Ideas
+* A History of the Calculus of Variations. H. H. Goldstine.
+* Deleuze's Philosophical Lineage, I and II
+* Plato’s Ghost: The Modernist Transformation of Mathematics Jeremy Gray https://www.ams.org/journals/notices/201002/rtx100200239p.pdf
+* The Eloquent Screen: A Rhetoric of Film
+* 
 
 ## Read
 ## Science Fiction
