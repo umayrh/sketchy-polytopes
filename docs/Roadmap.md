@@ -38,6 +38,9 @@
   * [GraphBLAS](https://github.com/szarnyasg/graphblas-pointers)
 
 ### Log
+#### 2020-01-20
+* Finally figured out how to get Travis with MacOS and PyEnv to work together. Needed to set up pyenv shim in PATH. 
+See also https://binx.io/blog/2019/04/12/installing-pyenv-on-macos/.
 #### 2020-01-05
 * Created [renv-313](https://github.com/rstudio/renv/issues/313) because RENV_PATHS_CACHE doesn't
 work as I'd expected so Renv still install project in a way that's not easy to cache on Travis.
