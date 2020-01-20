@@ -49,11 +49,15 @@ subprojects {
 
     // Workaround due to PyGradle's lack of support for native PyPi repos
     task pipInstallRequirements(type: Exec) {
+        commandLine "which", "python"
+        commandLine "pyenv", "which", "python"
         commandLine "bash", "-c", "source build/venv/bin/activate && pip install -r requirements.txt && deactivate"
     }
 
     task pipInstallRequests(type: Exec) {
         commandLine "which", "pip"
+        commandLine "which", "python"
+        commandLine "pyenv", "which", "python"
         commandLine  "pip", "install", "--user", "requests"
     }
 
