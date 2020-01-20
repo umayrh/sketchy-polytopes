@@ -44,9 +44,6 @@ bootstrapLinux() {
 
 bootstrapOSX() {
   ### YUCK! Save Python from OSX!
-  brew link openssl --force
-  brew install python --with-brewed-openssl
-
   setupPython
   setupSpark
   setupNeo4j
@@ -78,8 +75,8 @@ setupPython() {
   virtualenv -p "$(which python)" ${VIRTUALENV_EXTRA_ARGS:-} "$VIRTUAL_ENV"
   # shellcheck source=/dev/null
   source "$VIRTUAL_ENV/bin/activate"
-  which pip
-  pyenv which pip
+  which python
+  pyenv which python
 }
 
 ## Installs a specific version of Spark
