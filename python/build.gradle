@@ -55,9 +55,6 @@ subprojects {
     }
 
     task pipInstallRequests(type: Exec) {
-        commandLine "which", "pip"
-        commandLine "which", "python"
-        commandLine "pyenv", "which", "python"
         commandLine  "pip", "install", "--user", "requests"
     }
 
@@ -84,6 +81,12 @@ subprojects {
         doLast {
             println(project.configurations.python.allDependencies)
         }
+    }
+
+    task debug(type: Exec) {
+        commandLine "which", "pip"
+        commandLine "which", "python"
+        commandLine "pyenv", "which", "python"
     }
 
     installBuildRequirements.dependsOn getRequirements
