@@ -63,6 +63,7 @@ cache:
     - $HOME/.cache/pip
     - $TRAVIS_BUILD_DIR/build/venv/lib
     - $HOME/.cache/R
+    - $HOME/.pyenv
 
 notifications:
   email:
