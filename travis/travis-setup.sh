@@ -99,8 +99,8 @@ setupNeo4j() {
   cd "$HOME"/.cache
   if [[ ! -d "$HOME/.cache/neo4j-community" ]]; then
     rm -fr neo4j-community*
-    # axel, instead of wget, fails for unknown reason
-    axel dist.neo4j.org/neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
+    # axel - but not wget - occassionally fails for unknown reason
+    wget dist.neo4j.org/neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
     tar -xzf neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
     # version-independent package dir to help with caching
     mv neo4j-community-"${NEO4J_VERSION}" neo4j-community
