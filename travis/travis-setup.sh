@@ -63,8 +63,6 @@ setupPython() {
   # modify the Bash environment. ??? So, I hand-set the variables instead.
   pyenv global "${PYTHON_VERSION}"
   export PYENV_VERSION="${PYTHON_VERSION}"
-  #pyenv virtualenv venv
-  #source "${HOME}"/.pyenv/versions/"${PYTHON_VERSION}"/envs/venv/bin/activate
 
   # Make sure virtualenv is installed and up-to-date...
   pip install -U virtualenv
@@ -75,8 +73,6 @@ setupPython() {
   virtualenv -p "$(which python)" ${VIRTUALENV_EXTRA_ARGS:-} "$VIRTUAL_ENV"
   # shellcheck source=/dev/null
   source "$VIRTUAL_ENV/bin/activate"
-  which python
-  pyenv which python
 }
 
 ## Installs a specific version of Spark
@@ -104,7 +100,7 @@ setupNeo4j() {
   if [[ ! -d "$HOME/.cache/neo4j-community" ]]; then
     rm -fr neo4j-community*
     # axel, instead of wget, fails for unknown reason
-    axel --quiet dist.neo4j.org/neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
+    axel dist.neo4j.org/neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
     tar -xzf neo4j-community-"${NEO4J_VERSION}"-unix.tar.gz
     # version-independent package dir to help with caching
     mv neo4j-community-"${NEO4J_VERSION}" neo4j-community
