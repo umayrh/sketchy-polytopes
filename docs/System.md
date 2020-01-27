@@ -58,6 +58,10 @@ snippets, and “why-doc” for narrative, contextual descriptions  3. We can mi
 staleness by limiting the amount we mix the how-docs with the why-docs."
 [More](https://codeascraft.com/2018/10/10/etsys-experiment-with-immutable-documentation/)
 
+### Metrics
+### Linux Performance Metrics
+* [Linux Performance](http://www.brendangregg.com/linuxperf.html)
+
 ## Problems
 #### Cache congestion
 "Every time a model was saved or deleted, the delete_cache method was called. 

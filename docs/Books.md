@@ -65,6 +65,7 @@ S. Chatterjee.
 * Deleuze's Philosophical Lineage, I and II
 * Plato’s Ghost: The Modernist Transformation of Mathematics Jeremy Gray https://www.ams.org/journals/notices/201002/rtx100200239p.pdf
 * The Eloquent Screen: A Rhetoric of Film
+* Peirce's Doctrine of Signs: Theory, Applications, and Connections
 * 
 
 ## Read
