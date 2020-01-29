@@ -12,6 +12,8 @@
   * https://github.com/docker/compose/issues/1110
   * https://github.com/docker/compose/issues/2478
   * https://docs.docker.com/compose/extends/
+  * https://nickjanetakis.com/blog/docker-tip-65-get-your-docker-hosts-ip-address-from-in-a-container
+  * 
 * Steps:
   *  Install Docker on Mac
   * `git clone https://github.com/apache/incubator-superset/`
@@ -34,8 +36,14 @@
   * In case PostGres needs to be cycled:
     * `sudo -u postgres  pg_ctl -D /Library/PostgreSQL/12/data stop` 
   * `docker-compose up`
+  * If successful, you may see SQLAlchemy running DB migration.
+  * Browse to http://localhost:8088/ to log in (admin/admin, as set up in `docker-init.sh`)
+  * If the server seems to be up and healthy but the UI isn't responding, the JS libraries might be 
+    installing and can take ~30min
+  * Add a new DB to start playing with data 
+    * `postgresql+psycopg2://superset_user:superset@host.docker.internal/superset`
   * 
-* Errors
+* Possible errors during installation:
 ```
 superset_1         | INFO:root:Configured event logger of type <class 'superset.utils.log.DBEventLogger'>
 superset_1         | INFO:root:logging was configured successfully
@@ -49,7 +57,7 @@ superset-worker_1  | ERROR:flask_appbuilder.security.sqla.manager:DB Creation an
 superset-worker_1  | 	Is the server running locally and accepting
 superset-worker_1  | 	connections on Unix domain socket "/var/run/postgresql/.s.PGSQL.5432"?
 ```
-* PostGres or SQLAlchmeny DB URI error e.g.
+* PostGres or SQLAlchemy DB URI error e.g.
   * Socket path is different: `/tmp/.s.PGSQL.5432`. See https://stackoverflow.com/questions/5500332/cant-connect-the-postgresql-with-psycopg2
   * Host OS cannot be accessed
   * URI is incorrect
