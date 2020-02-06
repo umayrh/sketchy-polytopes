@@ -1,0 +1,9 @@
+version = "0.1"
+description = "Cats"
+
+dependencies {
+    api group: 'org.typelevel', name: 'cats-core' + "_" + scalaVersion, version: "2.0+"
+    api group: 'org.typelevel', name: 'cats-kernel'+ "_" + scalaVersion, version: "2.0+"
+    api group: 'org.typelevel', name: 'cats-laws'+ "_" + scalaVersion, version: "2.0+"
+    api group: 'org.typelevel', name: 'cats-free'+ "_" + scalaVersion, version: "2.0+"
+}
