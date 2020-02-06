@@ -30,6 +30,7 @@ jobs:
           update: true
           packages:
             - axel
+            - openssl
             - pyenv
             - pyenv-virtualenv
             - readline
