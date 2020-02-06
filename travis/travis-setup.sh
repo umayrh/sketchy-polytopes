@@ -45,6 +45,7 @@ bootstrapLinux() {
 bootstrapOSX() {
   ### YUCK! Save Python from OSX!
   setupPython
+  setupOpensslHack
   setupSpark
   setupNeo4j
   setupR_OSX
@@ -73,6 +74,12 @@ setupPython() {
   virtualenv -p "$(which python)" ${VIRTUALENV_EXTRA_ARGS:-} "$VIRTUAL_ENV"
   # shellcheck source=/dev/null
   source "$VIRTUAL_ENV/bin/activate"
+}
+
+setupOpensslHack() {
+  sudo mkdir -p /usr/local/opt/openssl/lib
+  sudo ln -s /usr/lib/libssl.dylib /usr/local/opt/openssl/lib/libssl.1.0.0.dylib
+  sudo ln -s /usr/lib/libcrypto.dylib /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib
 }
 
 ## Installs a specific version of Spark
