@@ -3,16 +3,17 @@ package com.umayrh.intervalGraph
 import java.sql.Date
 
 import com.holdenkarau.spark.testing.{DataFrameSuiteBase, SharedSparkContext}
-import org.scalatest.junit.AssertionsForJUnit
-import org.scalatest.{FeatureSpec, GivenWhenThen}
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should._
+import org.scalatest.GivenWhenThen
 
 /**
   * Tests [[DateOverlapUtils]]
   */
 class DateOverlapUtilsTest
-    extends FeatureSpec
-    with AssertionsForJUnit
+    extends AnyFeatureSpec
     with GivenWhenThen
+    with Matchers
     with SharedSparkContext
     with DataFrameSuiteBase {
   Feature("Functions for creating bitmaps from a table containing dates") {

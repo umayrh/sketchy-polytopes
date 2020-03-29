@@ -3,18 +3,14 @@ package com.umayrh.sort
 import com.holdenkarau.spark.testing.DataFrameSuiteBase
 import java.io.{File, FilenameFilter}
 
-import org.scalatest.{FeatureSpec, GivenWhenThen, Matchers}
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.GivenWhenThen
+import org.scalatest.matchers.should._
 
 import scala.io.Source
 import scala.reflect.io.Directory
 
-class MainTest
-    extends FeatureSpec
-    with AssertionsForJUnit
-    with GivenWhenThen
-    with Matchers
-    with DataFrameSuiteBase {
+class MainTest extends AnyFeatureSpec with GivenWhenThen with Matchers with DataFrameSuiteBase {
 
   var outputFile: File = null
 

@@ -5,17 +5,19 @@ import java.nio.ByteBuffer
 
 import com.umayrh.intervalGraph.RoaringBitmapSerde._
 import org.roaringbitmap.RoaringBitmap
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalatest.{FeatureSpec, GivenWhenThen, Matchers}
+import org.scalatest.GivenWhenThen
 
 /**
   * Tests [[RoaringBitmapSerde]]
   */
 class RoaringBitmapSerdeTest
-    extends FeatureSpec
+    extends AnyFeatureSpec
     with GivenWhenThen
-    with GeneratorDrivenPropertyChecks
-    with Matchers {
+    with Matchers
+    with GeneratorDrivenPropertyChecks {
   Feature("Functions for serializing and deserializing RoaringBitmap objects") {
     Scenario("RoaringBitmaps before serialization and after deserialization are equal") {
       Given("a sequence of integer pairs between 0 and Int.Max")

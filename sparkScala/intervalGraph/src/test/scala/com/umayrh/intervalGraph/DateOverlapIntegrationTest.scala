@@ -6,14 +6,14 @@ import com.holdenkarau.spark.testing._
 import org.apache.spark.sql.functions.col
 import org.apache.spark.sql.DataFrame
 import org.scalatest._
-import org.scalatest.junit.AssertionsForJUnit
+import org.scalatest.matchers.should._
+import org.scalatest.featurespec._
 
 /**
   * Tests [[DateOverlap]]
   */
 class DateOverlapIntegrationTest
-    extends FeatureSpec
-    with AssertionsForJUnit
+    extends AnyFeatureSpec
     with GivenWhenThen
     with Matchers
     with SharedSparkContext

@@ -5,7 +5,9 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.rand
 import org.roaringbitmap.RoaringBitmap
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalatest.{FeatureSpec, GivenWhenThen, Matchers}
+import org.scalatest.GivenWhenThen
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should._
 
 import scala.util.Random
 
@@ -19,10 +21,10 @@ object RoaringBitmapOrUDAFTest {
 }
 
 class RoaringBitmapOrUDAFTest
-    extends FeatureSpec
+    extends AnyFeatureSpec
     with GivenWhenThen
-    with GeneratorDrivenPropertyChecks
     with Matchers
+    with GeneratorDrivenPropertyChecks
     with SharedSparkContext
     with DataFrameSuiteBase {
   import RoaringBitmapOrUDAFTest._

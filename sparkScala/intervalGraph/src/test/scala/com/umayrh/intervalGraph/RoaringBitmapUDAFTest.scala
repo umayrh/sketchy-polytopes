@@ -5,8 +5,10 @@ import com.umayrh.intervalGraph.RoaringBitmapUDAF.{toEndIndex, toStartIndex}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions.rand
 import org.roaringbitmap.RoaringBitmap
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
-import org.scalatest.{FeatureSpec, GivenWhenThen, Matchers}
+import org.scalatest.GivenWhenThen
 
 import scala.util.Random
 
@@ -22,10 +24,10 @@ object RoaringBitmapUDAFTest {
 }
 
 class RoaringBitmapUDAFTest
-    extends FeatureSpec
+    extends AnyFeatureSpec
     with GivenWhenThen
-    with GeneratorDrivenPropertyChecks
     with Matchers
+    with GeneratorDrivenPropertyChecks
     with SharedSparkContext
     with DataFrameSuiteBase {
   import RoaringBitmapUDAFTest._

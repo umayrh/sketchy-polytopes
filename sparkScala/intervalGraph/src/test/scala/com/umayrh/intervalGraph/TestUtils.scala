@@ -6,7 +6,7 @@ import com.google.common.base.Preconditions
 import org.apache.spark.SparkContext
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.roaringbitmap.RoaringBitmap
-import org.scalatest.Matchers
+import org.scalatest.matchers.should._
 
 import scala.util.Random
 
