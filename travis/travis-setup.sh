@@ -58,7 +58,7 @@ setupPython() {
   eval "$(pyenv init -)"
   # virtualenv doesn't work without pyenv knowledge. venv in Python 3.3
   # doesn't provide Pip by default. So, use `pyenv-virtualenv <https://github.com/yyuu/pyenv-virtualenv/blob/master/README.md>`_.
-  pyenv install "${PYTHON_VERSION}"
+  pyenv install --skip-existing "${PYTHON_VERSION}"
   # I would expect something like ``pyenv init; pyenv local $PYTHON`` or
   # ``pyenv shell $PYTHON`` would work, but ``pyenv init`` doesn't seem to
   # modify the Bash environment. ??? So, I hand-set the variables instead.
