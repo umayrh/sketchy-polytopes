@@ -10,6 +10,7 @@ a requirements.txt file that can be used with `pip`. It should suffice to run:
 To create a new project:
 
 * `cp -R _template new_project`
+* Add the line `include 'new_project'` to the file `settings.gradle`
 * `cd new_project && gradle generateSetupPy`
 * `nano new_project/setup.py` and update project description e.g.
 ```
