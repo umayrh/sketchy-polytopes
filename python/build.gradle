@@ -27,7 +27,19 @@ subprojects {
 
     python {
         details {
-            pythonVersion = '2.7'
+            pythonVersion = '3.7'
+        }
+        // Sphinx-1.8.1.dist-info/METADATA:Requires-Dist: enum34; (python_version<"3")
+        // enum34-1.1.6 causes the build to fail on Python 3. These versions are old but
+        // the latest ones available at https://linkedin.jfrog.io/linkedin/pypi-external/pypi/
+        // as of 2020-05-25.
+        forceVersion('pypi', 'flake8', '3.7.9')
+        forceVersion('pypi', 'Sphinx', '2.2.1')
+    }
+
+    dependencies {
+        python ('pypi:flake8:3.7.9') {
+            exclude module: 'functools32'
         }
     }
 
@@ -49,18 +61,18 @@ subprojects {
 
     // Workaround due to PyGradle's lack of support for native PyPi repos
     task pipInstallRequirements(type: Exec) {
-        commandLine "bash", "-c", "source build/venv/bin/activate && pip install -r requirements.txt && deactivate"
+        commandLine "bash", "-c", "source build/venv/bin/activate && pip3 install -r requirements.txt && deactivate"
     }
 
     task pipInstallRequests(type: Exec) {
-        commandLine  "pip", "install", "--user", "requests"
+        commandLine  "pip3", "install", "--user", "requests"
     }
 
     // TODO: Offline test requires  gradle check -x getRequirements since
     // we're clobbering the local Ivy repo every time
     task getRequirements(type: Exec) {
         dependsOn pipInstallRequests
-        commandLine "python", "../etc/get_requirements.py", "build/local-ivy-repo"
+        commandLine "python3", "../etc/get_requirements.py", "build/local-ivy-repo"
         standardOutput = new ByteArrayOutputStream()
         ext.output = {
             return standardOutput.toString()
